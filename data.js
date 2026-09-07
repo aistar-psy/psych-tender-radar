@@ -1,6 +1,6 @@
 window.RADAR_DATA = {
   "title": "心育采购观察",
-  "builtAt": "2026-09-07T22:10:58.273136+08:00",
+  "builtAt": "2026-09-07T22:11:58.659378+08:00",
   "defaultRunId": "20260907T090000-94426b",
   "runs": [
     {
@@ -6772,73 +6772,6 @@ window.RADAR_DATA = {
       ],
       "discoveryDate": null,
       "dateEvidence": "搜索索引日期，待核验"
-    },
-    {
-      "id": "c8438e5c624f9746e7ca6b1e",
-      "title": "转：中国劳动关系学院涿州校区新建学生公寓2026年空气治理项目终止公告",
-      "category": "待核验",
-      "buyer": "中国劳动关系学院",
-      "number": "0873-2026FW1L0378",
-      "publishedAt": "2026-08-28",
-      "deadline": null,
-      "status": "结果/历史研究",
-      "detailStatus": "部分完成",
-      "sourceUrl": "https://news.culr.edu.cn/zcglc/cggg/e3f4f59cd6554b68bd9106759c488814.htm",
-      "amounts": [],
-      "province": "北京",
-      "buyerType": "G/事业单位",
-      "openingAt": null,
-      "bidAt": "2026-08-28",
-      "sourceQuality": "正文已核验",
-      "amountEligible": false,
-      "amountScope": "金额为规则提取候选；同类多值或批次意向不计入合计",
-      "products": [],
-      "parameters": [],
-      "events": [
-        {
-          "title": "转：中国劳动关系学院涿州校区新建学生公寓2026年空气治理项目终止公告",
-          "type": "终止公告",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/e3f4f59cd6554b68bd9106759c488814.htm",
-          "publishedAt": "2026-08-28",
-          "deadline": null
-        },
-        {
-          "title": "转：中国劳动关系学院涿州校区新建学生公寓2026年空气治理项目更正公告",
-          "type": "更正公告",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/a518a9f43758480ca8c681f40cae6751.htm",
-          "publishedAt": "2026-08-24",
-          "deadline": null
-        },
-        {
-          "title": "转：中国劳动关系学院涿州校区新建学生公寓2026年空气治理项目竞争性磋商公告",
-          "type": "竞争性磋商公告",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/9c1d47403c254646bfabd140998c01a9.htm",
-          "publishedAt": "2026-08-24",
-          "deadline": null
-        }
-      ],
-      "gaps": [
-        {
-          "name": "完整采购文件",
-          "status": "未取得",
-          "reason": "公告未发现公开附件；细化技术参数可能需另行获取。",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/e3f4f59cd6554b68bd9106759c488814.htm"
-        },
-        {
-          "name": "完整采购文件",
-          "status": "未取得",
-          "reason": "公告未发现公开附件；细化技术参数可能需另行获取。",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/a518a9f43758480ca8c681f40cae6751.htm"
-        },
-        {
-          "name": "完整采购文件",
-          "status": "未取得",
-          "reason": "公告未发现公开附件；细化技术参数可能需另行获取。",
-          "url": "https://news.culr.edu.cn/zcglc/cggg/9c1d47403c254646bfabd140998c01a9.htm"
-        }
-      ],
-      "discoveryDate": null,
-      "dateEvidence": "正文"
     },
     {
       "id": "lead-48d4711a5328",
