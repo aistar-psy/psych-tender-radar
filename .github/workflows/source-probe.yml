@@ -1,0 +1,31 @@
+name: Public source network comparison
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-source-network-comparison
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out public probe files
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Probe public sources
+        run: python3 probe_sources.py --catalog probe_catalog.json --output source-probe.json
+      - name: Upload sanitized comparison report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-probe
+          path: source-probe.json
+          if-no-files-found: error
+          retention-days: 7

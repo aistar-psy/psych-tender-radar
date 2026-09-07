@@ -1,0 +1,823 @@
+[
+  {
+    "id": "ccgp-beijing",
+    "name": "北京政府采购网",
+    "url": "https://www.ccgp-beijing.gov.cn/",
+    "active_url": "https://www.ccgp-beijing.gov.cn/",
+    "domains": [
+      "www.ccgp-beijing.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-shanghai",
+    "name": "上海政府采购网",
+    "url": "https://www.ccgp-shanghai.gov.cn/",
+    "active_url": "https://www.zfcg.sh.gov.cn/",
+    "domains": [
+      "www.ccgp-shanghai.gov.cn",
+      "www.zfcg.sh.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-tianjin",
+    "name": "天津政府采购网",
+    "url": "https://www.ccgp-tianjin.gov.cn/",
+    "active_url": "http://tjgp.cz.tj.gov.cn/",
+    "domains": [
+      "www.ccgp-tianjin.gov.cn",
+      "tjgp.cz.tj.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-chongqing",
+    "name": "重庆政府采购网",
+    "url": "https://www.ccgp-chongqing.gov.cn/",
+    "active_url": "https://www.ccgp-chongqing.gov.cn/",
+    "domains": [
+      "www.ccgp-chongqing.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-hebei",
+    "name": "河北政府采购网",
+    "url": "https://www.ccgp-hebei.gov.cn/",
+    "active_url": "https://www.ccgp-hebei.gov.cn/",
+    "domains": [
+      "www.ccgp-hebei.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-henan",
+    "name": "河南政府采购网",
+    "url": "https://www.ccgp-henan.gov.cn/",
+    "active_url": "https://zfcg.henan.gov.cn/",
+    "domains": [
+      "www.ccgp-henan.gov.cn",
+      "zfcg.henan.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-hubei",
+    "name": "湖北政府采购网",
+    "url": "https://www.ccgp-hubei.gov.cn/",
+    "active_url": "https://www.ccgp-hubei.gov.cn/",
+    "domains": [
+      "www.ccgp-hubei.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-hunan",
+    "name": "湖南政府采购网",
+    "url": "https://www.ccgp-hunan.gov.cn/",
+    "active_url": "https://www.ccgp-hunan.gov.cn/",
+    "domains": [
+      "www.ccgp-hunan.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-shanxi",
+    "name": "山西政府采购网",
+    "url": "https://www.ccgp-shanxi.gov.cn/",
+    "active_url": "https://www.ccgp-shanxi.gov.cn/",
+    "domains": [
+      "www.ccgp-shanxi.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-shandong",
+    "name": "山东政府采购网",
+    "url": "https://www.ccgp-shandong.gov.cn/",
+    "active_url": "https://www.ccgp-shandong.gov.cn/",
+    "domains": [
+      "www.ccgp-shandong.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-heilongjiang",
+    "name": "黑龙江政府采购网",
+    "url": "https://www.ccgp-heilongj.gov.cn/",
+    "active_url": "https://hljcg.hlj.gov.cn/",
+    "domains": [
+      "www.ccgp-heilongj.gov.cn",
+      "hljcg.hlj.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-jilin",
+    "name": "吉林政府采购网",
+    "url": "https://www.ccgp-jilin.gov.cn/",
+    "active_url": "https://www.ccgp-jilin.gov.cn/",
+    "domains": [
+      "www.ccgp-jilin.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-liaoning",
+    "name": "辽宁政府采购网",
+    "url": "https://www.ccgp-liaoning.gov.cn/",
+    "active_url": "https://www.ccgp-liaoning.gov.cn/",
+    "domains": [
+      "www.ccgp-liaoning.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-guangdong",
+    "name": "广东政府采购网",
+    "url": "https://www.ccgp-guangdong.gov.cn/",
+    "active_url": "https://gdgpo.czt.gd.gov.cn/",
+    "domains": [
+      "www.ccgp-guangdong.gov.cn",
+      "gdgpo.czt.gd.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-hainan",
+    "name": "海南政府采购网",
+    "url": "https://ccgp-hainan.gov.cn/",
+    "active_url": "https://ccgp-hainan.gov.cn/",
+    "domains": [
+      "ccgp-hainan.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-neimenggu",
+    "name": "内蒙古政府采购网",
+    "url": "https://www.ccgp-neimenggu.gov.cn/",
+    "active_url": "https://www.ccgp-neimenggu.gov.cn/",
+    "domains": [
+      "www.ccgp-neimenggu.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-shaanxi",
+    "name": "陕西政府采购网",
+    "url": "https://www.ccgp-shaanxi.gov.cn/",
+    "active_url": "https://www.ccgp-shaanxi.gov.cn/",
+    "domains": [
+      "www.ccgp-shaanxi.gov.cn",
+      "ccgp-shaanxi.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-gansu",
+    "name": "甘肃政府采购网",
+    "url": "https://www.ccgp-gansu.gov.cn/",
+    "active_url": "https://www.ccgp-gansu.gov.cn/",
+    "domains": [
+      "www.ccgp-gansu.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-qinghai",
+    "name": "青海政府采购网",
+    "url": "https://www.ccgp-qinghai.gov.cn/",
+    "active_url": "https://www.ccgp-qinghai.gov.cn/",
+    "domains": [
+      "www.ccgp-qinghai.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-ningxia",
+    "name": "宁夏政府采购网",
+    "url": "https://www.ccgp-ningxia.gov.cn/",
+    "active_url": "https://www.ccgp-ningxia.gov.cn/",
+    "domains": [
+      "www.ccgp-ningxia.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-jiangxi",
+    "name": "江西政府采购网",
+    "url": "https://ccgp-jiangxi.gov.cn/",
+    "active_url": "https://zfcg.jxf.gov.cn/",
+    "domains": [
+      "ccgp-jiangxi.gov.cn",
+      "zfcg.jxf.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-xinjiang",
+    "name": "新疆政府采购网",
+    "url": "https://www.ccgp-xinjiang.gov.cn/",
+    "active_url": "https://www.ccgp-xinjiang.gov.cn/",
+    "domains": [
+      "www.ccgp-xinjiang.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-xizang",
+    "name": "西藏政府采购网",
+    "url": "https://www.ccgp-xizang.gov.cn/",
+    "active_url": "https://www.ccgp-xizang.gov.cn/",
+    "domains": [
+      "www.ccgp-xizang.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-sichuan",
+    "name": "四川政府采购网",
+    "url": "https://www.ccgp-sichuan.gov.cn/",
+    "active_url": "https://www.ccgp-sichuan.gov.cn/",
+    "domains": [
+      "www.ccgp-sichuan.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-jiangsu",
+    "name": "江苏政府采购网",
+    "url": "https://www.ccgp-jiangsu.gov.cn/",
+    "active_url": "https://www.ccgp-jiangsu.gov.cn/",
+    "domains": [
+      "www.ccgp-jiangsu.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-zhejiang",
+    "name": "浙江政府采购网",
+    "url": "https://www.ccgp-zhejiang.gov.cn/",
+    "active_url": "https://zfcg.czt.zj.gov.cn/",
+    "domains": [
+      "www.ccgp-zhejiang.gov.cn",
+      "zfcg.czt.zj.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-guangxi",
+    "name": "广西政府采购网",
+    "url": "https://www.ccgp-guangxi.gov.cn/",
+    "active_url": "https://zfcg.gxzf.gov.cn/",
+    "domains": [
+      "www.ccgp-guangxi.gov.cn",
+      "zfcg.gxzf.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-yunnan",
+    "name": "云南政府采购网",
+    "url": "https://www.ccgp-yunnan.gov.cn/",
+    "active_url": "http://www.yngp.com/",
+    "domains": [
+      "www.ccgp-yunnan.gov.cn",
+      "www.yngp.com"
+    ]
+  },
+  {
+    "id": "ccgp-fujian",
+    "name": "福建政府采购网",
+    "url": "https://www.ccgp-fujian.gov.cn/",
+    "active_url": "https://zfcg.czt.fujian.gov.cn/",
+    "domains": [
+      "www.ccgp-fujian.gov.cn",
+      "zfcg.czt.fujian.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-guizhou",
+    "name": "贵州政府采购网",
+    "url": "https://www.ccgp-guizhou.gov.cn/",
+    "active_url": "https://www.ccgp-guizhou.gov.cn/",
+    "domains": [
+      "www.ccgp-guizhou.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-anhui",
+    "name": "安徽政府采购网",
+    "url": "https://www.ccgp-anhui.gov.cn/",
+    "active_url": "https://www.ccgp-anhui.gov.cn/",
+    "domains": [
+      "www.ccgp-anhui.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-shenzhen",
+    "name": "深圳政府采购网",
+    "url": "https://ccgp-shenzhen.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ccgp-shenzhen.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-dalian",
+    "name": "大连政府采购网",
+    "url": "https://www.ccgp-dalian.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.ccgp-dalian.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-xiamen",
+    "name": "厦门政府采购网",
+    "url": "https://ccgp-xiamen.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ccgp-xiamen.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-ningbo",
+    "name": "宁波政府采购网",
+    "url": "https://www.ccgp-ningbo.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.ccgp-ningbo.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-bingtuan",
+    "name": "新疆生产建设兵团政府采购网",
+    "url": "https://ccgp-bingtuan.gov.cn/",
+    "active_url": "https://ccgp-bingtuan.gov.cn/",
+    "domains": [
+      "ccgp-bingtuan.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-beijing",
+    "name": "北京公共资源交易平台",
+    "url": "https://ggzyfw.beijing.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyfw.beijing.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-tianjin",
+    "name": "天津公共资源交易平台",
+    "url": "https://ggzy.zwfwb.tj.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.zwfwb.tj.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-hebei",
+    "name": "河北公共资源交易平台",
+    "url": "https://szj.hebei.gov.cn/hbggfwpt/",
+    "active_url": null,
+    "domains": [
+      "szj.hebei.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-shanxi",
+    "name": "山西公共资源交易平台",
+    "url": "https://prec.sxzwfw.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "prec.sxzwfw.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-neimenggu",
+    "name": "内蒙古公共资源交易平台",
+    "url": "https://ggzyjy.nmg.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjy.nmg.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-henan",
+    "name": "河南公共资源交易平台",
+    "url": "https://ggzy.fgw.henan.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.fgw.henan.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-hubei",
+    "name": "湖北公共资源交易平台",
+    "url": "https://www.hbggzyfwpt.cn/",
+    "active_url": null,
+    "domains": [
+      "www.hbggzyfwpt.cn"
+    ]
+  },
+  {
+    "id": "ggzy-hunan",
+    "name": "湖南公共资源交易平台",
+    "url": "https://www.hnsggzy.com/",
+    "active_url": null,
+    "domains": [
+      "www.hnsggzy.com"
+    ]
+  },
+  {
+    "id": "ggzy-chongqing",
+    "name": "重庆公共资源交易平台",
+    "url": "https://www.cqggzy.com/",
+    "active_url": null,
+    "domains": [
+      "www.cqggzy.com"
+    ]
+  },
+  {
+    "id": "ggzy-sichuan",
+    "name": "四川公共资源交易平台",
+    "url": "https://ggzyjy.sc.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjy.sc.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-guizhou",
+    "name": "贵州公共资源交易平台",
+    "url": "https://ggzy.guizhou.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.guizhou.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-yunnan",
+    "name": "云南公共资源交易平台",
+    "url": "https://ggzy.yn.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.yn.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-xizang",
+    "name": "西藏公共资源交易平台",
+    "url": "https://ggzy.xizang.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.xizang.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-liaoning",
+    "name": "辽宁公共资源交易平台",
+    "url": "https://www.lnggzy.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.lnggzy.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-jilin",
+    "name": "吉林公共资源交易平台",
+    "url": "https://www.jl.gov.cn/ggzy/",
+    "active_url": null,
+    "domains": [
+      "www.jl.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-heilongjiang",
+    "name": "黑龙江公共资源交易平台",
+    "url": "https://ggzyjyw.hlj.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjyw.hlj.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-shanghai",
+    "name": "上海公共资源交易平台",
+    "url": "https://www.shggzy.com/",
+    "active_url": null,
+    "domains": [
+      "www.shggzy.com"
+    ]
+  },
+  {
+    "id": "ggzy-jiangsu",
+    "name": "江苏公共资源交易平台",
+    "url": "https://jsggzy.jszwfw.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "jsggzy.jszwfw.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-zhejiang",
+    "name": "浙江公共资源交易平台",
+    "url": "https://ggzy.zj.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.zj.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-anhui",
+    "name": "安徽公共资源交易平台",
+    "url": "https://ggzy.ah.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.ah.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-fujian",
+    "name": "福建公共资源交易平台",
+    "url": "https://ggzyfw.fujian.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyfw.fujian.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-jiangxi",
+    "name": "江西公共资源交易平台",
+    "url": "https://www.jxsggzy.cn/",
+    "active_url": null,
+    "domains": [
+      "www.jxsggzy.cn"
+    ]
+  },
+  {
+    "id": "ggzy-shandong",
+    "name": "山东公共资源交易平台",
+    "url": "https://ggzyjy.shandong.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjy.shandong.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-guangdong",
+    "name": "广东公共资源交易平台",
+    "url": "https://ygp.gdzwfw.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ygp.gdzwfw.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-guangxi",
+    "name": "广西公共资源交易平台",
+    "url": "https://ggzy.jgswj.gxzf.gov.cn/gxggzy/",
+    "active_url": null,
+    "domains": [
+      "ggzy.jgswj.gxzf.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-hainan",
+    "name": "海南公共资源交易平台",
+    "url": "https://zw.hainan.gov.cn/ggzy/",
+    "active_url": null,
+    "domains": [
+      "zw.hainan.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-shaanxi",
+    "name": "陕西公共资源交易平台",
+    "url": "https://www.sxggzyjy.cn/",
+    "active_url": null,
+    "domains": [
+      "www.sxggzyjy.cn"
+    ]
+  },
+  {
+    "id": "ggzy-gansu",
+    "name": "甘肃公共资源交易平台",
+    "url": "https://ggzyjy.gansu.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjy.gansu.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-qinghai",
+    "name": "青海公共资源交易平台",
+    "url": "https://www.qhggzyjy.gov.cn/ggzy/",
+    "active_url": null,
+    "domains": [
+      "www.qhggzyjy.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-ningxia",
+    "name": "宁夏公共资源交易平台",
+    "url": "https://ggzyjy.fzggw.nx.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzyjy.fzggw.nx.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-xinjiang",
+    "name": "新疆公共资源交易平台",
+    "url": "https://ggzy.xinjiang.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.xinjiang.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-bingtuan",
+    "name": "新疆生产建设兵团公共资源交易平台",
+    "url": "https://ggzy.xjbt.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "ggzy.xjbt.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-qingdao",
+    "name": "青岛市政府采购网",
+    "url": "http://www.ccgp-qingdao.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.ccgp-qingdao.gov.cn"
+    ]
+  },
+  {
+    "id": "ccgp-national",
+    "name": "中国政府采购网",
+    "url": "https://www.ccgp.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.ccgp.gov.cn"
+    ]
+  },
+  {
+    "id": "ggzy-national",
+    "name": "全国公共资源交易平台",
+    "url": "https://www.ggzy.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.ggzy.gov.cn"
+    ]
+  },
+  {
+    "id": "cebpub-national",
+    "name": "中国招标投标公共服务平台",
+    "url": "https://www.cebpubservice.com/",
+    "active_url": null,
+    "domains": [
+      "www.cebpubservice.com"
+    ]
+  },
+  {
+    "id": "zzcg-national",
+    "name": "中直机关采购中心",
+    "url": "https://www.zzcg.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.zzcg.gov.cn"
+    ]
+  },
+  {
+    "id": "zycg-national",
+    "name": "中央国家机关采购中心",
+    "url": "https://www.zycg.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "www.zycg.gov.cn"
+    ]
+  },
+  {
+    "id": "customs-national",
+    "name": "海关总署采购中心",
+    "url": "https://hgcg.customs.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "hgcg.customs.gov.cn"
+    ]
+  },
+  {
+    "id": "plap-national",
+    "name": "军队采购网",
+    "url": "https://www.plap.mil.cn/",
+    "active_url": null,
+    "domains": [
+      "www.plap.mil.cn"
+    ]
+  },
+  {
+    "id": "pbc-national",
+    "name": "中国人民银行集中采购中心",
+    "url": "https://jzcg.pbc.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "jzcg.pbc.gov.cn"
+    ]
+  },
+  {
+    "id": "chinatax-national",
+    "name": "国家税务总局集中采购中心",
+    "url": "https://swcg.chinatax.gov.cn/",
+    "active_url": null,
+    "domains": [
+      "swcg.chinatax.gov.cn"
+    ]
+  },
+  {
+    "id": "aggregator_qianlima",
+    "name": "千里马招标网",
+    "url": "https://www.qianlima.com/",
+    "active_url": null,
+    "domains": [
+      "qianlima.com"
+    ]
+  },
+  {
+    "id": "aggregator_bidcenter",
+    "name": "采招网",
+    "url": "https://www.bidcenter.com.cn/",
+    "active_url": null,
+    "domains": [
+      "bidcenter.com.cn"
+    ]
+  },
+  {
+    "id": "aggregator_yfbzb",
+    "name": "乙方宝",
+    "url": "https://www.yfbzb.com/",
+    "active_url": null,
+    "domains": [
+      "yfbzb.com"
+    ]
+  },
+  {
+    "id": "aggregator_jianyu360",
+    "name": "剑鱼标讯",
+    "url": "https://www.jianyu360.cn/",
+    "active_url": null,
+    "domains": [
+      "jianyu360.cn"
+    ]
+  },
+  {
+    "id": "aggregator_biaozhaozhao",
+    "name": "标找找",
+    "url": "https://m.biaozhaozhao.com/",
+    "active_url": null,
+    "domains": [
+      "biaozhaozhao.com"
+    ]
+  },
+  {
+    "id": "aggregator_caigou",
+    "name": "教育装备采购网",
+    "url": "https://www.caigou.com.cn/",
+    "active_url": null,
+    "domains": [
+      "caigou.com.cn"
+    ]
+  },
+  {
+    "id": "aggregator_chinabidding",
+    "name": "采购与招标网",
+    "url": "https://www.chinabidding.cn/zbw/index.jsp",
+    "active_url": null,
+    "domains": [
+      "chinabidding.cn"
+    ]
+  },
+  {
+    "id": "aggregator_zhaobiao",
+    "name": "招标网",
+    "url": "https://www.zhaobiao.cn/",
+    "active_url": null,
+    "domains": [
+      "zhaobiao.cn"
+    ]
+  },
+  {
+    "id": "aggregator_bidizhaobiao",
+    "name": "比地招标网",
+    "url": "https://www.bidizhaobiao.com/",
+    "active_url": null,
+    "domains": [
+      "bidizhaobiao.com"
+    ]
+  },
+  {
+    "id": "aggregator_bidradar",
+    "name": "标标达（原招标雷达）",
+    "url": "https://bidradar.com.cn/",
+    "active_url": null,
+    "domains": [
+      "bidradar.com.cn"
+    ]
+  },
+  {
+    "id": "aggregator_ebnew",
+    "name": "必联网",
+    "url": "https://www.ebnew.com/",
+    "active_url": null,
+    "domains": [
+      "ebnew.com"
+    ]
+  },
+  {
+    "id": "aggregator_infobidding",
+    "name": "招投标网",
+    "url": "https://www.infobidding.com/",
+    "active_url": null,
+    "domains": [
+      "infobidding.com"
+    ]
+  }
+]
