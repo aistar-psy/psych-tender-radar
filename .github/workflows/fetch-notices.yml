@@ -1,0 +1,33 @@
+name: Fetch queued public notices
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-notice-downloads
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out public notice queue and worker
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Fetch queued public notice bodies
+        run: python3 fetch_public_notices.py --queue fetch_queue.json --output-dir .
+      - name: Upload public notice bodies and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-notice-downloads
+          path: |
+            manifest.json
+            downloaded/*.bin
+          if-no-files-found: error
+          retention-days: 7
