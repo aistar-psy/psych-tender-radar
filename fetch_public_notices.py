@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Download only queued public notice URLs; never discover or follow attachments.
 
-The manifest is a JSON array. Successful bodies retain their original bytes and
-Content-Type; a download is not a determination of procurement authenticity.
+The manifest is a JSON array. Successful bodies retain decoded HTTP entity bytes
+and Content-Type; a download is not a determination of procurement authenticity.
 Errors contain fixed categories, never exception messages or environment data.
 """
 from __future__ import annotations
@@ -242,7 +242,7 @@ def validate_body(body, content_type):
 
 def read_body(response, deadline):
     encoding = (response.headers.get("Content-Encoding") or "identity").lower()
-    if encoding not in ("identity", ""):
+    if encoding not in ("identity", "", "gzip", "x-gzip", "deflate"):
         raise FetchFailure("unsupported_content_encoding")
     declared = response.headers.get("Content-Length")
     try:
@@ -277,7 +277,24 @@ def read_body(response, deadline):
         raise FetchFailure("body_limit_reached")
     if declared is not None and declared >= 0 and size != declared:
         raise FetchFailure("incomplete_body")
-    return b"".join(chunks)
+    body = b"".join(chunks)
+    if encoding in ("identity", ""):
+        return body
+    # Some public sites ignore Accept-Encoding: identity. Bound decompressed
+    # output too, so a small compressed response cannot exceed the body budget.
+    windows = (31,) if encoding in ("gzip", "x-gzip") else (15, -15)
+    for window in windows:
+        try:
+            decoder = zlib.decompressobj(window)
+            decoded = decoder.decompress(body, MAX_BODY_BYTES + 1)
+        except zlib.error:
+            continue
+        if len(decoded) > MAX_BODY_BYTES or decoder.unconsumed_tail:
+            raise FetchFailure("body_too_large")
+        if not decoder.eof or decoder.unused_data:
+            raise FetchFailure("incomplete_compressed_body")
+        return decoded
+    raise FetchFailure("invalid_compressed_body")
 
 
 def save_body(output_dir, body):
