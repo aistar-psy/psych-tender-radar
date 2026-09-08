@@ -20,6 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch queued public notice bodies
+        timeout-minutes: 9
         run: python3 fetch_public_notices.py --queue fetch_queue.json --output-dir .
       - name: Upload public notice bodies and manifest
         if: always()

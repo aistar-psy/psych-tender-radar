@@ -1,0 +1,1059 @@
+[
+  {
+    "id": "ccgp-beijing",
+    "name": "北京政府采购网",
+    "url": "https://www.ccgp-beijing.gov.cn/",
+    "active_url": "https://www.ccgp-beijing.gov.cn/",
+    "domains": [
+      "www.ccgp-beijing.gov.cn"
+    ],
+    "region": "北京",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-shanghai",
+    "name": "上海政府采购网",
+    "url": "https://www.ccgp-shanghai.gov.cn/",
+    "active_url": "https://www.zfcg.sh.gov.cn/",
+    "domains": [
+      "www.ccgp-shanghai.gov.cn",
+      "www.zfcg.sh.gov.cn"
+    ],
+    "region": "上海",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-tianjin",
+    "name": "天津政府采购网",
+    "url": "https://www.ccgp-tianjin.gov.cn/",
+    "active_url": "http://tjgp.cz.tj.gov.cn/",
+    "domains": [
+      "www.ccgp-tianjin.gov.cn",
+      "tjgp.cz.tj.gov.cn"
+    ],
+    "region": "天津",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-chongqing",
+    "name": "重庆政府采购网",
+    "url": "https://www.ccgp-chongqing.gov.cn/",
+    "active_url": "https://www.ccgp-chongqing.gov.cn/",
+    "domains": [
+      "www.ccgp-chongqing.gov.cn"
+    ],
+    "region": "重庆",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-hebei",
+    "name": "河北政府采购网",
+    "url": "https://www.ccgp-hebei.gov.cn/",
+    "active_url": "https://www.ccgp-hebei.gov.cn/",
+    "domains": [
+      "www.ccgp-hebei.gov.cn"
+    ],
+    "region": "河北",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-henan",
+    "name": "河南政府采购网",
+    "url": "https://www.ccgp-henan.gov.cn/",
+    "active_url": "https://zfcg.henan.gov.cn/",
+    "domains": [
+      "www.ccgp-henan.gov.cn",
+      "zfcg.henan.gov.cn"
+    ],
+    "region": "河南",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-hubei",
+    "name": "湖北政府采购网",
+    "url": "https://www.ccgp-hubei.gov.cn/",
+    "active_url": "https://www.ccgp-hubei.gov.cn/",
+    "domains": [
+      "www.ccgp-hubei.gov.cn"
+    ],
+    "region": "湖北",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-hunan",
+    "name": "湖南政府采购网",
+    "url": "https://www.ccgp-hunan.gov.cn/",
+    "active_url": "https://www.ccgp-hunan.gov.cn/",
+    "domains": [
+      "www.ccgp-hunan.gov.cn"
+    ],
+    "region": "湖南",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-shanxi",
+    "name": "山西政府采购网",
+    "url": "https://www.ccgp-shanxi.gov.cn/",
+    "active_url": "https://www.ccgp-shanxi.gov.cn/",
+    "domains": [
+      "www.ccgp-shanxi.gov.cn"
+    ],
+    "region": "山西",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-shandong",
+    "name": "山东政府采购网",
+    "url": "https://www.ccgp-shandong.gov.cn/",
+    "active_url": "https://www.ccgp-shandong.gov.cn/",
+    "domains": [
+      "www.ccgp-shandong.gov.cn"
+    ],
+    "region": "山东",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-heilongjiang",
+    "name": "黑龙江政府采购网",
+    "url": "https://www.ccgp-heilongj.gov.cn/",
+    "active_url": "https://hljcg.hlj.gov.cn/",
+    "domains": [
+      "www.ccgp-heilongj.gov.cn",
+      "hljcg.hlj.gov.cn"
+    ],
+    "region": "黑龙江",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-jilin",
+    "name": "吉林政府采购网",
+    "url": "https://www.ccgp-jilin.gov.cn/",
+    "active_url": "https://www.ccgp-jilin.gov.cn/",
+    "domains": [
+      "www.ccgp-jilin.gov.cn"
+    ],
+    "region": "吉林",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-liaoning",
+    "name": "辽宁政府采购网",
+    "url": "https://www.ccgp-liaoning.gov.cn/",
+    "active_url": "https://www.ccgp-liaoning.gov.cn/",
+    "domains": [
+      "www.ccgp-liaoning.gov.cn"
+    ],
+    "region": "辽宁",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-guangdong",
+    "name": "广东政府采购网",
+    "url": "https://www.ccgp-guangdong.gov.cn/",
+    "active_url": "https://gdgpo.czt.gd.gov.cn/",
+    "domains": [
+      "www.ccgp-guangdong.gov.cn",
+      "gdgpo.czt.gd.gov.cn"
+    ],
+    "region": "广东",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-hainan",
+    "name": "海南政府采购网",
+    "url": "https://ccgp-hainan.gov.cn/",
+    "active_url": "https://ccgp-hainan.gov.cn/",
+    "domains": [
+      "ccgp-hainan.gov.cn"
+    ],
+    "region": "海南",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-neimenggu",
+    "name": "内蒙古政府采购网",
+    "url": "https://www.ccgp-neimenggu.gov.cn/",
+    "active_url": "https://www.ccgp-neimenggu.gov.cn/",
+    "domains": [
+      "www.ccgp-neimenggu.gov.cn"
+    ],
+    "region": "内蒙古",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-shaanxi",
+    "name": "陕西政府采购网",
+    "url": "https://www.ccgp-shaanxi.gov.cn/",
+    "active_url": "https://www.ccgp-shaanxi.gov.cn/",
+    "domains": [
+      "www.ccgp-shaanxi.gov.cn",
+      "ccgp-shaanxi.gov.cn"
+    ],
+    "region": "陕西",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-gansu",
+    "name": "甘肃政府采购网",
+    "url": "https://www.ccgp-gansu.gov.cn/",
+    "active_url": "https://www.ccgp-gansu.gov.cn/",
+    "domains": [
+      "www.ccgp-gansu.gov.cn"
+    ],
+    "region": "甘肃",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-qinghai",
+    "name": "青海政府采购网",
+    "url": "https://www.ccgp-qinghai.gov.cn/",
+    "active_url": "https://www.ccgp-qinghai.gov.cn/",
+    "domains": [
+      "www.ccgp-qinghai.gov.cn"
+    ],
+    "region": "青海",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-ningxia",
+    "name": "宁夏政府采购网",
+    "url": "https://www.ccgp-ningxia.gov.cn/",
+    "active_url": "https://www.ccgp-ningxia.gov.cn/",
+    "domains": [
+      "www.ccgp-ningxia.gov.cn"
+    ],
+    "region": "宁夏",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-jiangxi",
+    "name": "江西政府采购网",
+    "url": "https://ccgp-jiangxi.gov.cn/",
+    "active_url": "https://zfcg.jxf.gov.cn/",
+    "domains": [
+      "ccgp-jiangxi.gov.cn",
+      "zfcg.jxf.gov.cn"
+    ],
+    "region": "江西",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-xinjiang",
+    "name": "新疆政府采购网",
+    "url": "https://www.ccgp-xinjiang.gov.cn/",
+    "active_url": "https://www.ccgp-xinjiang.gov.cn/",
+    "domains": [
+      "www.ccgp-xinjiang.gov.cn"
+    ],
+    "region": "新疆",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-xizang",
+    "name": "西藏政府采购网",
+    "url": "https://www.ccgp-xizang.gov.cn/",
+    "active_url": "https://www.ccgp-xizang.gov.cn/",
+    "domains": [
+      "www.ccgp-xizang.gov.cn"
+    ],
+    "region": "西藏",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-sichuan",
+    "name": "四川政府采购网",
+    "url": "https://www.ccgp-sichuan.gov.cn/",
+    "active_url": "https://www.ccgp-sichuan.gov.cn/",
+    "domains": [
+      "www.ccgp-sichuan.gov.cn"
+    ],
+    "region": "四川",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-jiangsu",
+    "name": "江苏政府采购网",
+    "url": "https://www.ccgp-jiangsu.gov.cn/",
+    "active_url": "https://www.ccgp-jiangsu.gov.cn/",
+    "domains": [
+      "www.ccgp-jiangsu.gov.cn"
+    ],
+    "region": "江苏",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-zhejiang",
+    "name": "浙江政府采购网",
+    "url": "https://www.ccgp-zhejiang.gov.cn/",
+    "active_url": "https://zfcg.czt.zj.gov.cn/",
+    "domains": [
+      "www.ccgp-zhejiang.gov.cn",
+      "zfcg.czt.zj.gov.cn"
+    ],
+    "region": "浙江",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-guangxi",
+    "name": "广西政府采购网",
+    "url": "https://www.ccgp-guangxi.gov.cn/",
+    "active_url": "https://zfcg.gxzf.gov.cn/",
+    "domains": [
+      "www.ccgp-guangxi.gov.cn",
+      "zfcg.gxzf.gov.cn"
+    ],
+    "region": "广西",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-yunnan",
+    "name": "云南政府采购网",
+    "url": "https://www.ccgp-yunnan.gov.cn/",
+    "active_url": "http://www.yngp.com/",
+    "domains": [
+      "www.ccgp-yunnan.gov.cn",
+      "www.yngp.com"
+    ],
+    "region": "云南",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-fujian",
+    "name": "福建政府采购网",
+    "url": "https://www.ccgp-fujian.gov.cn/",
+    "active_url": "https://zfcg.czt.fujian.gov.cn/",
+    "domains": [
+      "www.ccgp-fujian.gov.cn",
+      "zfcg.czt.fujian.gov.cn"
+    ],
+    "region": "福建",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-guizhou",
+    "name": "贵州政府采购网",
+    "url": "https://www.ccgp-guizhou.gov.cn/",
+    "active_url": "https://www.ccgp-guizhou.gov.cn/",
+    "domains": [
+      "www.ccgp-guizhou.gov.cn"
+    ],
+    "region": "贵州",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-anhui",
+    "name": "安徽政府采购网",
+    "url": "https://www.ccgp-anhui.gov.cn/",
+    "active_url": "https://www.ccgp-anhui.gov.cn/",
+    "domains": [
+      "www.ccgp-anhui.gov.cn"
+    ],
+    "region": "安徽",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-shenzhen",
+    "name": "深圳政府采购网",
+    "url": "https://ccgp-shenzhen.gov.cn/",
+    "domains": [
+      "ccgp-shenzhen.gov.cn"
+    ],
+    "region": "深圳",
+    "tier": "城市",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-dalian",
+    "name": "大连政府采购网",
+    "url": "https://www.ccgp-dalian.gov.cn/",
+    "domains": [
+      "www.ccgp-dalian.gov.cn"
+    ],
+    "region": "大连",
+    "tier": "城市",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-xiamen",
+    "name": "厦门政府采购网",
+    "url": "https://ccgp-xiamen.gov.cn/",
+    "domains": [
+      "ccgp-xiamen.gov.cn"
+    ],
+    "region": "厦门",
+    "tier": "城市",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-ningbo",
+    "name": "宁波政府采购网",
+    "url": "https://www.ccgp-ningbo.gov.cn/",
+    "domains": [
+      "www.ccgp-ningbo.gov.cn"
+    ],
+    "region": "宁波",
+    "tier": "城市",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-bingtuan",
+    "name": "新疆生产建设兵团政府采购网",
+    "url": "https://ccgp-bingtuan.gov.cn/",
+    "active_url": "https://ccgp-bingtuan.gov.cn/",
+    "domains": [
+      "ccgp-bingtuan.gov.cn"
+    ],
+    "region": "新疆生产建设兵团",
+    "tier": "省级政府采购",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-beijing",
+    "name": "北京公共资源交易平台",
+    "url": "https://ggzyfw.beijing.gov.cn/",
+    "domains": [
+      "ggzyfw.beijing.gov.cn"
+    ],
+    "region": "北京",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-tianjin",
+    "name": "天津公共资源交易平台",
+    "url": "https://ggzy.zwfwb.tj.gov.cn/",
+    "domains": [
+      "ggzy.zwfwb.tj.gov.cn"
+    ],
+    "region": "天津",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-hebei",
+    "name": "河北公共资源交易平台",
+    "url": "https://szj.hebei.gov.cn/hbggfwpt/",
+    "domains": [
+      "szj.hebei.gov.cn"
+    ],
+    "region": "河北",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-shanxi",
+    "name": "山西公共资源交易平台",
+    "url": "https://prec.sxzwfw.gov.cn/",
+    "domains": [
+      "prec.sxzwfw.gov.cn"
+    ],
+    "region": "山西",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-neimenggu",
+    "name": "内蒙古公共资源交易平台",
+    "url": "https://ggzyjy.nmg.gov.cn/",
+    "domains": [
+      "ggzyjy.nmg.gov.cn"
+    ],
+    "region": "内蒙古",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-henan",
+    "name": "河南公共资源交易平台",
+    "url": "https://ggzy.fgw.henan.gov.cn/",
+    "domains": [
+      "ggzy.fgw.henan.gov.cn"
+    ],
+    "region": "河南",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-hubei",
+    "name": "湖北公共资源交易平台",
+    "url": "https://www.hbggzyfwpt.cn/",
+    "domains": [
+      "www.hbggzyfwpt.cn"
+    ],
+    "region": "湖北",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-hunan",
+    "name": "湖南公共资源交易平台",
+    "url": "https://www.hnsggzy.com/",
+    "domains": [
+      "www.hnsggzy.com"
+    ],
+    "region": "湖南",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-chongqing",
+    "name": "重庆公共资源交易平台",
+    "url": "https://www.cqggzy.com/",
+    "domains": [
+      "www.cqggzy.com"
+    ],
+    "region": "重庆",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-sichuan",
+    "name": "四川公共资源交易平台",
+    "url": "https://ggzyjy.sc.gov.cn/",
+    "domains": [
+      "ggzyjy.sc.gov.cn"
+    ],
+    "region": "四川",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-guizhou",
+    "name": "贵州公共资源交易平台",
+    "url": "https://ggzy.guizhou.gov.cn/",
+    "domains": [
+      "ggzy.guizhou.gov.cn"
+    ],
+    "region": "贵州",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-yunnan",
+    "name": "云南公共资源交易平台",
+    "url": "https://ggzy.yn.gov.cn/",
+    "domains": [
+      "ggzy.yn.gov.cn"
+    ],
+    "region": "云南",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-xizang",
+    "name": "西藏公共资源交易平台",
+    "url": "https://ggzy.xizang.gov.cn/",
+    "domains": [
+      "ggzy.xizang.gov.cn"
+    ],
+    "region": "西藏",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-liaoning",
+    "name": "辽宁公共资源交易平台",
+    "url": "https://www.lnggzy.gov.cn/",
+    "domains": [
+      "www.lnggzy.gov.cn"
+    ],
+    "region": "辽宁",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-jilin",
+    "name": "吉林公共资源交易平台",
+    "url": "https://www.jl.gov.cn/ggzy/",
+    "domains": [
+      "www.jl.gov.cn"
+    ],
+    "region": "吉林",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-heilongjiang",
+    "name": "黑龙江公共资源交易平台",
+    "url": "https://ggzyjyw.hlj.gov.cn/",
+    "domains": [
+      "ggzyjyw.hlj.gov.cn"
+    ],
+    "region": "黑龙江",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-shanghai",
+    "name": "上海公共资源交易平台",
+    "url": "https://www.shggzy.com/",
+    "domains": [
+      "www.shggzy.com"
+    ],
+    "region": "上海",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-jiangsu",
+    "name": "江苏公共资源交易平台",
+    "url": "https://jsggzy.jszwfw.gov.cn/",
+    "domains": [
+      "jsggzy.jszwfw.gov.cn"
+    ],
+    "region": "江苏",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-zhejiang",
+    "name": "浙江公共资源交易平台",
+    "url": "https://ggzy.zj.gov.cn/",
+    "domains": [
+      "ggzy.zj.gov.cn"
+    ],
+    "region": "浙江",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-anhui",
+    "name": "安徽公共资源交易平台",
+    "url": "https://ggzy.ah.gov.cn/",
+    "domains": [
+      "ggzy.ah.gov.cn"
+    ],
+    "region": "安徽",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-fujian",
+    "name": "福建公共资源交易平台",
+    "url": "https://ggzyfw.fujian.gov.cn/",
+    "domains": [
+      "ggzyfw.fujian.gov.cn"
+    ],
+    "region": "福建",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-jiangxi",
+    "name": "江西公共资源交易平台",
+    "url": "https://www.jxsggzy.cn/",
+    "domains": [
+      "www.jxsggzy.cn"
+    ],
+    "region": "江西",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-shandong",
+    "name": "山东公共资源交易平台",
+    "url": "https://ggzyjy.shandong.gov.cn/",
+    "domains": [
+      "ggzyjy.shandong.gov.cn"
+    ],
+    "region": "山东",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-guangdong",
+    "name": "广东公共资源交易平台",
+    "url": "https://ygp.gdzwfw.gov.cn/",
+    "domains": [
+      "ygp.gdzwfw.gov.cn"
+    ],
+    "region": "广东",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-guangxi",
+    "name": "广西公共资源交易平台",
+    "url": "https://ggzy.jgswj.gxzf.gov.cn/gxggzy/",
+    "domains": [
+      "ggzy.jgswj.gxzf.gov.cn"
+    ],
+    "region": "广西",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-hainan",
+    "name": "海南公共资源交易平台",
+    "url": "https://zw.hainan.gov.cn/ggzy/",
+    "domains": [
+      "zw.hainan.gov.cn"
+    ],
+    "region": "海南",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-shaanxi",
+    "name": "陕西公共资源交易平台",
+    "url": "https://www.sxggzyjy.cn/",
+    "domains": [
+      "www.sxggzyjy.cn"
+    ],
+    "region": "陕西",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-gansu",
+    "name": "甘肃公共资源交易平台",
+    "url": "https://ggzyjy.gansu.gov.cn/",
+    "domains": [
+      "ggzyjy.gansu.gov.cn"
+    ],
+    "region": "甘肃",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-qinghai",
+    "name": "青海公共资源交易平台",
+    "url": "https://www.qhggzyjy.gov.cn/ggzy/",
+    "domains": [
+      "www.qhggzyjy.gov.cn"
+    ],
+    "region": "青海",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-ningxia",
+    "name": "宁夏公共资源交易平台",
+    "url": "https://ggzyjy.fzggw.nx.gov.cn/",
+    "domains": [
+      "ggzyjy.fzggw.nx.gov.cn"
+    ],
+    "region": "宁夏",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-xinjiang",
+    "name": "新疆公共资源交易平台",
+    "url": "https://ggzy.xinjiang.gov.cn/",
+    "domains": [
+      "ggzy.xinjiang.gov.cn"
+    ],
+    "region": "新疆",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-bingtuan",
+    "name": "新疆生产建设兵团公共资源交易平台",
+    "url": "https://ggzy.xjbt.gov.cn/",
+    "domains": [
+      "ggzy.xjbt.gov.cn"
+    ],
+    "region": "新疆生产建设兵团",
+    "tier": "省级公共资源",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-qingdao",
+    "name": "青岛市政府采购网",
+    "url": "http://www.ccgp-qingdao.gov.cn/",
+    "domains": [
+      "www.ccgp-qingdao.gov.cn"
+    ],
+    "region": "青岛",
+    "tier": "城市",
+    "provenance_url": "https://www.qingdao.gov.cn/ywdt/zwzl/ndbb/2024wzndbb/wzndbb2024_11/202501/P020250108410213535392.pdf",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ccgp-national",
+    "name": "中国政府采购网",
+    "url": "https://www.ccgp.gov.cn/",
+    "domains": [
+      "www.ccgp.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "ggzy-national",
+    "name": "全国公共资源交易平台",
+    "url": "https://www.ggzy.gov.cn/",
+    "domains": [
+      "www.ggzy.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "cebpub-national",
+    "name": "中国招标投标公共服务平台",
+    "url": "https://www.cebpubservice.com/",
+    "domains": [
+      "www.cebpubservice.com"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ggzy.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "zzcg-national",
+    "name": "中直机关采购中心",
+    "url": "https://www.zzcg.gov.cn/",
+    "domains": [
+      "www.zzcg.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "zycg-national",
+    "name": "中央国家机关采购中心",
+    "url": "https://www.zycg.gov.cn/",
+    "domains": [
+      "www.zycg.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "customs-national",
+    "name": "海关总署采购中心",
+    "url": "https://hgcg.customs.gov.cn/",
+    "domains": [
+      "hgcg.customs.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "plap-national",
+    "name": "军队采购网",
+    "url": "https://www.plap.mil.cn/",
+    "domains": [
+      "www.plap.mil.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "pbc-national",
+    "name": "中国人民银行集中采购中心",
+    "url": "https://jzcg.pbc.gov.cn/",
+    "domains": [
+      "jzcg.pbc.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "chinatax-national",
+    "name": "国家税务总局集中采购中心",
+    "url": "https://swcg.chinatax.gov.cn/",
+    "domains": [
+      "swcg.chinatax.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  }
+]

@@ -1,0 +1,250 @@
+[
+  {
+    "id": "culr-cggg",
+    "name": "中国劳动关系学院资产管理处采购公告",
+    "url": "https://news.culr.edu.cn/zcglc/cggg/index.htm",
+    "region": "北京",
+    "kind": "listing",
+    "verified": true,
+    "sector": "教育",
+    "note": "实测HTTP200，单页含智能心理测评与服务系统竞争性磋商公告及其他详情链接；仅验证栏目首页，不代表历史分页完整覆盖。",
+    "last_verified": "2026-09-07",
+    "sample_url": "https://news.culr.edu.cn/zcglc/cggg/cfd4ec11459c421bbfa632d2a1eda373.htm"
+  },
+  {
+    "id": "national-1",
+    "name": "中国政府采购网",
+    "url": "https://www.ccgp.gov.cn",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口；尚未确认栏目解析及覆盖"
+  },
+  {
+    "id": "national-2",
+    "name": "中国招标投标公共服务平台",
+    "url": "https://www.cebpubservice.com",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口；尚未确认栏目解析及覆盖"
+  },
+  {
+    "id": "national-3",
+    "name": "政采云平台",
+    "url": "https://www.zcygov.cn",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口；尚未确认栏目解析及覆盖"
+  },
+  {
+    "id": "jl-4",
+    "name": "吉林省政府采购网",
+    "url": "https://www.ccgp-jilin.gov.cn",
+    "region": "吉林省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jl-5",
+    "name": "吉林省教育厅官网",
+    "url": "https://jyt.jl.gov.cn",
+    "region": "吉林省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jl-6",
+    "name": "吉林省电化教育馆",
+    "url": "http://jldjg.cn",
+    "region": "吉林省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "shmh-7",
+    "name": "上海市政府采购网",
+    "url": "https://www.zfcg.sh.gov.cn",
+    "region": "上海市闵行区（含市级参照）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "shmh-8",
+    "name": "闵行区政务公开-政府采购",
+    "url": "https://zwgk.shmh.gov.cn",
+    "region": "上海市闵行区（含市级参照）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "shmh-9",
+    "name": "中国政府采购网上海分网",
+    "url": "https://www.ccgp.gov.cn",
+    "region": "上海市闵行区（含市级参照）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "hainan-10",
+    "name": "海南省政府采购网",
+    "url": "https://www.ccgp-hainan.gov.cn",
+    "region": "海南省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "hainan-11",
+    "name": "海南省公共资源交易平台",
+    "url": "https://ggzy.hainan.gov.cn",
+    "region": "海南省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "hainan-12",
+    "name": "海口市/三亚市及各市县政务门户",
+    "url": "https://www.haikou.gov.cn",
+    "region": "海南省",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jx-13",
+    "name": "江西省公共资源交易平台",
+    "url": "https://www.jxsggzy.cn",
+    "region": "江西（吉安·吉水）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jx-14",
+    "name": "吉水县政府信息公开-政府采购",
+    "url": "https://www.jishui.gov.cn",
+    "region": "江西（吉安·吉水）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jx-15",
+    "name": "江西省网上中介服务超市",
+    "url": "https://jxzwfww.gov.cn",
+    "region": "江西（吉安·吉水）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "jx-16",
+    "name": "江西省教育技术与装备发展中心",
+    "url": "http://djg.jx.edu.cn",
+    "region": "江西（吉安·吉水）",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "原V1.3入口，仅目录；待配置实际栏目"
+  },
+  {
+    "id": "ccgp-intention",
+    "name": "全国采购意向公开查询入口",
+    "url": "http://cgyx.ccgp.gov.cn/cgyx/pub/projSearch",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "综合",
+    "note": "仅登记查询页，不绕过验证码；不等同可抓取栏目"
+  },
+  {
+    "id": "b-sector-pending",
+    "name": "B端企业采购栏目（待配置）",
+    "url": "",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "sector": "B端",
+    "note": "尚未配置具体企业栏目，不代表B端覆盖；主体关键词仅提供公开搜索线索"
+  },
+  {
+    "id": "ccgp-local-open",
+    "name": "中国政府采购网地方公开招标栏目",
+    "url": "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/",
+    "region": "全国",
+    "kind": "listing",
+    "verified": true,
+    "last_verified": "2026-09-07",
+    "sector": "综合",
+    "note": "实测HTTP200且含具体采购公告详情链接；仅验证单页，不代表全国公告/分页完整覆盖。",
+    "sample_url": "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202609/t20260907_27282763.htm"
+  },
+  {
+    "id": "jilin-public-purchase",
+    "name": "吉林省公共资源交易政府采购公告栏目",
+    "url": "https://www.jl.gov.cn/ggzy/zfcg/cggg/",
+    "region": "吉林",
+    "kind": "search_registry",
+    "verified": false,
+    "last_verified": "2026-09-07",
+    "sector": "综合",
+    "note": "HTTP200，但本次静态HTML仅确认导航，未检出具体采购公告详情链接；待配置动态数据接口，不能计为栏目抓取成功。"
+  },
+  {
+    "id": "ccgp-local-gggg",
+    "name": "中国政府采购网地方gggg入口",
+    "url": "https://www.ccgp.gov.cn/cggg/dfgg/gggg/",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "last_verified": "2026-09-07",
+    "sector": "综合",
+    "note": "本次只读实测HTTP404，待配置正确栏目地址，不计成功覆盖。"
+  },
+  {
+    "id": "ccgp-central-gggg",
+    "name": "中国政府采购网中央gggg入口",
+    "url": "https://www.ccgp.gov.cn/cggg/zygg/gggg/",
+    "region": "全国",
+    "kind": "search_registry",
+    "verified": false,
+    "last_verified": "2026-09-07",
+    "sector": "综合",
+    "note": "本次只读实测HTTP404，待配置正确栏目地址，不计成功覆盖。"
+  },
+  {
+    "id": "hainan-hospital-news",
+    "name": "海南医院news入口",
+    "url": "https://www.hnsanyy.com/news/",
+    "region": "海南",
+    "kind": "search_registry",
+    "verified": false,
+    "last_verified": "2026-09-07",
+    "sector": "综合",
+    "note": "本次只读实测HTTP404，待配置正确栏目地址，不计成功覆盖。"
+  }
+]

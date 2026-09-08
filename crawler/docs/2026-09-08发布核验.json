@@ -1,0 +1,30 @@
+{
+  "builtAt": "2026-09-08T09:47:12.187257+08:00",
+  "window": {
+    "start": "2025-09-09",
+    "end": "2026-09-08"
+  },
+  "annualProjectsAndLeads": 1299,
+  "bodyObtained": 385,
+  "categories": {
+    "教育核心": 247,
+    "教育相关": 14,
+    "其他心理": 117,
+    "待核验": 921
+  },
+  "sourceCoverage": {
+    "registered": 135,
+    "domains": 146,
+    "probed": 135,
+    "accessible": 44,
+    "queried": 90,
+    "withDocuments": 53,
+    "complete": 0,
+    "nativeSources": 4,
+    "nativePages": 540,
+    "verifiedEmpty": 0,
+    "failedQueries": 0,
+    "provinceQueries": 32
+  },
+  "testsPassed": 121
+}

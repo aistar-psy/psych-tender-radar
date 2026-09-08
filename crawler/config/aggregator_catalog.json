@@ -1,0 +1,158 @@
+[
+  {
+    "id": "aggregator_qianlima",
+    "name": "千里马招标网",
+    "url": "https://www.qianlima.com/",
+    "domains": [
+      "qianlima.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.qianlima.com/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_bidcenter",
+    "name": "采招网",
+    "url": "https://www.bidcenter.com.cn/",
+    "domains": [
+      "bidcenter.com.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://sso.bidcenter.com.cn/login/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_yfbzb",
+    "name": "乙方宝",
+    "url": "https://www.yfbzb.com/",
+    "domains": [
+      "yfbzb.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.yfbzb.com/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_jianyu360",
+    "name": "剑鱼标讯",
+    "url": "https://www.jianyu360.cn/",
+    "domains": [
+      "jianyu360.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.jianyu360.cn/brand/index",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_biaozhaozhao",
+    "name": "标找找",
+    "url": "https://m.biaozhaozhao.com/",
+    "domains": [
+      "biaozhaozhao.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://m.biaozhaozhao.com/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_caigou",
+    "name": "教育装备采购网",
+    "url": "https://www.caigou.com.cn/",
+    "domains": [
+      "caigou.com.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.caigou.com.cn/about/about.html",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_chinabidding",
+    "name": "采购与招标网",
+    "url": "https://www.chinabidding.cn/zbw/index.jsp",
+    "domains": [
+      "chinabidding.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.chinabidding.cn/tg/sem/index.html",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_zhaobiao",
+    "name": "招标网",
+    "url": "https://www.zhaobiao.cn/",
+    "domains": [
+      "zhaobiao.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://help.zhaobiao.cn/helpn/help_about.html",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_bidizhaobiao",
+    "name": "比地招标网",
+    "url": "https://www.bidizhaobiao.com/",
+    "domains": [
+      "bidizhaobiao.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://mvip.bidizhaobiao.com/appAgreement.html",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_bidradar",
+    "name": "标标达（原招标雷达）",
+    "url": "https://bidradar.com.cn/",
+    "domains": [
+      "bidradar.com.cn"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://bidradar.com.cn/productFeatures.html",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_ebnew",
+    "name": "必联网",
+    "url": "https://www.ebnew.com/",
+    "domains": [
+      "ebnew.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.ebnew.com/home/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "aggregator_infobidding",
+    "name": "招投标网",
+    "url": "https://www.infobidding.com/",
+    "domains": [
+      "infobidding.com"
+    ],
+    "region": "全国",
+    "tier": "商业聚合",
+    "provenance_url": "https://www.infobidding.com/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  }
+]

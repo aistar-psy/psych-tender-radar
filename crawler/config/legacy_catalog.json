@@ -1,0 +1,169 @@
+[
+  {
+    "id": "legacy-culr-cggg",
+    "name": "中国劳动关系学院资产管理处采购公告",
+    "url": "https://news.culr.edu.cn/zcglc/cggg/index.htm",
+    "domains": [
+      "news.culr.edu.cn"
+    ],
+    "region": "北京",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://news.culr.edu.cn/zcglc/cggg/index.htm",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-national-3",
+    "name": "政采云平台",
+    "url": "https://www.zcygov.cn",
+    "domains": [
+      "zcygov.cn"
+    ],
+    "region": "全国",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://www.zcygov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-jl-5",
+    "name": "吉林省教育厅官网",
+    "url": "https://jyt.jl.gov.cn",
+    "domains": [
+      "jyt.jl.gov.cn"
+    ],
+    "region": "吉林省",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://jyt.jl.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-jl-6",
+    "name": "吉林省电化教育馆",
+    "url": "http://jldjg.cn",
+    "domains": [
+      "jldjg.cn"
+    ],
+    "region": "吉林省",
+    "tier": "原任务补充入口",
+    "provenance_url": "http://jldjg.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-shmh-8",
+    "name": "闵行区政务公开-政府采购",
+    "url": "https://zwgk.shmh.gov.cn",
+    "domains": [
+      "zwgk.shmh.gov.cn"
+    ],
+    "region": "上海市闵行区（含市级参照）",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://zwgk.shmh.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-hainan-11",
+    "name": "海南省公共资源交易平台",
+    "url": "https://ggzy.hainan.gov.cn",
+    "domains": [
+      "ggzy.hainan.gov.cn"
+    ],
+    "region": "海南省",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://ggzy.hainan.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-hainan-12",
+    "name": "海口市/三亚市及各市县政务门户",
+    "url": "https://www.haikou.gov.cn",
+    "domains": [
+      "haikou.gov.cn"
+    ],
+    "region": "海南省",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://www.haikou.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-jx-14",
+    "name": "吉水县政府信息公开-政府采购",
+    "url": "https://www.jishui.gov.cn",
+    "domains": [
+      "jishui.gov.cn"
+    ],
+    "region": "江西（吉安·吉水）",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://www.jishui.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-jx-15",
+    "name": "江西省网上中介服务超市",
+    "url": "https://jxzwfww.gov.cn",
+    "domains": [
+      "jxzwfww.gov.cn"
+    ],
+    "region": "江西（吉安·吉水）",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://jxzwfww.gov.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "legacy-jx-16",
+    "name": "江西省教育技术与装备发展中心",
+    "url": "http://djg.jx.edu.cn",
+    "domains": [
+      "djg.jx.edu.cn"
+    ],
+    "region": "江西（吉安·吉水）",
+    "tier": "原任务补充入口",
+    "provenance_url": "http://djg.jx.edu.cn",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  },
+  {
+    "id": "national-intentions",
+    "name": "中国政府采购网采购意向公开",
+    "url": "http://cgyx.ccgp.gov.cn/cgyx/pub/projSearch",
+    "domains": [
+      "cgyx.ccgp.gov.cn"
+    ],
+    "region": "全国",
+    "tier": "全国",
+    "provenance_url": "https://www.ccgp.gov.cn/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending"
+  },
+  {
+    "id": "legacy-hainan-hospital-news",
+    "name": "海南医院news入口",
+    "url": "https://www.hnsanyy.com/news/",
+    "domains": [
+      "hnsanyy.com"
+    ],
+    "region": "海南",
+    "tier": "原任务补充入口",
+    "provenance_url": "https://www.hnsanyy.com/news/",
+    "access_status": "unprobed",
+    "discovery_mode": "pending",
+    "note": "沿用V1.3来源登记，现行入口和栏目待验证"
+  }
+]

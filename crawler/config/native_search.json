@@ -1,0 +1,81 @@
+[
+  {
+    "source_id": "ggzy-shaanxi",
+    "base": "https://www.sxggzyjy.cn/",
+    "endpoint": "https://www.sxggzyjy.cn/inteligentsearch_new/rest/esinteligentsearch/getFullTextDataNew",
+    "payload": {
+      "token": "",
+      "pn": 0,
+      "rn": "",
+      "sdt": "",
+      "edt": "",
+      "wd": "%E5%BF%83%E7%90%86",
+      "inc_wd": "",
+      "exc_wd": "",
+      "fields": "title;content",
+      "cnum": "001",
+      "sort": "{\"webdate\":0}",
+      "ssort": "title",
+      "cl": 500,
+      "terminal": "",
+      "condition": [],
+      "time": null,
+      "highlights": "title;content",
+      "statistics": null,
+      "unionCondition": null,
+      "accuracy": "",
+      "noParticiple": "1",
+      "searchRange": null
+    },
+    "observed_at": "2026-09-08",
+    "evidence": "浏览器公开搜索页实际发出的 title;content 搜索请求；公开脚本 noParticiple=1 不分词，已用心育对照验证（拆字上千条，完整词6条）。",
+    "keyword_encoding": "plain"
+  },
+  {
+    "source_id": "ggzy-jiangxi",
+    "base": "https://www.jxsggzy.cn/",
+    "endpoint": "https://www.jxsggzy.cn/XZinterface/rest/esinteligentsearch/getFullTextDataNew",
+    "payload": {
+      "token": "",
+      "pn": 0,
+      "rn": "",
+      "sdt": "",
+      "edt": "",
+      "wd": "%E5%BF%83%E7%90%86",
+      "inc_wd": "",
+      "exc_wd": "",
+      "fields": "title;content",
+      "cnum": "",
+      "sort": "{\"webdate\":0}",
+      "ssort": "title",
+      "cl": 500,
+      "terminal": "",
+      "condition": [
+        {
+          "fieldName": "categorynum",
+          "isLike": true,
+          "likeType": 2,
+          "equal": "002"
+        }
+      ],
+      "time": null,
+      "highlights": "title;content",
+      "statistics": null,
+      "unionCondition": null,
+      "accuracy": "",
+      "noParticiple": "1",
+      "searchRange": null
+    },
+    "observed_at": "2026-09-08",
+    "evidence": "浏览器公开搜索页实际发出的 title;content 搜索请求"
+  },
+  {
+    "source_id": "ggzy-chongqing",
+    "base": "https://www.cqggzy.com/",
+    "endpoint": "https://www.cqggzy.com/api/search",
+    "payload": {},
+    "adapter": "chongqing",
+    "observed_at": "2026-09-08",
+    "evidence": "站内点击第二页得到 pageIndex=2 / pageSize=10；关键词字段范围尚未核实"
+  }
+]
