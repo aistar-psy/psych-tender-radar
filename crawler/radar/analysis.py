@@ -86,8 +86,9 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     evidence=[{'text':b['text'],'locator':b.get('locator','document'),'url':b.get('source_url',url)} for b in blocks if re.search(PSYCH+'|'+EDU+'|健康画像',b['text'])][:8]
     result={'title':doc.get('title',''),'project_number':None,'published_at':None,'deadline':None,'category':category,'category_evidence':evidence,'products':[],'parameters':[],'amounts':[],'warnings':warnings}
     result['buyer'],result['buyer_evidence']=_buyer(blocks,url)
-    result['notice_type']=next((kind for kind in ('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标通知书','采购意向','竞争性磋商公告','竞争性谈判公告','招标公告','采购信息公告','采购公告','采购公示') if kind in corpus), None)
-    result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购公示|招标公告|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|明细)|中标通知书|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
+    notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','采购信息公告','采购公告','采购公示')
+    result['notice_type']=next((kind for source in (title,corpus) for kind in notice_types if kind in source),None)
+    result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购公示|招标公告|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
     if re.search(r'更正公告|终止公告|废标公告',corpus) and re.search(r'响应|投标|采购|招标|供应商|成交|中标|磋商',corpus):
         result['is_procurement']=True
     if re.search(r'比选公告|遴选公告',corpus) and re.search(r'供应商|报价文件|采购|招标',corpus):
@@ -95,7 +96,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['procurement_hint']=result['is_procurement']
     result['content_status']=doc.get('content_status','available')
     if result['content_status']=='unavailable': result['is_procurement']=None
-    number=re.search(r'(?:项目编号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
+    number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
     if number: result['project_number']=number.group(1)
     date_label=r'(?:发布日期|发布时间|公告日期|公告发布时间|信息提供日期|信息时间)'
     primary_blocks=[b for b in blocks if b.get('source_url',url)==url]
@@ -129,7 +130,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['province']=next(iter(matched)) if len(matched)==1 else None
     if len(matched)>1: warnings.append('采购方地区证据冲突，省份待核验')
     result['deadline']=_dated(text,r'(?:(?:响应|投标)\s*(?:截止时间|截止日期)|(?:提交|递交)(?:响应|投标)文件\s*[:：]?\s*(?:截止时间|截止日期)|(?:响应|投标)文件(?:提交|递交)\s*(?:截止时间|截止日期))',current.tzinfo,warnings)
-    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|成交金额|中标金额|预算)\s*(?:为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit>亿元|万元|元)?')
+    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|成交金额|中标金额|中标价格|合同金额|预算)\s*(?:为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit>亿元|万元|元)?')
     seen=set()
     table_headers={}
     amount_headers={}
@@ -140,7 +141,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
         amount_blocks=[b]
         valid=lambda m: bool(m['unit'] or m['symbol'])
         matches=[m for m in amount_re.finditer(amount_line) if valid(m)]
-        if not matches and re.search(r'预算|限价|成交金额|中标金额',line) and b.get('kind')!='table_row':
+        if not matches and re.search(r'预算|限价|成交金额|中标金额|中标价格|合同金额',line) and b.get('kind')!='table_row':
             for following in blocks[bi+1:bi+4]:
                 if following.get('source_url',url)!=b.get('source_url',url) or following.get('kind')=='table_row': break
                 amount_blocks.append(following)
@@ -148,7 +149,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
                 matches=[m for m in amount_re.finditer(amount_line) if valid(m) and m.start()<len(line)]
                 if matches: break
         for m in matches:
-            kind='预算' if '预算' in m['label'] else ('限价' if '限价' in m['label'] else '成交')
+            kind='合同' if '合同' in m['label'] else ('预算' if '预算' in m['label'] else ('限价' if '限价' in m['label'] else '成交'))
             value=Decimal(m['value'].replace(',',''))*{'亿元':Decimal(100000000),'万元':Decimal(10000),'元':Decimal(1)}[m['unit'] or '元']
             kinds=[kind,'限价'] if '亦是最高限价' in m['label'] else [kind]
             for kind in kinds:

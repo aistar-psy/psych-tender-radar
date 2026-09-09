@@ -7,6 +7,14 @@ import requests
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from radar.source_scan import is_challenge
 from radar.pipeline import write_json
+from radar.http import secure_session
+from radar.paths import public_dir
+
+# Support the local workspace and the published repository's crawler/ layout.
+_root = Path(__file__).resolve().parents[1]
+_worker_dir = public_dir(_root)
+sys.path.insert(0, str(_worker_dir))
+from fetch_public_notices import public_url as validate_url
 
 def run(queue,out,workers=3):
  out=Path(out);out.mkdir(parents=True,exist_ok=True);(out/'bodies').mkdir(exist_ok=True)
@@ -14,19 +22,18 @@ def run(queue,out,workers=3):
  def fetch(row):
   url=row['url'];result={'url':url,'kind':row.get('kind','document'),'provider':'local_public_batch','read_at':datetime.now(timezone.utc).isoformat()}
   try:
-   sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'publish'))
-   from fetch_public_notices import public_url as validate_url
    validate_url(url)
-   with requests.get(url,timeout=(6,14),stream=True) as r:
+   with secure_session() as session, session.get(url,timeout=(10,20),stream=True) as r:
+    result.update(status_code=r.status_code,final_url=r.url)
     r.raise_for_status();validate_url(r.url);body=b''
     for chunk in r.iter_content(65536):
      body+=chunk
      if len(body)>5*1024*1024:raise ValueError('body_limit')
-    if is_challenge(body):raise ValueError('access_challenge')
+    if ('html' in r.headers.get('Content-Type','').lower() or body.lstrip().lower().startswith((b'<html',b'<!doctype html'))) and is_challenge(body):raise ValueError('access_challenge')
     if not body.strip():raise ValueError('empty_body')
     digest=hashlib.sha256(body).hexdigest();path='bodies/'+digest+'.bin';(out/path).write_bytes(body)
     result.update(status='ok',status_code=r.status_code,path=path,sha256=digest,content_type=r.headers.get('Content-Type',''),final_url=r.url)
-  except Exception as e:result.update(status='failed',error_type=type(e).__name__,error=str(e)[:180])
+  except Exception as e:result.update(status='failed',error_type='access_challenge' if str(e)=='access_challenge' else type(e).__name__,error=str(e)[:1200])
   time.sleep(.35);return result
  pending=[r for r in rows if results.get(r['url'],{}).get('status')!='ok']
  with ThreadPoolExecutor(max_workers=workers) as pool:

@@ -2,7 +2,9 @@ import gzip, importlib.util, io, time, unittest, zlib
 from pathlib import Path
 from unittest.mock import patch
 
-spec=importlib.util.spec_from_file_location('cloud_worker',Path(__file__).resolve().parents[1]/'publish/fetch_public_notices.py')
+root=Path(__file__).resolve().parents[1]
+worker_path=next(path for path in (root/'publish/fetch_public_notices.py',root.parent/'fetch_public_notices.py') if path.is_file())
+spec=importlib.util.spec_from_file_location('cloud_worker',worker_path)
 worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
 
 class CompressedResponse(io.BytesIO):

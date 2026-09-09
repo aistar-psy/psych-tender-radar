@@ -56,25 +56,28 @@ def _project_title(out):
 
 def _html(data, url, out):
     from bs4 import BeautifulSoup
+    location=urlparse(url)
+    if location.hostname=='www.sxggzyjy.cn' and re.match(r'^/(?:xwzx|zcfg|cxgk)/',location.path):
+        out['page_kind']='non_notice'
     soup = BeautifulSoup(data, 'html.parser', from_encoding='utf-8' if _utf8(data) else None)
     for node in soup.select('script, style, nav, footer, header, aside, noscript, .nav, .navigation, .footer, .breadcrumb, .new_miew, .fixedbox'):
         node.decompose()
     # A selector union returns the earliest DOM match, often a search widget.
     # Prefer explicit notice containers, then generic layout classes.
-    selectors=('#zbDiv','article','.article','main','#zoom','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.detail-content','.content')
+    selectors=('#zbDiv','article','.article','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.detail-content','.content')
     root=None; empty_root=None
     for selector in selectors:
         candidates=soup.select(selector)
         for node in candidates:
             value=node.get_text(' ',strip=True)
             if not value and selector!='.content': empty_root=empty_root if empty_root is not None else node
-            if len(value)<100 and re.search(r'立即登录|登录/注册|开启全网商机',value):continue
+            if len(value)<100 and re.search(r'立即登录|登录/注册|开启全网商机|扫码关注公众号|招标商机|手机实时看',value):continue
             if value and not re.fullmatch(r'[\s/]*(?:(?:搜标题|搜全文|搜索|查询)[\s/]*)+',value):
                 root=node; break
         if root is not None: break
     structured=root is not None
     if root is None: root=empty_root if empty_root is not None else (soup.body or soup)
-    headings=list(root.find_all(['h1','h2']))+list(soup.select('h1, h2.tc, .info-title'))
+    headings=list(root.find_all(['h1','h2']))+list(soup.select('h1, h2.tc, .info-title, .article-title, .ewb-article-title'))
     titles=[]
     for node in headings+([soup.title] if soup.title else []):
         value=node.get_text(' ',strip=True)
@@ -110,6 +113,8 @@ def _html(data, url, out):
         target = urljoin(url, a['href'])
         if not _public_link(target): continue
         label = a.get_text(' ', strip=True)
+        if re.search(r'APP\s*下载|下载\s*APP|下载中心|客户端下载|操作手册|用户手册|办事指南|隐私政策',label,re.I): continue
+        if 'downloads/agent.jsp' in target and target.endswith('req='): continue
         kind = 'attachment' if urlparse(target).path.lower().endswith(ATTACHMENTS) or re.search('附件|下载|采购文件|招标文件', label) else 'page'
         if root not in a.parents and kind!='attachment': continue
         out['links'].append({'url':target, 'text':label, 'kind':kind})
@@ -117,7 +122,7 @@ def _html(data, url, out):
     for frame in frames:
         target=urljoin(url,frame.get('src',''))
         if frame.get('src') and _public_link(target):
-            kind='attachment' if urlparse(target).path.lower().endswith(ATTACHMENTS) else 'page'
+            kind='attachment'
             out['links'].append({'url':target,'text':frame.get('title') or 'iframe 公告正文入口','kind':kind})
     if frames: out['warnings'].append('iframe content not fetched; public entry links retained for follow-up')
     body_text=' '.join(str(n).strip() for n in root.find_all(string=True) if n.parent.name not in ('h1','h2','title') and not any(p.name in ('a','iframe') for p in n.parents))
@@ -163,6 +168,10 @@ def _html(data, url, out):
     if gated and (len(retained)<1500 or masked):
         out['content_status']='unavailable';out['status']='partial'
         out['warnings'].append('member-only or redacted summary; detailed notice body not acquired')
+    substantive='\n'.join(b['text'] for b in out['blocks'] if b.get('kind')!='metadata').strip()
+    if re.fullmatch(r'本次公开的采购意向是[\s\S]*?为准[。.]?',substantive):
+        out['content_status']='unavailable';out['status']='partial'
+        out['warnings'].append('intent disclaimer only; actual procurement table or body missing')
 
 
 def _utf8(data):

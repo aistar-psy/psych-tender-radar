@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from .report import opportunity_state
 from .fetch import canonical_url
 from .search_recipes import vocabulary_match
+from .paths import public_dir
 
 ROOT=Path(__file__).resolve().parent.parent
 
@@ -90,7 +91,7 @@ def public_run(summary,documents,tasks):
             'sourceUrl':link(primary.get('url')),'amounts':amounts,
             'province':clean(a.get('province')),'buyerType':clean(a.get('buyer_type')),
             'openingAt':clean(a.get('opening_at')),'bidAt':clean(a.get('bid_at')),
-            'sourceQuality':'正文已取得','fetchMode':'云端公开HTTP' if any(e.get('provider')=='github_public_fetch' for e in primary.get('evidence',[])) else '本机公开HTTP','amountEligible':a.get('category') in ('教育核心','教育相关','其他心理') and a.get('notice_type')!='采购意向',
+            'sourceQuality':'正文已取得','fetchMode':'普通浏览器渲染' if any(e.get('provider')=='public_browser' for e in primary.get('evidence',[])) else ('云端公开HTTP' if any(e.get('provider')=='github_public_fetch' for e in primary.get('evidence',[])) else '本机公开HTTP'),'amountEligible':a.get('category') in ('教育核心','教育相关','其他心理') and a.get('notice_type')!='采购意向',
             'amountScope':'金额为规则提取候选；同类多值或批次意向不计入合计',
             'products':public_rows([p for d in items for p in d['analysis'].get('products',[])],('name','text','locator','url')),
             'parameters':public_rows([p for d in items for p in d['analysis'].get('parameters',[])],('text','locator','url')),
@@ -141,13 +142,13 @@ def timestamp(value):
     except (ValueError,TypeError):return 0
 
 def export(out=None,run_dirs=None):
-    out=Path(out or ROOT/'publish');out.mkdir(parents=True,exist_ok=True)
+    out=Path(out or public_dir(ROOT));out.mkdir(parents=True,exist_ok=True)
     if run_dirs is None:
         snapshots=list((ROOT/'data/reprocessed/runs').glob('*/summary.json'))+list((ROOT/'data/cloud_replay/runs').glob('*/summary.json'))+list((ROOT/'data/site_backfill/runs').glob('*/summary.json'))+list((ROOT/'data/expanded/runs').glob('*/summary.json'))+list((ROOT/'data/annual/runs').glob('*/summary.json'))+list((ROOT/'data/runtime/runs').glob('*/summary.json'))+list((ROOT/'data/validated/runs').glob('*/summary.json'))
         run_dirs=[p.parent for p in sorted(snapshots,key=lambda p:p.stat().st_mtime,reverse=True)]
     rejected_path=ROOT/'data/external-discovery/v15_rejected.json'
     rejected_urls={canonical_url(r['url']) for r in json.loads(rejected_path.read_text())} if rejected_path.exists() else set()
-    run_documents={};runs=[];read_urls=set();task_status={};task_times={};all_documents=[]
+    run_documents={};runs=[];read_urls=set();task_status={};task_times={};task_details={};all_documents=[]
     for directory in run_dirs:
         directory=Path(directory)
         read=lambda name:json.loads((directory/name).read_text(encoding='utf-8'))
@@ -156,8 +157,9 @@ def export(out=None,run_dirs=None):
         read_urls.update(canonical_url(d['url']) for d in documents)
         for t in tasks:
             if t.get('kind')=='document' and t.get('url'):
+                if t.get('status') in ('not_in_cloud_batch','not_executed','deferred_document'):continue
                 u=canonical_url(t['url']);when=timestamp(t.get('executed_at') or summary.get('actual_started_at'))
-                if u not in task_times or when>task_times[u]:task_times[u]=when;task_status[u]=t['status']
+                if u not in task_times or when>task_times[u]:task_times[u]=when;task_status[u]=t['status'];task_details[u]=t
         runs.append(public_run(summary,documents,tasks));run_documents[summary['run_id']]=documents
     runs.sort(key=lambda r:r.get('executedAt') or '',reverse=True)
     latest_documents=[d for d in latest_document_versions(all_documents) if task_status.get(canonical_url(d['url'])) not in ('content_unconfirmed','not_procurement')]
@@ -208,6 +210,16 @@ def export(out=None,run_dirs=None):
     from .enrichment import enrich
     enrich(list(archive.values()),latest_documents,out)
     for r in runs:enrich(r['projects'],run_documents[r['id']],out)
+    from .recovery import latest_receipts,acquisition_state
+    receipts=latest_receipts(ROOT)
+    for project in list(archive.values())+[p for r in runs for p in r['projects']]:
+        u=canonical_url(project['sourceUrl'])
+        state=acquisition_state(receipts.get(u,{}),task_details.get(u,{}),project.get('sourceQuality')=='正文已取得')
+        project['acquisition']=state
+        if project.get('sourceQuality')!='正文已取得':
+            project['detailStatus']=state['label']+'：'+state['reason']
+            project['gaps']=[g for g in project.get('gaps',[]) if g.get('name')!='公告正文']+[{'name':'公告正文','status':state['label'],'reason':state['reason'],'url':project['sourceUrl']}]
+
     cloud,cloud_failed=cloud_attempts(ROOT/'data/cloud-downloads')
     for url,status in cloud_failed.items():
         if url not in read_urls and task_status.get(url)!='not_procurement':task_status[url]=status

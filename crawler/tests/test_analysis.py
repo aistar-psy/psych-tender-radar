@@ -8,6 +8,20 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_chongqing_project_number_and_title_notice_type(self):
+        d={'title':'学校心理设备询价公告','text':'项目号：\nFDX26A00518\n预算金额：721,669.00元\n如发布更正公告，以更正为准。'}
+        a=analyze_document(d,'https://e/a','2026-09-09T12:00:00+08:00')
+        self.assertEqual(a['project_number'],'FDX26A00518')
+        self.assertEqual(a['notice_type'],'询价公告')
+
+    def test_contract_amount_has_its_own_scope(self):
+        a=analyze('某学校心理服务中心工程政府采购合同公告\n合同金额：576,500.00元')
+        self.assertEqual(a['notice_type'],'合同公告')
+        self.assertEqual([(v['type'],v['value']) for v in a['amounts']],[('合同',576500)])
+
+    def test_award_publication_variant_is_procurement(self):
+        self.assertTrue(analyze('某医院心理测评系统项目中标公示\n中标人：某科技公司\n中标价格：5.45万元')['is_procurement'])
+
     def test_numeric_support_group_cannot_be_buyer(self):
         result=analyze('采购人:498912314\n采购人信息\n名称：某市第一中学\n地址：某市')
         self.assertEqual(result['buyer'],'某市第一中学')

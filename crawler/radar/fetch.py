@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 import requests
+from .http import secure_session
 
 class FetchError(RuntimeError):
     def __init__(self, kind, message, url=''):
@@ -20,7 +21,7 @@ class Fetcher:
     def __init__(self, interval=1.0, timeout=15, max_bytes=20*1024*1024, retries=1):
         self.interval, self.timeout, self.max_bytes, self.retries = interval, timeout, max_bytes, retries
         self.last = {}
-        self.session = requests.Session()
+        self.session = secure_session()
         self.session.headers['User-Agent'] = 'PsychTenderRadar/0.1 (public procurement research; low-rate)'
     def __call__(self, url):
         url = canonical_url(url)

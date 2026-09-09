@@ -1,6 +1,13 @@
 import unittest
 from radar.enrichment import match_evidence, awarded_suppliers, purchase_time
 class EnrichmentTests(unittest.TestCase):
+ def test_contract_supplier_and_signing_date_are_explicit(self):
+  rows=[{'text':'供应商(乙方)：某心理健康服务协会','locator':'p:1'}, {'text':'合同签订日期','locator':'p:2'}, {'text':'2024年11月25日','locator':'p:3'}]
+  found=awarded_suppliers('学校心理服务中心政府采购合同公告',rows,'https://example.org')
+  self.assertEqual(found[0]['name'],'某心理健康服务协会')
+  self.assertEqual(found[0]['role'],'合同供应商')
+  self.assertEqual(purchase_time(rows,'2026-09-07'),{'value':'2024-11-25','label':'合同签订'})
+
  def test_updated_terms_and_real_location(self):
   hits=match_evidence('某学院设备采购',[{'text':'银龄心理融合实训室；心理仪器','locator':'table:2/row:1','source_url':'https://example.edu.cn/a.pdf'}],'https://example.edu.cn/notice')
   self.assertTrue(any(x['term']=='银龄心理' and x['field']=='正文' and x['url'].endswith('a.pdf') for x in hits))

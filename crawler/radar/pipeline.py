@@ -140,6 +140,9 @@ def _run(root,seeds,no_discovery,max_discovery,max_documents,max_attachments,int
             task={'id':key(url),'kind':'document','url':url,'status':'running'};tasks.append(task)
             try:
                 doc,ev=obtain(url)
+                if doc.get('page_kind')=='non_notice':
+                    task.update(status='not_procurement',error='已确认页面为新闻、政策或企业名录，不是项目公告')
+                    store.resolve(url);snapshot();continue
                 main_unavailable=doc.get('content_status')=='unavailable'
                 if main_unavailable:task['main_content_status']='unavailable'
                 links=list({l['url']:l for l in doc.get('links',[]) if l.get('kind')=='attachment'}.values())

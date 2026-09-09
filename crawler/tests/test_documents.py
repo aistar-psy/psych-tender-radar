@@ -5,6 +5,32 @@ from radar.documents import parse_document
 
 
 class DocumentTests(unittest.TestCase):
+    def test_qr_sidebar_and_intent_boilerplate_are_not_full_bodies(self):
+        raw='<title>学校心理设备招标公告</title><div class="content">扫码关注公众号 招标商机 手机实时看</div><div class="bid-content">下文中****为隐藏内容，仅对会员开放。项目名称：****；预算金额：50万元。</div>'
+        self.assertEqual(parse_document(raw.encode(),'https://www.qianlima.com/bid-1.html')['content_status'],'unavailable')
+        raw='<title>学校心理设备采购意向</title><div id="content">本次公开的采购意向是本单位政府采购工作的初步安排，具体采购项目情况以相关采购公告和采购文件为准。</div>'
+        self.assertEqual(parse_document(raw.encode(),'https://example.edu.cn/intent.html')['content_status'],'unavailable')
+
+    def test_shaanxi_news_and_company_registry_are_not_notices(self):
+        for channel in ('xwzx','zcfg','cxgk'):
+            doc=parse_document('<article><h1>心理服务公司</h1><p>公共资源交易信息</p></article>'.encode(),f'https://www.sxggzyjy.cn/{channel}/a.html')
+            self.assertEqual(doc.get('page_kind'),'non_notice')
+
+    def test_shaanxi_notice_container_beats_address_span(self):
+        raw='<title>全国公共资源交易平台（陕西省）陕西省公共资源交易中心</title><div class="ewb-article-title">某学校心理健康设备采购公告</div><div class="epoint-article-content"><div id="noticeArea"><p>项目编号：X-26</p><p>预算金额：50万元</p><p>文件获取地址：<span class="content">某市采购中心</span></p></div></div>'
+        doc=parse_document(raw.encode(),'https://www.sxggzyjy.cn/notice.html')
+        self.assertIn('预算金额：50万元',doc['text'])
+        self.assertEqual(doc['title'],'某学校心理健康设备采购公告')
+
+    def test_navigation_downloads_are_not_procurement_attachments(self):
+        raw='<article><h1>学校心理设备采购公告</h1><p>项目编号：X1</p><a href="/files/need.pdf">采购需求.pdf</a></article><a href="/app">APP 下载</a><a href="/help">下载中心</a>'
+        doc=parse_document(raw.encode(),'https://example.org/a.html')
+        self.assertEqual([x['url'] for x in doc['links'] if x['kind']=='attachment'], ['https://example.org/files/need.pdf'])
+
+    def test_public_embedded_body_enters_attachment_followup(self):
+        doc=parse_document('<article><h1>学校心理采购公告</h1><iframe src="/public/body.html"></iframe></article>'.encode(),'https://example.org/a.html')
+        self.assertEqual(doc['links'][0]['kind'],'attachment')
+
     def test_member_summary_is_not_acquired_fulltext(self):
         raw='<article><h1>某学校心理健康设备中标公告</h1><table><tr><td>采购项目名称</td><td>心理健康设备</td></tr><tr><td>中标金额</td><td>241万元</td></tr></table><p>本网站会员请登录</p><p>查看政府采购详细信息，注册会员请点击此处</p></article>'
         doc=parse_document(raw.encode(),'https://example.org/result.html')

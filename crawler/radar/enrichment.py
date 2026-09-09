@@ -7,11 +7,12 @@ from .search_recipes import load_recipes,keyword_text,match_recipes,clauses
 
 def match_evidence(title,blocks,url,body_label='正文'):
  sources=[{'text':title,'locator':'title','source_url':url,'field':'标题'}]+[{**b,'field':body_label} for b in blocks]
+ for b in sources:b['_normalized']=keyword_text(b.get('text',''))
  out=[]
  for family in load_recipes()['families']:
   for term in family['terms']:
    for b in sources:
-    text=keyword_text(b.get('text',''));i=text.casefold().find(term.casefold())
+    text=b['_normalized'];i=text.casefold().find(term.casefold())
     if i>=0:
      out.append({'term':term,'point':family['name'],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
  # Include explicit A/D/E/F aliases absent from the family table, e.g. 防霸凌.
@@ -24,20 +25,23 @@ def match_evidence(title,blocks,url,body_label='正文'):
    for term in clause:
     if term in family_terms:continue
     for b in selected:
-     text=keyword_text(b.get('text',''));i=text.casefold().find(term.casefold())
+     text=b['_normalized'];i=text.casefold().find(term.casefold())
      if i>=0:
       out.append({'term':term,'point':points[recipe['id']],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
  return list({(h['term'],h['field'],h['url']):h for h in out}.values())
 
 def awarded_suppliers(title,blocks,url):
- if not re.search(r'(?:中标|成交).*?(?:公告|结果|通知书)',title) or re.search(r'候选|废标|终止|更正',title):return []
+ contract='合同公告' in title
+ if not (contract or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):
   name=value.strip(' ：:　').split('供应商地址')[0].strip()
   if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$',name):return
-  if name not in seen:seen.add(name);out.append({'name':name,'url':b.get('source_url',url),'locator':b.get('locator','document'),'text':b['text']})
+  if name not in seen:seen.add(name);out.append({'name':name,'role':'合同供应商' if contract else '中标单位','url':b.get('source_url',url),'locator':b.get('locator','document'),'text':b['text']})
  for b in blocks:
   line=b.get('text','');cells=[s.strip() for s in line.split('|')];key=(b.get('source_url',url),b.get('locator','').rsplit('/row:',1)[0])
+  if contract:
+   for m in re.finditer(r'供应商\s*[（(]乙方[）)]\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
   for m in re.finditer(r'(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
   if b.get('kind')=='table_row':
    indices=[i for i,c in enumerate(cells) if re.fullmatch(r'供应商名称|中标单位(?:名称)?|成交供应商(?:名称)?',c)]
@@ -63,7 +67,11 @@ def purchase_time(blocks,published):
       if m:values.append(f'{m[1]}-{int(m[2]):02}')
   m=re.search(r'(?:预计采购时间|计划采购时间)\s*[:：]\s*(20\d{2})[年/-](\d{1,2})',text)
   if m:values.append(f'{m[1]}-{int(m[2]):02}')
- return {'value':'、'.join(dict.fromkeys(values)),'label':'预计采购月份'} if values else {'value':published,'label':'公告发布'}
+ if values:return {'value':'、'.join(dict.fromkeys(values)),'label':'预计采购月份'}
+ text='\n'.join(b.get('text','') for b in blocks)
+ signed=re.search(r'合同签订日期\s*[:：]?\s*(20\d{2})[年/-](\d{1,2})[月/-](\d{1,2})',text)
+ if signed:return {'value':f'{signed[1]}-{int(signed[2]):02}-{int(signed[3]):02}','label':'合同签订'}
+ return {'value':published,'label':'公告发布'}
 
 @lru_cache(maxsize=3000)
 def parsed_evidence(path):

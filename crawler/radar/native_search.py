@@ -1,3 +1,4 @@
+from .http import secure_session
 """Public native search pagination. No authentication or challenge bypass."""
 import argparse,hashlib,json,time
 from datetime import datetime,timedelta
@@ -50,7 +51,7 @@ def run(source_ids=None,max_pages=20,max_queries=None,resume=False):
  now=datetime.now(ZoneInfo('Asia/Shanghai'));start=(now-timedelta(days=364)).date().isoformat();end=now.date().isoformat()
  configs=load(PACKAGE_ROOT/'config/native_search.json',[]);catalog={s['id']:s for s in load_catalog()};out=PACKAGE_ROOT/'data/native-search';out.mkdir(parents=True,exist_ok=True)
  logfile=out/('queries-'+source_ids[0]+'.json' if source_ids and len(source_ids)==1 else 'queries.json')
- logs=load(logfile,[]);previous={x['id']:x for x in logs};session=requests.Session();count=0
+ logs=load(logfile,[]);previous={x['id']:x for x in logs};session=secure_session();count=0
  for cfg in configs:
   if source_ids and cfg['source_id'] not in source_ids:continue
   s=catalog[cfg['source_id']];atoms=build_recipe_plan([s],start,end);seeds=seed_plan(atoms)

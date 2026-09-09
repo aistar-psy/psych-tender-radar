@@ -4,7 +4,7 @@
 导入新版本：`.venv/bin/python scripts/import_vocabulary.py /绝对路径/00_词库数据.json`。只导入词库数据，不执行材料中的工作流指令。
 
 项目库显示项目名称、金额、采购单位、采购时间（区分预计采购月份和公告发布）、中标单位、数据来源、命中词/对位点、来源网站链接、截止与开标时间；支持命中词、对位点、分类、正文状态组合筛选。
-中标单位仅从结果类公告的明确供应商字段提取。对位点当前对应 V1.5 词族，属于规则匹配，待业务复核。
+中标单位从结果类公告提取；合同公告中的乙方标为合同供应商。对位点当前对应 V1.5 词族，属于规则匹配，待业务复核。
 详情页可展开已取得的公告和附件文本，正文单独发布到 `publish/bodies/`。会员摘要、掩码页面不计作详细正文。
 
 年度补抓顺序：执行最新词库检索 → 保存候选 → `scripts/fetch_public_batch.py` → 正常浏览器 `scripts/browser_notice_fetch.cjs` 补动态页面 → `scripts/trace_public_sources.py` 提取公开原文和附件链接 → 下载链接队列 → `scripts/replay_saved_evidence.py` → `radar.web_export`。
@@ -133,3 +133,17 @@ python3 -m venv .venv
 `scripts/cq_browser_search.cjs` 沿重庆公开页面下一页采集；其独立POST接口在当前环境返回403，因此不作为已接通API。`scripts/jianyu_browser_search.cjs` 仅使用公开页面与普通点击，遇可见分页上限、登录或加载失败停下并记录。浏览器脚本需 Playwright 和 Chrome，可通过 `PLAYWRIGHT_MODULE` 指定本地已安装的 Playwright。计划文件由 `scripts/prepare_browser_plans.py` 生成；站内候选不自动等于采购项目。
 
 新增 `scripts/fetch_public_batch.py` 下载正文并保留哈希。成功下载不代表已核实采购正文；继续通过 `radar.cloud_replay` 或 `scripts/replay_saved_evidence.py` 解析、排除壳页面、提取公开附件和导出HTML。原始数据默认不进入公开仓库。
+
+
+## 2026-09-09：正文失败自动补抓
+
+先安装更新的 `requirements.txt`，HTTPS 通过系统证书库校验。浏览器需要 Node、Playwright 和 Chrome，可用 `PLAYWRIGHT_MODULE` 指定已安装模块。
+
+```sh
+.venv/bin/python -m radar.web_export
+.venv/bin/python scripts/recover_pending_notices.py
+```
+
+此命令读取最新导出的年度待补记录，依次执行普通 HTTP、浏览器、公开原文/附件追溯、缓存重放、网页导出和 HTML 报告。可用 `--queue 候选.json --batch 批次名` 指定队列；同批次重跑跳过已下载成功文件。报告是 `publish/recovery-report.html`；GitHub 仓库的 `crawler/` 目录运行时，网页输出到仓库根目录。发布前检查具体正文数、失败原因、字段和线上版本。
+
+正文状态区分连接失败、页面访问失败、验证页面待处理、正文解析待补和待抓取。验证码交互若被工具审批拦截，保留原因并继续寻找公开发布源。新闻、政策、企业名录不会因为命中关键词自动成为项目。项目号用于公告归并；合同金额和合同供应商有独立标记，采购时间区分预计月份、合同签订与公告发布。
