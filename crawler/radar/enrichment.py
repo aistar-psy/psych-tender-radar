@@ -3,7 +3,7 @@ import hashlib,json,re
 from pathlib import Path
 from functools import lru_cache
 from urllib.parse import urlsplit
-from .search_recipes import load_recipes,keyword_text,match_recipes
+from .search_recipes import load_recipes,keyword_text,match_recipes,clauses
 
 def match_evidence(title,blocks,url,body_label='正文'):
  sources=[{'text':title,'locator':'title','source_url':url,'field':'标题'}]+[{**b,'field':body_label} for b in blocks]
@@ -14,7 +14,20 @@ def match_evidence(title,blocks,url,body_label='正文'):
     text=keyword_text(b.get('text',''));i=text.casefold().find(term.casefold())
     if i>=0:
      out.append({'term':term,'point':family['name'],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
- return out
+ # Include explicit A/D/E/F aliases absent from the family table, e.g. 防霸凌.
+ family_terms={t for f in load_recipes()['families'] for t in f['terms']}
+ points={'A':'心理直接词','D':'场景与建设词','E':'服务与师资词','F':'风险与干预词'}
+ for recipe in load_recipes()['recipes']:
+  if recipe['id'] not in points:continue
+  selected=sources[:1] if recipe['field']=='title' else sources
+  for clause in clauses(recipe['syntax']):
+   for term in clause:
+    if term in family_terms:continue
+    for b in selected:
+     text=keyword_text(b.get('text',''));i=text.casefold().find(term.casefold())
+     if i>=0:
+      out.append({'term':term,'point':points[recipe['id']],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
+ return list({(h['term'],h['field'],h['url']):h for h in out}.values())
 
 def awarded_suppliers(title,blocks,url):
  if not re.search(r'(?:中标|成交).*?(?:公告|结果|通知书)',title) or re.search(r'候选|废标|终止|更正',title):return []
