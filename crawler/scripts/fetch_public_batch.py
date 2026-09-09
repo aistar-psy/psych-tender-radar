@@ -12,7 +12,7 @@ def run(queue,out,workers=3):
  out=Path(out);out.mkdir(parents=True,exist_ok=True);(out/'bodies').mkdir(exist_ok=True)
  rows=json.loads(Path(queue).read_text());old=json.loads((out/'manifest.json').read_text()) if (out/'manifest.json').exists() else [];results={x['url']:x for x in old}
  def fetch(row):
-  url=row['url'];result={'url':url,'kind':'document','provider':'local_public_batch','read_at':datetime.now(timezone.utc).isoformat()}
+  url=row['url'];result={'url':url,'kind':row.get('kind','document'),'provider':'local_public_batch','read_at':datetime.now(timezone.utc).isoformat()}
   try:
    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'publish'))
    from fetch_public_notices import public_url as validate_url

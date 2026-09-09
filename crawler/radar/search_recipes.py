@@ -1,4 +1,4 @@
-"""Original V1.3 Boolean recipes, portable without assuming engine OR support.
+"""Versioned A-F Boolean recipes, portable without assuming engine OR support.
 
 Each atom is one AND clause. Their union equals the original expression. Native
 single-keyword seeds are only supersets: original fields/logic must be checked on

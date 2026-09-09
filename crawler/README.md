@@ -1,3 +1,16 @@
+# 本轮更新：V1.5 词库、详细正文与汇总筛选
+
+当前词库来自 2026-09-09 V1.5 任务包：8 个词族、161 词、211 个 A—F 逻辑分支。
+导入新版本：`.venv/bin/python scripts/import_vocabulary.py /绝对路径/00_词库数据.json`。只导入词库数据，不执行材料中的工作流指令。
+
+项目库显示项目名称、金额、采购单位、采购时间（区分预计采购月份和公告发布）、中标单位、数据来源、命中词/对位点、来源网站链接、截止与开标时间；支持命中词、对位点、分类、正文状态组合筛选。
+中标单位仅从结果类公告的明确供应商字段提取。对位点当前对应 V1.5 词族，属于规则匹配，待业务复核。
+详情页可展开已取得的公告和附件文本，正文单独发布到 `publish/bodies/`。会员摘要、掩码页面不计作详细正文。
+
+年度补抓顺序：执行最新词库检索 → 保存候选 → `scripts/fetch_public_batch.py` → 正常浏览器 `scripts/browser_notice_fetch.cjs` 补动态页面 → `scripts/trace_public_sources.py` 提取公开原文和附件链接 → 下载链接队列 → `scripts/replay_saved_evidence.py` → `radar.web_export`。
+浏览器命令：`PLAYWRIGHT_MODULE=playwright node scripts/browser_notice_fetch.cjs 队列.json data/public-downloads/日期-browser`。使用系统 Chrome，只读取公开页面，遇验证或权限提示记录失败。
+继续读 `docs/2026-09-09深入抓取与项目列表.md` 查看这次实际执行数据与缺口。
+
 # 心理健康教育采购雷达
 
 独立Python项目，不依赖WorkBuddy。读取公开采购信息，下载可取得的正文/附件，提取带来源的产品和参数候选，区分教育与其他心理场景，输出周报及逐项执行记录。
@@ -11,7 +24,7 @@
 - `config/legacy_seeds.json`：从旧报告导入的26个URL，只作待核验线索。
 - `config/seeds.json`：已知公开公告起始链接。
 - `config/regions.json`：31省级地区＋兵团。
-- `config/channels.json`：复用V1.3词族形成5条检索通道；不再读取WorkBuddy路径。
+- `config/channels.json`：保留早期5条检索通道配置，实际检索以 search_recipes.json 为准；不再读取WorkBuddy路径。
 - `config/source_catalog.json`、`aggregator_catalog.json`、`owner_catalog.json`、`legacy_catalog.json`：官方平台、商业聚合、已发现采购单位官网和原任务来源台账，当前合计135个入口。`active_url`记录已确认迁移的新地址。
 - `config/sources.json`：原有通用发现器的来源配置；新增全国来源执行器读取上述4份台账。
 
@@ -103,7 +116,7 @@ python3 -m venv .venv
 
 ## 2026-09-08：原式检索与站内分页
 
-先读 `docs/2026-09-08检索诊断与修复.md`。默认区域搜索和逐站计划已恢复原 V1.3 的 A—F 逻辑，不再使用“心理健康+教育+采购”作为唯一条件。
+先读 `docs/2026-09-08检索诊断与修复.md`。默认区域搜索和逐站计划读取当前 config/search_recipes.json 的 A—F 逻辑，不再使用“心理健康+教育+采购”作为唯一条件。
 
 ```sh
 # 逐站原式站外索引补查，保留真实执行日志与分页失败
@@ -120,6 +133,3 @@ python3 -m venv .venv
 `scripts/cq_browser_search.cjs` 沿重庆公开页面下一页采集；其独立POST接口在当前环境返回403，因此不作为已接通API。`scripts/jianyu_browser_search.cjs` 仅使用公开页面与普通点击，遇可见分页上限、登录或加载失败停下并记录。浏览器脚本需 Playwright 和 Chrome，可通过 `PLAYWRIGHT_MODULE` 指定本地已安装的 Playwright。计划文件由 `scripts/prepare_browser_plans.py` 生成；站内候选不自动等于采购项目。
 
 新增 `scripts/fetch_public_batch.py` 下载正文并保留哈希。成功下载不代表已核实采购正文；继续通过 `radar.cloud_replay` 或 `scripts/replay_saved_evidence.py` 解析、排除壳页面、提取公开附件和导出HTML。原始数据默认不进入公开仓库。
-
-
-GitHub 仓库内运行本目录代码时，使用 `.venv/bin/python -m radar.web_export --out ..` 更新根目录网页。浏览器模块通过环境变量指定；data目录在本地生成，不提交。

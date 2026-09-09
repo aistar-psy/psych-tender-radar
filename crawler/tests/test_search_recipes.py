@@ -5,7 +5,7 @@ class RecipeTests(unittest.TestCase):
   r=load_recipes();self.assertEqual([x['id'] for x in r['recipes']],list('ABCDEF'))
   self.assertEqual(len(r['families']),8)
   self.assertEqual(len(clauses(r['recipes'][1]['syntax'])),45)
-  self.assertEqual(len(clauses(r['recipes'][2]['syntax'])),42)
+  self.assertEqual(len(clauses(r['recipes'][2]['syntax'])),45)
  def test_boolean_logic_and_field(self):
   self.assertEqual(clauses('(a OR b) AND (c OR d)'),[('a','c'),('a','d'),('b','c'),('b','d')])
   self.assertIn('D',match_recipes('成长指导中心设备购置'))

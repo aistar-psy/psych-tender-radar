@@ -41,9 +41,11 @@ for manifest in sorted((root/'data/cloud-downloads').glob('*/manifest.json')):
   if not attachment_batch and row.get('url'):seeds.add(canonical_url(row['url']))
   if row.get('status')=='ok':add(row['url'],row,manifest.parent/row['path'],'github_public_fetch')
 
+v15_allowed={canonical_url(r['url']) for r in json.loads((root/'data/v15_fetch_queue.json').read_text())} if (root/'data/v15_fetch_queue.json').exists() else None
 for manifest in sorted((root/'data/public-downloads').glob('*/manifest.json')):
  rows=json.loads(manifest.read_text())
  for row in rows:
+  if manifest.parent.name=='20260909-v15' and v15_allowed is not None and canonical_url(row['url']) not in v15_allowed:continue
   if row.get('kind')!='attachment' and row.get('url'):seeds.add(canonical_url(row['url']))
   if row.get('status')=='ok':add(row['url'],row,manifest.parent/row['path'],row.get('provider','local_public_batch'))
 

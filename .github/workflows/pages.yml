@@ -22,6 +22,7 @@ jobs:
       - run: |
           mkdir _site
           cp index.html style.css app.js sources.js data.js _site/
+          cp -R bodies _site/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

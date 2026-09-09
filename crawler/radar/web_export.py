@@ -145,18 +145,20 @@ def export(out=None,run_dirs=None):
     if run_dirs is None:
         snapshots=list((ROOT/'data/reprocessed/runs').glob('*/summary.json'))+list((ROOT/'data/cloud_replay/runs').glob('*/summary.json'))+list((ROOT/'data/site_backfill/runs').glob('*/summary.json'))+list((ROOT/'data/expanded/runs').glob('*/summary.json'))+list((ROOT/'data/annual/runs').glob('*/summary.json'))+list((ROOT/'data/runtime/runs').glob('*/summary.json'))+list((ROOT/'data/validated/runs').glob('*/summary.json'))
         run_dirs=[p.parent for p in sorted(snapshots,key=lambda p:p.stat().st_mtime,reverse=True)]
-    runs=[];read_urls=set();task_status={};task_times={};all_documents=[]
+    rejected_path=ROOT/'data/external-discovery/v15_rejected.json'
+    rejected_urls={canonical_url(r['url']) for r in json.loads(rejected_path.read_text())} if rejected_path.exists() else set()
+    run_documents={};runs=[];read_urls=set();task_status={};task_times={};all_documents=[]
     for directory in run_dirs:
         directory=Path(directory)
         read=lambda name:json.loads((directory/name).read_text(encoding='utf-8'))
-        documents=read('documents.json');tasks=read('execution.json');summary=read('summary.json')
+        documents=[d for d in read('documents.json') if canonical_url(d['url']) not in rejected_urls];tasks=read('execution.json');summary=read('summary.json')
         all_documents.extend(documents)
         read_urls.update(canonical_url(d['url']) for d in documents)
         for t in tasks:
             if t.get('kind')=='document' and t.get('url'):
                 u=canonical_url(t['url']);when=timestamp(t.get('executed_at') or summary.get('actual_started_at'))
                 if u not in task_times or when>task_times[u]:task_times[u]=when;task_status[u]=t['status']
-        runs.append(public_run(summary,documents,tasks))
+        runs.append(public_run(summary,documents,tasks));run_documents[summary['run_id']]=documents
     runs.sort(key=lambda r:r.get('executedAt') or '',reverse=True)
     latest_documents=[d for d in latest_document_versions(all_documents) if task_status.get(canonical_url(d['url'])) not in ('content_unconfirmed','not_procurement')]
     read_urls={canonical_url(d['url']) for d in latest_documents}
@@ -193,7 +195,7 @@ def export(out=None,run_dirs=None):
             seen_urls.update(urls)
     import hashlib
     for url,seed in candidates.items():
-        if url in seen_urls or url in excluded_urls or task_status.get(url)=='not_procurement':continue
+        if url in seen_urls or url in excluded_urls or url in rejected_urls or task_status.get(url)=='not_procurement':continue
         pid='lead-'+hashlib.sha256(url.encode()).hexdigest()[:12]
         archive[pid]={'id':pid,'title':clean(seed['title']),'sourceUrl':link(url),'category':clean(seed.get('category') or '待核验'),
             'buyer':clean(seed.get('buyer')),'province':clean(seed.get('province') or seed.get('region')),'buyerType':None,
@@ -203,6 +205,9 @@ def export(out=None,run_dirs=None):
             'products':[],'parameters':[{'text':clean(seed['search_note']),'locator':'搜索摘要，非本地正文','url':link(url)}] if seed.get('search_note') else [],'events':[],
             'detailStatus':'正文待获取或采购属性待核验','status':'待核验',
             'gaps':[{'name':'公告正文','status':'待核验','reason':'尚未完成正文核验，不计入已核验金额','url':link(url)}]}
+    from .enrichment import enrich
+    enrich(list(archive.values()),latest_documents,out)
+    for r in runs:enrich(r['projects'],run_documents[r['id']],out)
     cloud,cloud_failed=cloud_attempts(ROOT/'data/cloud-downloads')
     for url,status in cloud_failed.items():
         if url not in read_urls and task_status.get(url)!='not_procurement':task_status[url]=status
@@ -222,7 +227,10 @@ def export(out=None,run_dirs=None):
     from .source_matrix import matrix,query_logs
     data['sourceCoverage']=matrix(list(archive.values()),candidates)
     data['archiveCoverage']['queries']=len(query_logs())
-    encoded=json.dumps(data,ensure_ascii=False,indent=2).replace('<','\\u003c').replace('>','\\u003e')
+    referenced={ref['path'] for p in data['archiveProjects']+[p for r in runs for p in r['projects']] for ref in p.get('fullTexts',[])}
+    for old in (out/'bodies').glob('*.json'):
+        if re.fullmatch(r'[a-f0-9]{64}\.json',old.name) and 'bodies/'+old.name not in referenced:old.unlink()
+    encoded=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e')
     (out/'data.js').write_text('window.RADAR_DATA = '+encoded+';\n',encoding='utf-8')
     return {'out':str(out),'runs':len(runs),'projects_in_default_run':len(preferred['projects']) if preferred else 0}
 

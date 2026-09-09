@@ -68,6 +68,7 @@ def _html(data, url, out):
         for node in candidates:
             value=node.get_text(' ',strip=True)
             if not value and selector!='.content': empty_root=empty_root if empty_root is not None else node
+            if len(value)<100 and re.search(r'立即登录|登录/注册|开启全网商机',value):continue
             if value and not re.fullmatch(r'[\s/]*(?:(?:搜标题|搜全文|搜索|查询)[\s/]*)+',value):
                 root=node; break
         if root is not None: break
@@ -154,6 +155,14 @@ def _html(data, url, out):
             if unavailable:
                 out['status']='ok'
                 out['warnings']=[w for w in out['warnings'] if not w.startswith('notice body unavailable:')]
+
+
+    retained='\n'.join(b['text'] for b in out['blocks'])
+    gated=re.search(r'查看(?:政府采购)?详细信息[，,\s]*(?:注册|请|登录)|本网站会员请[\s\S]{0,80}(?:登录|注册)|仅对.{0,20}会员开放|下文中.{0,30}为隐藏内容|登录后(?:查看|可见)',retained)
+    masked=bool(re.search(r'\*{3,}|(?:公司|项目|采购人)\s*[（(]略[）)]',retained))
+    if gated and (len(retained)<1500 or masked):
+        out['content_status']='unavailable';out['status']='partial'
+        out['warnings'].append('member-only or redacted summary; detailed notice body not acquired')
 
 
 def _utf8(data):

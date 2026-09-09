@@ -5,6 +5,11 @@ from radar.documents import parse_document
 
 
 class DocumentTests(unittest.TestCase):
+    def test_member_summary_is_not_acquired_fulltext(self):
+        raw='<article><h1>某学校心理健康设备中标公告</h1><table><tr><td>采购项目名称</td><td>心理健康设备</td></tr><tr><td>中标金额</td><td>241万元</td></tr></table><p>本网站会员请登录</p><p>查看政府采购详细信息，注册会员请点击此处</p></article>'
+        doc=parse_document(raw.encode(),'https://example.org/result.html')
+        self.assertEqual(doc['content_status'],'unavailable')
+
     def test_search_widget_cannot_replace_real_notice_body(self):
         raw='''<title>陕西省政府采购网</title><div class="content"><form>搜标题 搜全文 /</form></div><h1 class="info-title">某市学校心理中心设备采购意向</h1><div>信息时间：2026-04-01 17:05</div><div id="content"><p>采购项目名称：心理中心设备采购</p><p>采购预算：70万元</p></div>'''
         doc=parse_document(raw.encode(),'https://e/notice.html')

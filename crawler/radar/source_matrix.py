@@ -57,7 +57,7 @@ def matrix(projects,candidates):
  return {'sources':rows,'searchRecipes':[{**r,'atoms':len(clauses(r['syntax']))} for r in load_recipes()['recipes']], 'recipeVersion':load_recipes()['version'],'summary':{'registered':len(rows),'domains':len({d for r in rows for d in r['domains']}),
    'probed':sum(r['probeStatus']!='unprobed' for r in rows),'accessible':sum(r['pages']>0 for r in rows),
    'queried':sum(r['indexQueries']>0 for r in rows),'withDocuments':sum(r['documents']>0 for r in rows),'complete':0,
-   'nativeSources':sum(r['nativeQueries']>0 for r in rows),'nativePages':sum(r['nativePages'] for r in rows),'verifiedEmpty':sum(r['verifiedEmpty'] for r in rows),
+   'nativeSources':sum(r['nativePages']>0 for r in rows),'nativePages':sum(r['nativePages'] for r in rows),'verifiedEmpty':sum(r['verifiedEmpty'] for r in rows),
    'failedQueries':sum(r['failedQueries'] for r in rows),
    'provinceQueries':len({q.get('region') for q in logs if q.get('region') in set(load(PACKAGE_ROOT/'config/regions.json',[])) and q.get('status') in QUERY_SUCCEEDED})},
    'limitation':'登记网站不是已完成采集；首页可访问不是检索成功；已发现部分公告不是近一年完整覆盖。省级查询仅计检索地区，不自动记为该省每个网站已检索。商业付费及非公开数据存在缺口。'}
