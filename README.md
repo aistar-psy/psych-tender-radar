@@ -4,7 +4,7 @@
 
 上期 141 条待补中，本次 6 条已取得正文、135 条仍待补；本次另有 62 条新增待补线索。前后年度窗口不同，条数包含归并和排除，不能直接视为新增独立项目或全网覆盖率。
 
-[查看最新 HTML 报告](https://aistar-psy.github.io/psych-tender-radar/recovery-report.html) · [本轮修复与检索缺口](crawler/docs/2026-09-14周度检索修复.md) · [数据更新说明](crawler/docs/2026-09-14正文补抓修复报告.md) · [运行脚本](crawler/README.md)
+[查看最新 HTML 报告](https://aistar-psy.github.io/psych-tender-radar/recovery-report.html) · [近一年项目与线索明细](https://aistar-psy.github.io/psych-tender-radar/annual-projects.html) · [本轮修复与检索缺口](crawler/docs/2026-09-14周度检索修复.md) · [数据更新说明](crawler/docs/2026-09-14正文补抓修复报告.md) · [运行脚本](crawler/README.md)
 
 项目列表支持命中词、对位点、正文状态组合筛选，提供公告与公开附件原文。验证或付费提示、仅有扫描水印和页码的文件不计作有效全文。词库仍为用户最新 V1.5。
 
