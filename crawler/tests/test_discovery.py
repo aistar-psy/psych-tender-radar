@@ -72,3 +72,14 @@ class SearchPaginationTests(unittest.TestCase):
   self.assertEqual(len(r['links']),2)
   self.assertEqual(r['pagination']['stop_reason'],'repeated_page')
   self.assertFalse(r['pagination']['complete'])
+
+class DomainConstraintTests(unittest.TestCase):
+    def test_unrelated_domains_are_not_valid_site_search_results(self):
+        from radar.discovery import _relevance
+        result=_relevance('site:www.ccgp-beijing.gov.cn "心理健康"',{'status':'ok','links':[{'url':'https://www.xinli001.com/','text':'心理健康','snippet':''}],'error':''})
+        self.assertEqual(result['status'],'irrelevant_results')
+    def test_verified_domain_links_survive_and_other_domains_do_not(self):
+        from radar.discovery import _relevance
+        hit={'url':'https://www.ccgp-beijing.gov.cn/notice.html','text':'心理健康服务采购','snippet':''}
+        result=_relevance('site:www.ccgp-beijing.gov.cn "心理健康"',{'status':'ok','links':[hit,dict(hit,url='https://example.org/notice.html')],'error':''})
+        self.assertEqual(result['links'],[hit])

@@ -1,5 +1,5 @@
 """Reparse saved public evidence into a fresh run, preserving previous snapshots."""
-import hashlib,json,os,sys
+import hashlib,json,os,sys,shutil,uuid
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from radar.cloud_replay import replay
@@ -50,6 +50,26 @@ for manifest in sorted((root/'data/public-downloads').glob('*/manifest.json')):
   if row.get('status')=='ok':add(row['url'],row,manifest.parent/row['path'],row.get('provider','local_public_batch'))
 
 for url,row in records.items():row['kind']='document' if url in seeds else 'attachment'
+pending_path=cache/'pending-seeds.json'
+if pending_path.exists():
+ pending=set(json.loads(pending_path.read_text()))
+ records=dict(sorted(records.items(),key=lambda item:item[0] not in pending))
 manifest=cache/'manifest.json';manifest.write_text(json.dumps(list(records.values()),ensure_ascii=False,indent=2))
 print(json.dumps({'cached_urls':len(records),'replay_seeds':sum(r['kind']=='document' for r in records.values())}),flush=True)
-print(json.dumps(replay(manifest,root/'data/reprocessed'),ensure_ascii=False),flush=True)
+remaining={u for u,r in records.items() if r['kind']=='document'}
+for chunk in range(4):
+ if not remaining:break
+ current=[]
+ for u,row in records.items():current.append({**row,'kind':'document' if u in remaining else 'attachment'})
+ chunk_manifest=manifest if chunk==0 else cache/f'resume-{chunk}.json'
+ chunk_manifest.write_text(json.dumps(current,ensure_ascii=False,indent=2))
+ # A fresh continuation queue avoids revisiting earlier notices before the tail.
+ destination=root/'data/reprocessed' if chunk==0 else root/'data/reprocessed/resume'/uuid.uuid4().hex
+ summary=replay(chunk_manifest,destination)
+ run_dir=Path(summary['run_dir'])
+ if chunk:shutil.copytree(run_dir,root/'data/reprocessed/runs'/summary['run_id'])
+ attempted={canonical_url(t['url']) for t in json.loads((run_dir/'execution.json').read_text()) if t.get('kind')=='document' and t.get('url')}
+ previous=len(remaining);remaining-=attempted
+ (cache/'pending-seeds.json').write_text(json.dumps(sorted(remaining),ensure_ascii=False,indent=2))
+ print(json.dumps({**summary,'cached_seed_urls_remaining':len(remaining),'replay_chunk':chunk+1},ensure_ascii=False),flush=True)
+ if len(remaining)==previous:break

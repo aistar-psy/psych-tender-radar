@@ -176,6 +176,11 @@ def _relevance(query, result):
     # A minimum relevance gate: candidates still require document-level review.
     terms = ('心理','心育','学校','校园','学生','采购','招标','教育','情绪','心灵','成长','辅导','生物反馈','抑郁','焦虑','润心')
     links = [x for x in result['links'] if any(term in (x.get('text','')+' '+x.get('snippet','')) for term in terms)]
+    domains=[m.group(1).lower().strip('\"\'') for m in re.finditer(r'(?<![\w-])site:([^\s()]+)',query,re.I)]
+    if domains:
+        links=[x for x in links if any((urlsplit(x['url']).hostname or '').lower()==d or (urlsplit(x['url']).hostname or '').lower().endswith('.'+d) for d in domains)]
+        if not links:
+            return {'status':'irrelevant_results','links':[],'error':'Search returned no links within the requested site domains; engine site constraint unverified'}
     if not links:
         return {'status':'irrelevant_results','links':[],'error':'Search returned no Chinese procurement/mental-health/education relevance; engine query handling unverified'}
     return dict(result, links=links)

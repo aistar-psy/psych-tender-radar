@@ -9,7 +9,7 @@
       "rn": "",
       "sdt": "",
       "edt": "",
-      "wd": "%E5%BF%83%E7%90%86",
+      "wd": "",
       "inc_wd": "",
       "exc_wd": "",
       "fields": "title;content",
@@ -41,7 +41,7 @@
       "rn": "",
       "sdt": "",
       "edt": "",
-      "wd": "%E5%BF%83%E7%90%86",
+      "wd": "",
       "inc_wd": "",
       "exc_wd": "",
       "fields": "title;content",
@@ -73,7 +73,9 @@
     "source_id": "ggzy-chongqing",
     "base": "https://www.cqggzy.com/",
     "endpoint": "https://www.cqggzy.com/api/search",
-    "payload": {},
+    "payload": {
+      "wd": ""
+    },
     "adapter": "chongqing",
     "observed_at": "2026-09-08",
     "evidence": "站内点击第二页得到 pageIndex=2 / pageSize=10；关键词字段范围尚未核实"

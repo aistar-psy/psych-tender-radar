@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from radar.documents import parse_document
 from radar.analysis import analyze_document
-from radar.recovery import recovery_queue
+from radar.recovery import recovery_queue,latest_receipts
 from radar.fetch import canonical_url
 from radar.paths import public_dir
 ROOT=Path(__file__).resolve().parents[1]
@@ -42,6 +42,13 @@ def main():
     for _ in range(2):
         run(sys.executable,'scripts/trace_public_sources.py')
         run(sys.executable,'scripts/fetch_public_batch.py','data/source-trace/fetch_queue.json',linked,'--workers','3')
+    trace_path=ROOT/'data/source-trace/links.json'
+    if trace_path.exists():
+        traces=json.loads(trace_path.read_text());receipts=latest_receipts(ROOT)
+        for rel in traces:
+            receipt=receipts.get(canonical_url(rel['to_url']),{})
+            if receipt:rel.update(status='downloaded_pending_parse' if receipt['status']=='ok' else 'read_failed',read_at=receipt.get('read_at'),error_type=receipt.get('error_type'))
+        trace_path.write_text(json.dumps(traces,ensure_ascii=False,indent=2))
     run(sys.executable,'scripts/replay_saved_evidence.py')
     run(sys.executable,'-m','radar.web_export')
     run(sys.executable,'scripts/recovery_report.py','--before',base/'before.json','--batch',args.batch)

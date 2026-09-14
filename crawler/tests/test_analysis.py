@@ -193,3 +193,35 @@ class AnalysisTests(unittest.TestCase):
     def test_generic_publication_metadata_precedes_old_table_date(self):
         doc={'title':'心理设备结果公告','text':'','blocks':[{'text':'公告发布日期 | 2025/11/07','kind':'table_row','locator':'html/table:1/row:1'},{'text':'时间：2025-11-13 来源：学校','kind':'metadata','locator':'html/time:1'}]}
         self.assertEqual(analyze_document(doc,'https://e/a','2026-09-07T09:00:00+08:00')['published_at'],'2025-11-13')
+
+class EducationAgencyClassificationTests(unittest.TestCase):
+ def test_education_and_sports_agency_is_education_core(self):
+  from radar.analysis import analyze_document
+  for buyer in ['富县教育体育局','某县教育和体育局','某县教育科技体育局','某县教体局']:
+   doc={'title':'心理健康信息化管理平台采购结果公告','text':'采购人：'+buyer+'\n中标金额：500000元'}
+   self.assertEqual(analyze_document(doc,'https://example.gov.cn/n','2026-09-14T10:00:00+08:00')['category'],'教育核心')
+ def test_health_agency_remains_other_psychology(self):
+  from radar.analysis import analyze_document
+  doc={'title':'心理健康信息化管理平台采购结果公告','text':'采购人：某县卫生健康局\n中标金额：500000元'}
+  self.assertEqual(analyze_document(doc,'https://example.gov.cn/n','2026-09-14T10:00:00+08:00')['category'],'其他心理')
+
+
+class EducationCenterTests(unittest.TestCase):
+    def test_school_facilities_and_teacher_development_buyers_are_education(self):
+        for title, buyer in [
+            ('义务教育薄弱环节心理咨询室采购项目更正公告', '某县教师发展中心'),
+            ('心理咨询室设施设备项目招标代理采购公告', '某区职业教育中心'),
+        ]:
+            d={'title':title,'text':'采购人：'+buyer+'\n采购项目编号：ABC-2026','blocks':[]}
+            a=analyze_document(d,'https://e/a','2026-09-14T10:00:00+08:00')
+            self.assertEqual(a['category'],'教育核心')
+            self.assertEqual(a['buyer_type'],'G/事业单位')
+
+
+class AwardAmountLabelTests(unittest.TestCase):
+    def test_parenthesized_award_label_keeps_currency_and_separate_budget(self):
+        a=analyze('学校心理设备采购\n预算金额：80万元\n中标（成交）金额：\n709,722.00元')
+        self.assertEqual({(v['type'],v['value']) for v in a['amounts']},{('预算',800000),('成交',709722)})
+        d={'title':'学校心理平台中标公告','blocks':[{'text':'供应商名称 | 中标(成交)金额（元）','kind':'table_row','locator':'html/table:1/row:1'},{'text':'某科技公司 | 350,000.00','kind':'table_row','locator':'html/table:1/row:2'}]}
+        a=analyze_document(d,'https://e/a','2026-09-14T10:00:00+08:00')
+        self.assertEqual([(v['type'],v['value']) for v in a['amounts']],[('成交',350000)])

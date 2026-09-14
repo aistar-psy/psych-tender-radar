@@ -44,7 +44,7 @@ def clauses(expression):
 
 def keyword_text(text):
  # Prevent the word boundary 中心 / 理化 from manufacturing a 心理 keyword.
- return str(text or '').replace('中心理化','中心 理化')
+ return str(text or '').replace('中心理化','中心 理化').replace('核心育种','核心 育种')
 
 def match_recipes(title,fulltext=''):
  title=keyword_text(title);fulltext=keyword_text(fulltext)

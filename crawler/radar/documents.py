@@ -266,5 +266,24 @@ def _parse(data,url,content_type,depth):
     return out
 
 
+def content_issue(text, content_type=''):
+    """Recognize access screens and image-only PDF text without rejecting short specs."""
+    compact=re.sub(r'\s+','',text or '')
+    if not compact:return 'empty'
+    if 'html' in content_type.lower() and len(compact)<500:
+        if re.search(r'请输入(?:正确的)?验证码|人机验证|只支持付费用户|用户登录.*(?:验证码|密码)|登录后(?:查看|下载)',compact):return 'access_page'
+        if re.fullmatch(r'(?:copyright|copryright|版权所有)[^\n]{0,150}',compact,re.I):return 'empty'
+    if 'pdf' in content_type.lower():
+        rest=re.sub(r'扫描全能王(?:\s*创建)?|(?:Scannedwith)?CamScanner|file://[^\s]+','',text or '',flags=re.I)
+        rest=re.sub(r'[\s\d/|.·—_-]+','',rest)
+        if not rest:return 'needs_ocr'
+    return None
+
+
 def parse_document(data: bytes, url: str, content_type: str = '') -> dict:
-    return _parse(data,url,content_type,0)
+    out=_parse(data,url,content_type,0)
+    issue=content_issue(out.get('text',''),content_type or ('application/pdf' if data.startswith(b'%PDF') else ''))
+    if issue and out.get('status') in ('ok','parsed','partial'):
+        out.update(status='needs_ocr' if issue=='needs_ocr' else 'partial',content_status='unavailable')
+        out.setdefault('warnings',[]).append('no substantive document text: '+issue)
+    return out

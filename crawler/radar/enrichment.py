@@ -4,6 +4,7 @@ from pathlib import Path
 from functools import lru_cache
 from urllib.parse import urlsplit
 from .search_recipes import load_recipes,keyword_text,match_recipes,clauses
+from .documents import content_issue
 
 def match_evidence(title,blocks,url,body_label='正文'):
  sources=[{'text':title,'locator':'title','source_url':url,'field':'标题'}]+[{**b,'field':body_label} for b in blocks]
@@ -32,19 +33,24 @@ def match_evidence(title,blocks,url,body_label='正文'):
 
 def awarded_suppliers(title,blocks,url):
  contract='合同公告' in title
- if not (contract or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
+ if not (contract or '采购结果公告' in title or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):
   name=value.strip(' ：:　').split('供应商地址')[0].strip()
   if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$',name):return
   if name not in seen:seen.add(name);out.append({'name':name,'role':'合同供应商' if contract else '中标单位','url':b.get('source_url',url),'locator':b.get('locator','document'),'text':b['text']})
- for b in blocks:
+ for bi,b in enumerate(blocks):
   line=b.get('text','');cells=[s.strip() for s in line.split('|')];key=(b.get('source_url',url),b.get('locator','').rsplit('/row:',1)[0])
   if contract:
    for m in re.finditer(r'供应商\s*[（(]乙方[）)]\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
   for m in re.finditer(r'(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
+  if b.get('kind')!='table_row' and re.fullmatch(r'(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*',line) and bi+1<len(blocks):
+   following=blocks[bi+1]
+   if following.get('source_url',url)==b.get('source_url',url):add(following.get('text',''),{**b,'text':line+' '+following.get('text','')})
   if b.get('kind')=='table_row':
    indices=[i for i,c in enumerate(cells) if re.fullmatch(r'供应商名称|中标单位(?:名称)?|成交供应商(?:名称)?',c)]
+   if indices and any(re.search(r'排序|排名|最终报价|投标报价|评审报价',c) for c in cells) and not any(re.search(r'(?:中标|成交).*金额',c) for c in cells):
+    headers[key]=[];continue
    if indices:
     if len(cells)==2 and indices==[0]:add(cells[1],b)
     else:headers[key]=indices
@@ -93,7 +99,7 @@ def document_parts(d):
   parsed=parsed_evidence(ev.get('path',''))
   if parsed.get('status') not in ('ok','parsed','partial') or parsed.get('content_status')=='unavailable':continue
   blocks=[{**b,'source_url':ev.get('url') or d['url']} for b in parsed.get('blocks',[])];text=parsed.get('text') or '\n'.join(b['text'] for b in blocks)
-  if not text.strip():continue
+  if content_issue(text,ev.get('content_type','')):continue
   out.append({'title':parsed.get('title') or d['analysis'].get('title'),'url':ev.get('url') or d['url'],'readAt':ev.get('fetched_at'),'sha256':ev.get('sha256'),'kind':'公告正文' if i==0 else '公开附件','text':text,'blocks':blocks,'contentType':ev.get('content_type'),'provider':ev.get('provider')})
  return out
 
@@ -112,6 +118,12 @@ def enrich(projects,documents,out):
    d=by_url.get(url)
    if not d:continue
    if url not in parts:parts[url]=document_parts(d)
+   for ev in d.get('evidence',[]):
+    parsed=parsed_evidence(ev.get('path',''));issue=content_issue(parsed.get('text',''),ev.get('content_type',''))
+    if issue:
+     reason={'needs_ocr':'文件仅有扫描水印或页码，正文需 OCR','access_page':'只取得验证、登录或付费提示页','empty':'页面仅有空壳或页脚，未取得正文'}[issue]
+     gap={'name':'正文或公开附件','status':issue,'reason':reason,'url':ev.get('url') or url}
+     if gap not in p.setdefault('gaps',[]):p['gaps'].append(gap)
    blocks=[b for part in parts[url] for b in part['blocks']];allblocks+=blocks
    winners+=awarded_suppliers(d['analysis']['title'],blocks,url)
    for part in parts[url]:

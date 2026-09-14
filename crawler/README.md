@@ -147,3 +147,17 @@ python3 -m venv .venv
 此命令读取最新导出的年度待补记录，依次执行普通 HTTP、浏览器、公开原文/附件追溯、缓存重放、网页导出和 HTML 报告。可用 `--queue 候选.json --batch 批次名` 指定队列；同批次重跑跳过已下载成功文件。报告是 `publish/recovery-report.html`；GitHub 仓库的 `crawler/` 目录运行时，网页输出到仓库根目录。发布前检查具体正文数、失败原因、字段和线上版本。
 
 正文状态区分连接失败、页面访问失败、验证页面待处理、正文解析待补和待抓取。验证码交互若被工具审批拦截，保留原因并继续寻找公开发布源。新闻、政策、企业名录不会因为命中关键词自动成为项目。项目号用于公告归并；合同金额和合同供应商有独立标记，采购时间区分预计月份、合同签订与公告发布。
+
+
+## 2026-09-14：每周检索复核
+
+原式检索按来源和 A—F 分支轮转，游标保存在 `data/source-audit/keyword_cursor-*.json`，跨周接续未执行部分。引擎返回不满足 `site:` 域名限定的结果会被拒绝，不能解释为源网站无信息。
+
+江西本轮 Python HTTPS 报旧式重协商不可用；正常 Chrome 可读取官网及其公开 JSON 检索。保持系统证书校验，使用以下已验证的普通浏览器路径：
+
+```sh
+.venv/bin/python scripts/prepare_browser_plans.py
+PLAYWRIGHT_MODULE=playwright node scripts/epoint_browser_search.cjs ggzy-jiangxi 80
+```
+
+该脚本保留每页 JSON、日期范围、总数、失败及断点。宽种子结果仍需按原式检查标题和正文。周报同时显示当前自然周与最近一个完整周，避免周一采集时混淆两个统计窗口。

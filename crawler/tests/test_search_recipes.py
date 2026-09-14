@@ -30,3 +30,8 @@ class RecipeTests(unittest.TestCase):
  def test_word_boundary_false_positive_is_not_psychology(self):
   self.assertEqual(match_recipes('疾病预防控制中心理化所设备采购'),[])
   self.assertIn('A',match_recipes('学校理化生实验室和心理咨询室建设项目'))
+
+class AdditionalWordBoundaryTests(unittest.TestCase):
+ def test_livestock_core_breeding_is_not_mental_health_education(self):
+  self.assertEqual(match_recipes('国家肉牛核心育种场测绘服务采购'),[])
+  self.assertIn('A',match_recipes('核心育种场职工心理健康服务采购'))
