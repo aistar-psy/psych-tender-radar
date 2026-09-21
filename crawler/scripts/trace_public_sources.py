@@ -31,6 +31,14 @@ for r,path in latest.values():
   if re.search(r'投诉操作手册|用户手册|系统操作手册|CA.*指南|办事指南|隐私|免责声明|APP\s*下载|下载\s*APP|下载中心|客户端下载',txt,re.I):continue
   rel={'from_url':r['url'],'to_url':u,'link_text':txt,'kind':'public_attachment' if attachment else 'original_publication_candidate','status':old.get((r['url'],u),{}).get('status','pending_read'),'evidence_sha256':r['sha256']};relations.append(rel)
   queue[canonical_url(u)]={'url':u,'title':txt,'kind':'attachment' if attachment else 'document','parent_url':r['url']}
+# Separately verified exact-title lookups are evidence, not hyperlinks inferred
+# from a page. Keep their provenance and public label distinct across reruns.
+lookup_path=root/'data/source-trace/verified_lookups.json'
+for rel in json.loads(lookup_path.read_text()) if lookup_path.exists() else []:
+ if rel.get('kind')!='verified_title_lookup' or not rel.get('evidence_sha256'):continue
+ if any(urlsplit(rel.get(k,'')).scheme not in ('http','https') for k in ('from_url','to_url')):continue
+ if not any(x['from_url']==rel['from_url'] and x['to_url']==rel['to_url'] for x in relations):relations.append(rel)
+ queue[canonical_url(rel['to_url'])]={'url':rel['to_url'],'title':rel['link_text'],'kind':'document','parent_url':rel['from_url']}
 receipts=latest_receipts(root)
 for rel in relations:
  r=receipts.get(canonical_url(rel['to_url']),{})

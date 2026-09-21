@@ -1,6 +1,11 @@
 import unittest
 from radar.search_audit import audit_status
 class AuditTests(unittest.TestCase):
+ def test_browser_gaps_have_specific_labels_and_never_prove_empty(self):
+  for status,word in [('verification_required','验证'),('login_or_membership_prompt','登录'),('search_ui_unadapted','适配'),('search_ui_unverified','核实')]:
+   with self.subTest(status=status):
+    row=audit_status([],{'status':status},211)
+    self.assertIn(word,row['nativeStatus']);self.assertFalse(row['verifiedEmpty'])
  def test_index_empty_never_proves_native_empty(self):
   r=audit_status([],{'status':'connection_failed'},191)
   self.assertFalse(r['verifiedEmpty']);self.assertIn('连接',r['nativeStatus'])

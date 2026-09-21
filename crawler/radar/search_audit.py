@@ -12,6 +12,7 @@ def audit_status(queries,check,total_atoms):
  hits={x['url'] for q in queries for x in q.get('records',[])};visible={x['title'] for q in queries for x in q.get('listings',[])};pages=[p for q in queries for p in q.get('pages',[])];failed=[p for p in pages if p.get('status')!='ok']
  empty=len(verified)==total_atoms and not hits and not visible and not failed
  labels={'connection_failed':'站内连接未成功','challenge':'站内需要人机验证','registration_prompt':'站内出现注册提示','render_failed':'检索页未加载出结果','entry_only':'仅入口可访问·站内检索待核实','not_tested':'站内尚未核实','native_results':'站内结果已验证·详情待补'}
+ labels.update(verification_required='站内需要人机验证',login_or_membership_prompt='站内出现登录或会员提示',search_ui_unadapted='公开检索控件待适配',search_ui_unverified='检索条件与结果尚待核实')
  native='站内已返回结果' if hits or visible else '原式与年度分页已核验·无命中' if empty else '站内请求失败·待补' if failed else '部分词无命中·不足以判定网站无信息' if queries else labels.get(check.get('status'),'站内尚未核实')
  return {'nativeStatus':native,'nativeQueries':len(queries),'nativePages':sum(x.get('status')=='ok' for x in pages),'nativeFailedPages':len(failed),
   'recipeAtomsAttempted':len(attempted),'recipeAtomsPaged':len(paged),'recipeAtomsPlanned':total_atoms,'nativeResultUrls':len(hits),'nativeVisibleRows':len(visible),

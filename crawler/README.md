@@ -161,3 +161,11 @@ PLAYWRIGHT_MODULE=playwright node scripts/epoint_browser_search.cjs ggzy-jiangxi
 ```
 
 该脚本保留每页 JSON、日期范围、总数、失败及断点。宽种子结果仍需按原式检查标题和正文。周报同时显示当前自然周与最近一个完整周，避免周一采集时混淆两个统计窗口。
+
+## 2026-09-21 运行修正
+
+- 系统代理导致 HTTPS 中断时，可在普通浏览器命令前设置 `RADAR_BROWSER_DIRECT=1` 使用直接连接。仅在确认代理路径失败后使用；仍保留证书校验，不绕过登录、人机验证或会员权限。
+- 聚合网站关键词目录、地区/机构列表和政府采购公告索引仅用于发现链接，不能作为单条采购项目发布。
+- 运行历史按需读取 `publish/runs/` 中的独立 JSON；初始快照保留年度项目和默认运行，历史证据与正文不丢弃。发布时需同时复制 `runs/` 和 `bodies/`。
+- 重庆列表等待 DOM 完整加载后再读取；页面标题先出现不能证明整页结果与下一页控件已加载，部分 HTML 不再用作末页依据。
+- 零正文入口复核可运行 `node scripts/public_entry_audit.cjs 入口计划.json YYYYMMDD`；计划条目包含 `id`、`url` 和可选的同省正例引用 `positive_control_reference`。每站使用独立页面，避免前一站未结束的跳转污染下一站诊断；注册表单中的“验证码”不自动等同于整站访问验证。

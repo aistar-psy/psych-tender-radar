@@ -43,6 +43,14 @@ def _buyer(blocks,url):
 
 
 def _dated(text,label,tz,warnings):
+    def clock(match):
+        part,hour=match.group(1),int(match.group(2))
+        if hour>12:return match.group(0)
+        if part in ('下午','晚上') and hour<12:hour+=12
+        elif part in ('上午','凌晨') and hour==12:hour=0
+        elif part=='中午' and hour<11:hour+=12
+        return str(hour)
+    text=re.sub(r'(上午|下午|晚上|凌晨|中午)\s*(\d{1,2})(?=[:：点时])',clock,text)
     match=re.search(label+r'\s*[:：|]?\s*'+DATE,text)
     if not match: return None
     try:
@@ -86,9 +94,9 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     evidence=[{'text':b['text'],'locator':b.get('locator','document'),'url':b.get('source_url',url)} for b in blocks if re.search(PSYCH+'|'+EDU+'|健康画像',b['text'])][:8]
     result={'title':doc.get('title',''),'project_number':None,'published_at':None,'deadline':None,'category':category,'category_evidence':evidence,'products':[],'parameters':[],'amounts':[],'warnings':warnings}
     result['buyer'],result['buyer_evidence']=_buyer(blocks,url)
-    notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','采购信息公告','采购公告','采购公示')
+    notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','招标通告','采购信息公告','采购公告','采购通告','采购公示')
     result['notice_type']=next((kind for source in (title,corpus) for kind in notice_types if kind in source),None)
-    result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购公示|招标公告|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
+    result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购通告|采购公示|招标(?:公告|通告)|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
     if re.search(r'更正公告|终止公告|废标公告',corpus) and re.search(r'响应|投标|采购|招标|供应商|成交|中标|磋商',corpus):
         result['is_procurement']=True
     if re.search(r'比选公告|遴选公告',corpus) and re.search(r'供应商|报价文件|采购|招标',corpus):

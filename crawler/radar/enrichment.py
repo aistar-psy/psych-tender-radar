@@ -93,8 +93,10 @@ def parsed_evidence(path):
  except (OSError,ValueError):return {}
 
 def document_parts(d):
+ from .candidate_urls import is_listing_url
  out=[]
  for i,ev in enumerate(d.get('evidence',[])):
+  if is_listing_url(ev.get('url','')):continue
   if i==0 and d.get('main_content_status')=='unavailable':continue
   parsed=parsed_evidence(ev.get('path',''))
   if parsed.get('status') not in ('ok','parsed','partial') or parsed.get('content_status')=='unavailable':continue
@@ -139,6 +141,6 @@ def enrich(projects,documents,out):
   hits=match_evidence(p['title'],matchblocks,p['sourceUrl'],'正文' if body_obtained else '搜索摘要待核验')
   p.update(keywordVersion=load_recipes()['version'],matchEvidence=hits,matchedTerms=list(dict.fromkeys(h['term'] for h in hits)),matchPoints=list(dict.fromkeys(h['point'] for h in hits)),recipeIds=match_recipes(p['title'],'\n'.join(b['text'] for b in matchblocks)),winners=list({(w['name'],w['url']):w for w in winners}.values()),fullTexts=list({ref['path']:ref for ref in refs}.values()),procurementTime=purchase_time(allblocks,p.get('publishedAt')),sourceNames=list(dict.fromkeys(source_name(u) for u in urls)),sourceLinks=[{'name':source_name(u),'url':u} for u in urls])
   read_links={x['url'] for x in refs}
-  p['sourceTrace']=[{'fromUrl':t['from_url'],'url':t['to_url'],'label':t['link_text'],'kind':'公开附件' if t['kind']=='public_attachment' else '原文跳转链接','status':'已取得文本' if t['to_url'] in read_links else ('读取失败，待补抓' if t.get('status')=='read_failed' else '响应或跳转待核实')} for t in traces if t['from_url'] in urls]
+  p['sourceTrace']=[{'fromUrl':t['from_url'],'url':t['to_url'],'label':t['link_text'],'kind':'公开附件' if t['kind']=='public_attachment' else '同名公告源头核实' if t['kind']=='verified_title_lookup' else '原文跳转链接','status':'已取得文本' if t['to_url'] in read_links else ('读取失败，待补抓' if t.get('status')=='read_failed' else '响应或跳转待核实')} for t in traces if t['from_url'] in urls]
   p['winnerStatus']='正文提取，按原公告复核' if winners else '未取得中标信息'
  return projects

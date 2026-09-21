@@ -114,6 +114,29 @@
       window.scrollTo(0, 0);
     }
   }
+  async function selectObservation() {
+    const chosen = runs.find(r => r.id === $('#run-select').value) || run;
+    const nextScope = $('#scope-select').value;
+    const controls = [$('#run-select'), $('#scope-select'), $('#export-json')];
+    if (nextScope === 'run' && !Array.isArray(chosen.projects) && chosen.projectsRef) {
+      controls.forEach(control => control.disabled = true);
+      $('#run-status').textContent = '正在加载运行记录…';
+      try {
+        if (!/^runs\/[a-f0-9]{64}\.json$/.test(chosen.projectsRef)) throw Error('invalid run reference');
+        const response = await fetch(chosen.projectsRef);
+        if (!response.ok) throw Error('HTTP ' + response.status);
+        const projects = await response.json();
+        if (!Array.isArray(projects)) throw Error('invalid run projects');
+        chosen.projects = projects;
+      } catch {
+        $('#run-select').value = run.id || '';
+        $('#scope-select').value = scope;
+        $('#run-status').textContent = '运行记录加载失败，请重新选择以重试';
+        return;
+      } finally { controls.forEach(control => control.disabled = false); }
+    }
+    run = chosen; scope = nextScope; render();
+  }
   window.addEventListener('hashchange', () => navigate(location.hash.slice(1), { updateHistory: false }));
-  runs.forEach(r => { const opt = el('option', r.label || r.id); opt.value = r.id; $('#run-select').append(opt); }); if (!runs.length) $('#run-select').append(el('option', '暂无运行记录')); $('#run-select').value = run.id || ''; $('#run-select').addEventListener('change', e => { run = runs.find(r => r.id === e.target.value) || run; render(); }); $('#scope-select').addEventListener('change', e => { scope = e.target.value; render(); }); document.querySelectorAll('[data-view]').forEach(n => n.addEventListener('click', e => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); navigate(n.dataset.view, { focus: true }); })); document.querySelectorAll('[data-go]').forEach(n => n.addEventListener('click', () => navigate(n.dataset.go, { focus: true }))); $('#project-search').addEventListener('input', renderProjects); $('#category-filter').addEventListener('change', renderProjects); ['keyword-filter','point-filter','quality-filter'].forEach(id=>$('#'+id).addEventListener('change',renderProjects)); $('#close-dialog').addEventListener('click', () => $('#project-dialog').close()); $('#project-dialog').addEventListener('click', e => { if(e.target === e.currentTarget) { const r = e.currentTarget.getBoundingClientRect(); if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.currentTarget.close(); } }); $('#export-json').addEventListener('click', () => { const blob = new Blob([JSON.stringify({title:data.title || '心育采购观察', scope, runId:scope === 'run' ? run.id : null, exportedAt:new Date().toISOString(), projects:filtered}, null, 2)], {type:'application/json;charset=utf-8'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='心育采购观察-'+scope+'.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); $('#build-time').textContent = data.builtAt ? '数据更新 ' + data.builtAt : '尚未载入数据'; navigate(location.hash.slice(1), { updateHistory: false }); render();
+  runs.forEach(r => { const opt = el('option', r.label || r.id); opt.value = r.id; $('#run-select').append(opt); }); if (!runs.length) $('#run-select').append(el('option', '暂无运行记录')); $('#run-select').value = run.id || ''; $('#run-select').addEventListener('change', selectObservation); $('#scope-select').addEventListener('change', selectObservation); document.querySelectorAll('[data-view]').forEach(n => n.addEventListener('click', e => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); navigate(n.dataset.view, { focus: true }); })); document.querySelectorAll('[data-go]').forEach(n => n.addEventListener('click', () => navigate(n.dataset.go, { focus: true }))); $('#project-search').addEventListener('input', renderProjects); $('#category-filter').addEventListener('change', renderProjects); ['keyword-filter','point-filter','quality-filter'].forEach(id=>$('#'+id).addEventListener('change',renderProjects)); $('#close-dialog').addEventListener('click', () => $('#project-dialog').close()); $('#project-dialog').addEventListener('click', e => { if(e.target === e.currentTarget) { const r = e.currentTarget.getBoundingClientRect(); if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.currentTarget.close(); } }); $('#export-json').addEventListener('click', () => { const blob = new Blob([JSON.stringify({title:data.title || '心育采购观察', scope, runId:scope === 'run' ? run.id : null, exportedAt:new Date().toISOString(), projects:filtered}, null, 2)], {type:'application/json;charset=utf-8'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='心育采购观察-'+scope+'.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); $('#build-time').textContent = data.builtAt ? '数据更新 ' + data.builtAt : '尚未载入数据'; navigate(location.hash.slice(1), { updateHistory: false }); render();
 })();

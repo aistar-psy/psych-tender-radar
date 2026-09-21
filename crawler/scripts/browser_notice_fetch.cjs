@@ -16,7 +16,7 @@ async function run(queueFile,outDir,workers=3){
   const save=()=>{const tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify([...records.values()],null,2));fs.renameSync(tmp,file)};
   const todo=queue.filter(r=>allowed(r.url)&&records.get(r.url)?.status!=='ok');
   const hosts=new Set(),lastHost=new Map(),diagnosticHosts=new Set();let finished=0;
-  const browser=await chromium.launch({headless:process.env.RADAR_HEADFUL!=='1',channel:process.env.CHROME_CHANNEL||'chrome'});
+  const browser=await chromium.launch({headless:process.env.RADAR_HEADFUL!=='1',channel:process.env.CHROME_CHANNEL||'chrome',args:process.env.RADAR_BROWSER_DIRECT==='1'?['--no-proxy-server']:[]});
   async function worker(){
     const context=await browser.newContext({locale:'zh-CN'});
     while(todo.length){

@@ -11,6 +11,7 @@ from .report import opportunity_state
 from .fetch import canonical_url
 from .search_recipes import vocabulary_match
 from .paths import public_dir
+from .candidate_urls import is_listing_url
 
 ROOT=Path(__file__).resolve().parent.parent
 
@@ -141,6 +142,33 @@ def timestamp(value):
     try:return datetime.fromisoformat(str(value).replace('Z','+00:00')).timestamp()
     except (ValueError,TypeError):return 0
 
+def write_run_history(data,out):
+    """Keep immutable historical projects outside the initial page payload."""
+    import hashlib
+    folder=Path(out)/'runs';folder.mkdir(parents=True,exist_ok=True);referenced=set()
+    for run in data['runs']:
+        run['projectCount']=len(run['projects'])
+        if run['id']==data.get('defaultRunId'):continue
+        encoded=json.dumps(run.pop('projects'),ensure_ascii=False,separators=(',',':'))
+        name=hashlib.sha256(encoded.encode()).hexdigest()+'.json'
+        (folder/name).write_text(encoded,encoding='utf-8');referenced.add(name)
+        run['projectsRef']='runs/'+name
+    for old in folder.glob('*.json'):
+        if re.fullmatch(r'[a-f0-9]{64}\.json',old.name) and old.name not in referenced:old.unlink()
+
+def strip_listing_evidence(projects):
+    """Older snapshots may contain navigation pages mislabeled as attachments."""
+    for project in projects:
+        for field in ('fullTexts','products','parameters','matchEvidence','winners','sourceTrace','gaps'):
+            if field in project:project[field]=[row for row in project[field] if not is_listing_url(row.get('url',''))]
+        if 'matchEvidence' in project:
+            project['matchedTerms']=list(dict.fromkeys(row['term'] for row in project['matchEvidence']))
+            project['matchPoints']=list(dict.fromkeys(row['point'] for row in project['matchEvidence']))
+        if project.get('sourceQuality')=='正文已取得' and not project.get('fullTexts'):
+            reason='已存导航目录不是采购正文，详细公告仍需补抓'
+            project.update(sourceQuality='搜索线索待核验',amountEligible=False,detailStatus=reason)
+            project['acquisition']={**project.get('acquisition',{}),'code':'content_unavailable','label':'正文解析待补','reason':reason}
+
 def export(out=None,run_dirs=None):
     out=Path(out or public_dir(ROOT));out.mkdir(parents=True,exist_ok=True)
     if run_dirs is None:
@@ -152,7 +180,7 @@ def export(out=None,run_dirs=None):
     for directory in run_dirs:
         directory=Path(directory)
         read=lambda name:json.loads((directory/name).read_text(encoding='utf-8'))
-        documents=[d for d in read('documents.json') if canonical_url(d['url']) not in rejected_urls];tasks=read('execution.json');summary=read('summary.json')
+        documents=[d for d in read('documents.json') if canonical_url(d['url']) not in rejected_urls and not is_listing_url(d['url'])];tasks=read('execution.json');summary=read('summary.json')
         all_documents.extend(documents)
         read_urls.update(canonical_url(d['url']) for d in documents)
         for t in tasks:
@@ -170,7 +198,7 @@ def export(out=None,run_dirs=None):
     # Archive all successful snapshots; enrich only with explicit discovery provenance.
     candidates={}
     for f in (ROOT/'data/external-discovery').glob('*combined.json'):
-        candidates.update({canonical_url(r['url']):r for r in json.loads(f.read_text()) if r.get('url')})
+        candidates.update({canonical_url(r['url']):r for r in json.loads(f.read_text()) if r.get('url') and not is_listing_url(r['url'])})
     archive={};seen_urls=set();url_project={};excluded_urls=set()
     # Corrected parsers supersede older interpretations of the same URL. Distinct
     # procurement/correction/result URLs still contribute their own evidence.
@@ -210,6 +238,7 @@ def export(out=None,run_dirs=None):
     from .enrichment import enrich
     enrich(list(archive.values()),latest_documents,out)
     for r in runs:enrich(r['projects'],run_documents[r['id']],out)
+    strip_listing_evidence(list(archive.values())+[p for r in runs for p in r['projects']])
     from .recovery import latest_receipts,acquisition_state
     receipts=latest_receipts(ROOT)
     for project in list(archive.values())+[p for r in runs for p in r['projects']]:
@@ -242,6 +271,7 @@ def export(out=None,run_dirs=None):
     referenced={ref['path'] for p in data['archiveProjects']+[p for r in runs for p in r['projects']] for ref in p.get('fullTexts',[])}
     for old in (out/'bodies').glob('*.json'):
         if re.fullmatch(r'[a-f0-9]{64}\.json',old.name) and 'bodies/'+old.name not in referenced:old.unlink()
+    write_run_history(data,out)
     encoded=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e')
     (out/'data.js').write_text('window.RADAR_DATA = '+encoded+';\n',encoding='utf-8')
     return {'out':str(out),'runs':len(runs),'projects_in_default_run':len(preferred['projects']) if preferred else 0}

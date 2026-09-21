@@ -5,6 +5,26 @@ except ImportError:
  public_run=None
 
 class WebExportTests(unittest.TestCase):
+ def test_navigation_downloads_are_removed_but_notice_attachments_remain(self):
+  from radar.web_export import strip_listing_evidence
+  directory='https://www.hnnkyy.com/index.php?a=lists&catid=750'
+  document='https://www.hnnkyy.com/uploads/spec.pdf'
+  project={'fullTexts':[{'url':directory},{'url':document}],'matchEvidence':[{'url':directory,'term':'学生','point':'教育'},{'url':document,'term':'心理','point':'心理直接词'}]}
+  strip_listing_evidence([project]);self.assertEqual(project['fullTexts'],[{'url':document}]);self.assertEqual(project['matchedTerms'],['心理'])
+  only_directory={'sourceQuality':'正文已取得','fullTexts':[{'url':directory}]}
+  strip_listing_evidence([only_directory]);self.assertNotEqual(only_directory['sourceQuality'],'正文已取得');self.assertFalse(only_directory['amountEligible'])
+ def test_run_history_is_lossless_and_loaded_only_when_selected(self):
+  import json,tempfile
+  from pathlib import Path
+  from radar.web_export import write_run_history
+  with tempfile.TemporaryDirectory() as tmp:
+   projects=[{'id':'p','title':'学校心理系统','fullTexts':[{'path':'bodies/example.json'}]}]
+   snapshot={'defaultRunId':'current','runs':[{'id':'old','projects':projects},{'id':'current','projects':[]}]}
+   write_run_history(snapshot,Path(tmp))
+   old,current=snapshot['runs']
+   self.assertNotIn('projects',old);self.assertEqual(old['projectCount'],1)
+   self.assertEqual(json.loads((Path(tmp)/old['projectsRef']).read_text()),projects)
+   self.assertEqual(current['projects'],[])
  def test_product_names_share_one_identical_evidence_excerpt(self):
   from radar.web_export import public_rows
   rows=[{'name':name,'text':'同一采购表的完整内容','locator':'pdf/page:1','url':'https://example.org/a.pdf'} for name in ['心理平台','测评终端','心理平台']]

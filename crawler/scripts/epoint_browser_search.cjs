@@ -9,7 +9,7 @@ const plan=JSON.parse(fs.readFileSync(path.join(out,'epoint-'+id+'-plan.json')))
 let logs=fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):[];
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const save=()=>fs.writeFileSync(file,JSON.stringify(logs,null,2));
-(async()=>{const browser=await chromium.launch({headless:true,channel:'chrome'}),page=await browser.newPage();
+(async()=>{const browser=await chromium.launch({headless:true,channel:'chrome',args:process.env.RADAR_BROWSER_DIRECT==='1'?['--no-proxy-server']:[]}),page=await browser.newPage();
 try {
  await page.goto(cfg.base,{waitUntil:'domcontentloaded',timeout:20000});
  for(const seed of plan){

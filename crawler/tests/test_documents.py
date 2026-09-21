@@ -5,6 +5,14 @@ from radar.documents import parse_document
 
 
 class DocumentTests(unittest.TestCase):
+    def test_hospital_notice_keeps_publication_metadata_outside_body(self):
+        raw='<title>医院通知</title><div>学校培训导航</div><div class="xwxq_tittle">某医院心理热线项目招标通告</div><div class="xwxq_author">作者： 日期：2026-09-14 09:26:10 点击：</div><div class="xwxq_contianer">招标内容：心理热线系统升级。<p>开标时间：2026年9月22日上午9：00。</p><p>2026年9月11日</p></div>'
+        doc=parse_document(raw.encode(),'https://www.hnnkyy.com/index.php?id=1')
+        self.assertNotIn('学校培训导航',doc['text']);self.assertEqual(doc['title'],'某医院心理热线项目招标通告')
+        from radar.analysis import analyze_document
+        a=analyze_document(doc,'https://www.hnnkyy.com/index.php?id=1','2026-09-21T09:00:00+08:00')
+        self.assertEqual(a['published_at'],'2026-09-14T09:26:10+08:00')
+
     def test_qr_sidebar_and_intent_boilerplate_are_not_full_bodies(self):
         raw='<title>学校心理设备招标公告</title><div class="content">扫码关注公众号 招标商机 手机实时看</div><div class="bid-content">下文中****为隐藏内容，仅对会员开放。项目名称：****；预算金额：50万元。</div>'
         self.assertEqual(parse_document(raw.encode(),'https://www.qianlima.com/bid-1.html')['content_status'],'unavailable')

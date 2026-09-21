@@ -4,11 +4,11 @@ const runtime=process.env.PLAYWRIGHT_MODULE||'playwright';const {chromium}=requi
 const root=path.resolve(__dirname,'..'),out=path.join(root,'data/native-search'),plan=JSON.parse(fs.readFileSync(path.join(out,'browser_plan.json')));
 const file=path.join(out,'queries-browser-cq.json');let logs=fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):[];
 const save=()=>fs.writeFileSync(file,JSON.stringify(logs,null,2));
-(async()=>{const b=await chromium.launch({headless:true,channel:'chrome'});const p=await b.newPage();p.setDefaultTimeout(4000);
+(async()=>{const b=await chromium.launch({headless:true,channel:'chrome',args:process.env.RADAR_BROWSER_DIRECT==='1'?['--no-proxy-server']:[]});const p=await b.newPage();p.setDefaultTimeout(4000);
 for(const seed of plan){const id=crypto.createHash('sha256').update('browser:'+JSON.stringify(seed)).digest('hex').slice(0,24);if(logs.some(x=>x.id===id&&['exhausted','date_boundary_observed'].includes(x.stop_reason)))continue;
  const q={...seed,id,provider:'native_public_browser',checked_at:new Date().toISOString(),records:[],pages:[],field_verified:false,date_verified:false,pagination_complete:false,fulltext_status:'search_snippets_only',complete:false};let url='https://www.cqggzy.com/search?keyword='+encodeURIComponent(seed.keyword),seen=new Set();
  for(let n=1;n<=30;n++){
- try{await p.goto(url,{waitUntil:'commit',timeout:18000});let text='';for(let wait=0;wait<12;wait++){text=await p.locator('body').innerText().catch(()=>'');if(/为您找到\s*[\d,]+\s*个相关内容/.test(text))break;if(/人机验证|访问验证|Access Denied/.test(text))throw Error('access_challenge');await p.waitForTimeout(1000)}
+ try{await p.goto(url,{waitUntil:'domcontentloaded',timeout:30000});let text='';for(let wait=0;wait<12;wait++){text=await p.locator('body').innerText().catch(()=>'');if(/为您找到\s*[\d,]+\s*个相关内容/.test(text))break;if(/人机验证|访问验证|Access Denied/.test(text))throw Error('access_challenge');await p.waitForTimeout(1000)}
  const m=text.match(/为您找到\s*([\d,]+)\s*个相关内容/);if(!m)throw Error('result_area_not_loaded');q.reported_total=Number(m[1].replaceAll(',',''));
  const rows=await p.locator('li').evaluateAll(xs=>xs.flatMap(x=>{let a=x.querySelector('a[href*="/searchDetail/"]'),d=x.innerText.match(/发布时间：[\s]*(\d{4}-\d{2}-\d{2})/);return a?[{url:a.href,title:a.innerText,published_at:d?.[1]||'',snippet:''}]:[]}));
  if(!rows.length&&q.reported_total>0)throw Error('result_parser_missing_rows');let hash=crypto.createHash('sha256').update(JSON.stringify(rows.map(x=>x.url))).digest('hex');if(seen.has(hash))throw Error('repeated_page');seen.add(hash);

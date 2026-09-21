@@ -64,7 +64,7 @@ def _html(data, url, out):
         node.decompose()
     # A selector union returns the earliest DOM match, often a search widget.
     # Prefer explicit notice containers, then generic layout classes.
-    selectors=('#zbDiv','article','.article','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.detail-content','.content')
+    selectors=('#zbDiv','.xwxq_contianer','article','.article','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.detail-content','.content')
     root=None; empty_root=None
     for selector in selectors:
         candidates=soup.select(selector)
@@ -77,7 +77,7 @@ def _html(data, url, out):
         if root is not None: break
     structured=root is not None
     if root is None: root=empty_root if empty_root is not None else (soup.body or soup)
-    headings=list(root.find_all(['h1','h2']))+list(soup.select('h1, h2.tc, .info-title, .article-title, .ewb-article-title'))
+    headings=list(root.find_all(['h1','h2']))+list(soup.select('h1, h2.tc, .info-title, .article-title, .ewb-article-title, .xwxq_tittle'))
     titles=[]
     for node in headings+([soup.title] if soup.title else []):
         value=node.get_text(' ',strip=True)
@@ -101,7 +101,7 @@ def _html(data, url, out):
                 value=candidate
                 if re.search(r'\d{4}[年./-]\d{1,2}[月./-]\d{1,2}',candidate): break
             _block(out,value,f'html/metadata:{i}','metadata')
-    for i,node in enumerate(soup.select('.conttime, .time, .titx, .publish-time, time'),1):
+    for i,node in enumerate(soup.select('.conttime, .time, .titx, .publish-time, .xwxq_author, time'),1):
         value=node.get_text(' ',strip=True)
         if node.name=='time' and node.get('datetime'): value='发布时间：'+node['datetime']
         if len(value)<=250 and re.search(r'\d{4}[年./-]\d{1,2}[月./-]\d{1,2}',value) and not re.search(r'服务|履约|部署|截止|开标|开启|响应|报名',value):
@@ -112,7 +112,10 @@ def _html(data, url, out):
     for a in soup.find_all('a', href=True):
         target = urljoin(url, a['href'])
         if not _public_link(target): continue
+        from .candidate_urls import is_listing_url
+        if is_listing_url(target): continue
         label = a.get_text(' ', strip=True)
+        if root not in a.parents and re.fullmatch(r'下载专栏|文件下载|资料下载|软件下载',label): continue
         if re.search(r'APP\s*下载|下载\s*APP|下载中心|客户端下载|操作手册|用户手册|办事指南|隐私政策',label,re.I): continue
         if 'downloads/agent.jsp' in target and target.endswith('req='): continue
         kind = 'attachment' if urlparse(target).path.lower().endswith(ATTACHMENTS) or re.search('附件|下载|采购文件|招标文件', label) else 'page'

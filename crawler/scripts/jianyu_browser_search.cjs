@@ -1,7 +1,7 @@
 /* Read visible public search results and ordinary popup links only. */
 const fs=require('fs'),path=require('path'),crypto=require('crypto');const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'data/native-search'),plan=JSON.parse(fs.readFileSync(path.join(out,'jianyu_plan.json')));const file=path.join(out,'queries-browser-jianyu.json');let logs=fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):[];
-(async()=>{const b=await chromium.launch({headless:true,channel:'chrome'}),p=await b.newPage();p.setDefaultTimeout(5000);
+(async()=>{const b=await chromium.launch({headless:true,channel:'chrome',args:process.env.RADAR_BROWSER_DIRECT==='1'?['--no-proxy-server']:[]}),p=await b.newPage();p.setDefaultTimeout(5000);
 for(const seed of plan){let q={...seed,id:crypto.createHash('sha256').update('jy-public:'+JSON.stringify(seed)).digest('hex').slice(0,24),provider:'native_public_browser',checked_at:new Date().toISOString(),pages:[],records:[],listings:[],pagination_complete:false,field_verified:false,date_verified:false,fulltext_status:'search_snippets_only',complete:false};
 try{await p.goto('https://www.jianyu360.cn/jylab/supsearch/index.html?keywords='+encodeURIComponent(seed.keyword)+'&selectType=title&searchGroup=1',{waitUntil:'commit',timeout:20000});await p.getByText(/搜索到\s*[\d,]+\s*条信息/).first().waitFor({timeout:40000});
 for(let n=1;n<=Number(process.env.MAX_PUBLIC_PAGES||10);n++){

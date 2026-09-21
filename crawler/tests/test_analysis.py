@@ -8,6 +8,12 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_procurement_tonggao_and_chinese_clock(self):
+        for part,hour in [('上午',9),('下午',21)]:
+            a=analyze('某医院12356心理援助热线系统升级项目招标通告\n招标内容：系统升级\n投标人资格要求\n开标时间：2026年9月22日'+part+'9：00。')
+            self.assertTrue(a['is_procurement']);self.assertEqual(a['notice_type'],'招标通告')
+            self.assertEqual(a['opening_at'],f'2026-09-22T{hour:02}:00:00+08:00')
+
     def test_chongqing_project_number_and_title_notice_type(self):
         d={'title':'学校心理设备询价公告','text':'项目号：\nFDX26A00518\n预算金额：721,669.00元\n如发布更正公告，以更正为准。'}
         a=analyze_document(d,'https://e/a','2026-09-09T12:00:00+08:00')

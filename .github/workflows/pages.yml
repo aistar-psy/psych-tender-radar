@@ -23,6 +23,7 @@ jobs:
           mkdir _site
           cp index.html style.css app.js sources.js data.js recovery-report.html annual-projects.html _site/
           cp -R bodies _site/
+          if [ -d runs ]; then cp -R runs _site/; fi
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
