@@ -5,6 +5,7 @@ from functools import lru_cache
 from urllib.parse import urlsplit
 from .search_recipes import load_recipes,keyword_text,match_recipes,clauses
 from .documents import content_issue
+from .public_safety import redact_public
 
 def match_evidence(title,blocks,url,body_label='正文'):
  sources=[{'text':title,'locator':'title','source_url':url,'field':'标题'}]+[{**b,'field':body_label} for b in blocks]
@@ -130,10 +131,10 @@ def enrich(projects,documents,out):
    winners+=awarded_suppliers(d['analysis']['title'],blocks,url)
    for part in parts[url]:
     # Text is stored separately to keep the searchable index small.
-    content={k:v for k,v in part.items() if k!='blocks'};encoded=json.dumps(content,ensure_ascii=False)
+    content=redact_public({k:v for k,v in part.items() if k!='blocks'});encoded=json.dumps(content,ensure_ascii=False)
     name=hashlib.sha256(encoded.encode()).hexdigest()+'.json';target=bodydir/name
     if not target.exists():target.write_text(encoded)
-    refs.append({k:v for k,v in content.items() if k!='text'}|{'path':'bodies/'+name,'characters':len(part['text'])})
+    refs.append({k:v for k,v in part.items() if k not in ('text','blocks')}|{'path':'bodies/'+name,'characters':len(content['text'])})
   if p.get('sourceQuality')=='正文已取得' and not refs:
    p.update(sourceQuality='搜索线索待核验',amountEligible=False,detailStatus='历史页面仅有摘要或正文不可用，待追查原始发布源')
   body_obtained=p.get('sourceQuality')=='正文已取得'

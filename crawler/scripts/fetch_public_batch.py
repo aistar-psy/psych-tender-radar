@@ -9,6 +9,7 @@ from radar.source_scan import is_challenge
 from radar.pipeline import write_json
 from radar.http import secure_session
 from radar.paths import public_dir
+from radar.documents import MAX_BYTES as MAX_ATTACHMENT_BYTES
 
 # Support the local workspace and the published repository's crawler/ layout.
 _root = Path(__file__).resolve().parents[1]
@@ -25,10 +26,16 @@ def run(queue,out,workers=3):
    validate_url(url)
    with secure_session() as session, session.get(url,timeout=(10,20),stream=True) as r:
     result.update(status_code=r.status_code,final_url=r.url)
-    r.raise_for_status();validate_url(r.url);body=b''
+    r.raise_for_status();validate_url(r.url)
+    limit=MAX_ATTACHMENT_BYTES if row.get('kind')=='attachment' else 5*1024*1024
+    try:declared=int(r.headers.get('Content-Length',''))
+    except (TypeError,ValueError):declared=None
+    if declared is not None and declared>limit:raise ValueError('body_limit')
+    body=bytearray()
     for chunk in r.iter_content(65536):
-     body+=chunk
-     if len(body)>5*1024*1024:raise ValueError('body_limit')
+     if len(body)+len(chunk)>limit:raise ValueError('body_limit')
+     body.extend(chunk)
+    body=bytes(body)
     if ('html' in r.headers.get('Content-Type','').lower() or body.lstrip().lower().startswith((b'<html',b'<!doctype html'))) and is_challenge(body):raise ValueError('access_challenge')
     if not body.strip():raise ValueError('empty_body')
     digest=hashlib.sha256(body).hexdigest();path='bodies/'+digest+'.bin';(out/path).write_bytes(body)

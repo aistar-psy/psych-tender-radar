@@ -8,6 +8,20 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_explicit_corrected_price_keeps_notice_evidence(self):
+        doc = {'title': '学校心理辅导室设备采购更正公告', 'text': '本项目最高限价更正为174.838万元。'}
+        result = analyze_document(doc, 'https://e/correction', '2026-10-12T09:00:00+08:00')
+        self.assertEqual(result['notice_type'], '更正公告')
+        self.assertEqual([(a['type'], a['value']) for a in result['amounts']], [('限价', 1748380)])
+        self.assertEqual(result['amounts'][0]['url'], 'https://e/correction')
+        self.assertIn('更正为', result['amounts'][0]['text'])
+
+    def test_inquiry_opening_is_not_response_submission_start(self):
+        result = analyze('学校心理设备询价公告\n询价响应文件递交开始时间：2026年10月13日 09:30\n询价响应文件递交截止时间：2026年10月14日 09:30\n询价开始时间：2026年10月14日 10:00')
+        self.assertEqual(result['opening_at'], '2026-10-14T10:00:00+08:00')
+        self.assertEqual(result['deadline'], '2026-10-14T09:30:00+08:00')
+        self.assertIsNone(analyze('询价响应文件递交开始时间：2026年10月13日 09:30')['opening_at'])
+
     def test_procurement_tonggao_and_chinese_clock(self):
         for part,hour in [('上午',9),('下午',21)]:
             a=analyze('某医院12356心理援助热线系统升级项目招标通告\n招标内容：系统升级\n投标人资格要求\n开标时间：2026年9月22日'+part+'9：00。')

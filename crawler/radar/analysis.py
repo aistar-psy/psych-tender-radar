@@ -121,7 +121,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
                 if result['published_at']: break
     result['bid_at']=result['published_at']
     result['bid_at_semantics']='公开发布日期'
-    result['opening_at']=_dated(text,r'(?:(?:开标|开启)\s*(?:时间|日期)|(?:开标|开启)\s*[:：]?\s*时间)',current.tzinfo,warnings)
+    result['opening_at']=_dated(text,r'(?:(?:开标|开启)\s*(?:时间|日期)|(?:开标|开启)\s*[:：]?\s*时间|询价\s*开始\s*(?:时间|日期))',current.tzinfo,warnings)
     buyer_name=result['buyer'] or ''
     result['buyer_type']='B/企业' if re.search(r'公司|集团|企业',buyer_name) else ('G/事业单位' if re.search(r'职业教育中心|教师发展中心|大学|学院|学校|小学|中学|幼儿园|教育(?:和|与)?(?:科技|科学技术)?(?:和)?(?:体育)?局|教体局|教育厅|委员会|政府|管理局|管理中心|事业单位',buyer_name) else '未知')
     result['buyer_type_evidence']={'method':'根据采购人名称规则推断，待核验','text':buyer_name,'url':url} if buyer_name else {'method':'采购人未识别，未知'}
@@ -138,7 +138,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['province']=next(iter(matched)) if len(matched)==1 else None
     if len(matched)>1: warnings.append('采购方地区证据冲突，省份待核验')
     result['deadline']=_dated(text,r'(?:(?:响应|投标)\s*(?:截止时间|截止日期)|(?:提交|递交)(?:响应|投标)文件\s*[:：]?\s*(?:截止时间|截止日期)|(?:响应|投标)文件(?:提交|递交)\s*(?:截止时间|截止日期))',current.tzinfo,warnings)
-    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|中标[（(]成交[）)]金额|成交金额|中标金额|中标价格|合同金额|预算)\s*(?:为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit>亿元|万元|元)?')
+    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|中标[（(]成交[）)]金额|成交金额|中标金额|中标价格|合同金额|预算)\s*(?:更正为|为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit>亿元|万元|元)?')
     seen=set()
     table_headers={}
     amount_headers={}

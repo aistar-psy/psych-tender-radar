@@ -12,6 +12,7 @@ from .fetch import canonical_url
 from .search_recipes import vocabulary_match
 from .paths import public_dir
 from .candidate_urls import is_listing_url
+from .public_safety import redact_public
 
 ROOT=Path(__file__).resolve().parent.parent
 
@@ -149,7 +150,7 @@ def write_run_history(data,out):
     for run in data['runs']:
         run['projectCount']=len(run['projects'])
         if run['id']==data.get('defaultRunId'):continue
-        encoded=json.dumps(run.pop('projects'),ensure_ascii=False,separators=(',',':'))
+        encoded=json.dumps(redact_public(run.pop('projects')),ensure_ascii=False,separators=(',',':'))
         name=hashlib.sha256(encoded.encode()).hexdigest()+'.json'
         (folder/name).write_text(encoded,encoding='utf-8');referenced.add(name)
         run['projectsRef']='runs/'+name
@@ -271,6 +272,7 @@ def export(out=None,run_dirs=None):
     referenced={ref['path'] for p in data['archiveProjects']+[p for r in runs for p in r['projects']] for ref in p.get('fullTexts',[])}
     for old in (out/'bodies').glob('*.json'):
         if re.fullmatch(r'[a-f0-9]{64}\.json',old.name) and 'bodies/'+old.name not in referenced:old.unlink()
+    data=redact_public(data)
     write_run_history(data,out)
     encoded=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e')
     (out/'data.js').write_text('window.RADAR_DATA = '+encoded+';\n',encoding='utf-8')
