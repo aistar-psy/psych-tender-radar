@@ -8,6 +8,18 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_staff_qualities_do_not_make_property_services_psychology_procurement(self):
+        doc={'title':'延安市实验中学物业服务采购结果公告','text':'项目编号：PROPERTY-2026-001。中标金额：147万元。安保人员应具备强大的心理素质，具备良好的情绪管理能力。'}
+        result=analyze_document(doc,'https://e/property','2026-10-20T09:00:00+08:00')
+        self.assertEqual(result['category'],'待核验')
+        self.assertTrue(result['is_procurement'])
+        self.assertEqual(result['amounts'][0]['value'],1470000)
+
+    def test_real_psychology_services_inside_property_contract_remain_relevant(self):
+        for title,text in [('学校物业服务采购公告','服务范围包括学生心理辅导、心理咨询服务。'),('教师心理素质培训采购公告','为学校教师提供心理培训服务。')]:
+            with self.subTest(title=title):
+                self.assertIn(analyze_document({'title':title,'text':text},'https://e/service','2026-10-20T09:00:00+08:00')['category'],('教育核心','教育相关'))
+
     def test_explicit_corrected_price_keeps_notice_evidence(self):
         doc = {'title': '学校心理辅导室设备采购更正公告', 'text': '本项目最高限价更正为174.838万元。'}
         result = analyze_document(doc, 'https://e/correction', '2026-10-12T09:00:00+08:00')

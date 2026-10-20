@@ -3,6 +3,24 @@ from radar.candidate_urls import is_listing_url
 
 
 class CandidateUrlTests(unittest.TestCase):
+    def test_procurement_homepages_and_henan_columns_are_discovery_only(self):
+        for url in (
+            'https://puyang.zfcg.henan.gov.cn/',
+            'https://www.sxggzyjy.cn',
+            'https://xuchang.zfcg.henan.gov.cn/puyang',
+            'https://ruzhou.zfcg.henan.gov.cn/ruzhou/',
+            'https://zhecheng.zfcg.henan.gov.cn/henan/list2?bz=1&pageNo=24&pageSize=20',
+        ):
+            with self.subTest(url=url): self.assertTrue(is_listing_url(url))
+
+    def test_henan_content_and_query_routed_homepage_notices_survive(self):
+        for url in (
+            'https://puyang.zfcg.henan.gov.cn/puyang/content?channelCode=H701401&infoId=2030625',
+            'https://example.edu.cn/?noticeId=123',
+            'https://example.edu.cn/puyang/',
+        ):
+            with self.subTest(url=url): self.assertFalse(is_listing_url(url))
+
     def test_keyword_hotlists_are_not_notices(self):
         for url in (
             'https://www.bidcenter.com.cn/hotlist-1-5206-5d9a96040d5d22a66cd59fe5da1dd410.html',

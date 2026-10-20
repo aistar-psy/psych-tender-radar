@@ -9,6 +9,11 @@ def is_listing_url(url):
         host, path = (parsed.hostname or '').lower(), parsed.path.lower()
     except (TypeError, ValueError):
         return False
+    if host == 'zfcg.henan.gov.cn' or host.endswith('.zfcg.henan.gov.cn'):
+        return bool(re.fullmatch(r'/(?:[a-z]+/)?list[12]/?', path)) or (
+            not parsed.query and (path in ('', '/') or bool(re.fullmatch(r'/[a-z]+/?', path))))
+    if host in ('sxggzyjy.cn', 'www.sxggzyjy.cn') and path in ('', '/') and not parsed.query:
+        return True
     if host == 'bidcenter.com.cn' or host.endswith('.bidcenter.com.cn'):
         return bool(re.match(r'^/(?:zhaobiao/(?:agencies_|areanew_|zbkeyw-)|hotlist-|enterprise/)', path))
     if host == 'qianlima.com' or host.endswith('.qianlima.com'):
