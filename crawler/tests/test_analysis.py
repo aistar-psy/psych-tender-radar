@@ -20,6 +20,14 @@ class AnalysisTests(unittest.TestCase):
             with self.subTest(title=title):
                 self.assertIn(analyze_document({'title':title,'text':text},'https://e/service','2026-10-20T09:00:00+08:00')['category'],('教育核心','教育相关'))
 
+    def test_purchased_psychological_quality_training_in_property_contract_is_relevant(self):
+        doc={'title':'学校物业综合服务采购公告','text':'采购内容包括为学校安保人员购买心理素质培训课程，组织专业培训服务。'}
+        self.assertIn(analyze_document(doc,'https://e/training','2026-10-20T09:00:00+08:00')['category'],('教育核心','教育相关'))
+
+    def test_purchased_emotional_management_course_in_property_contract_is_relevant(self):
+        doc={'title':'学校物业综合服务采购公告','text':'采购内容包括为学生提供情绪管理能力提升课程。'}
+        self.assertIn(analyze_document(doc,'https://e/course','2026-10-20T09:00:00+08:00')['category'],('教育核心','教育相关'))
+
     def test_explicit_corrected_price_keeps_notice_evidence(self):
         doc = {'title': '学校心理辅导室设备采购更正公告', 'text': '本项目最高限价更正为174.838万元。'}
         result = analyze_document(doc, 'https://e/correction', '2026-10-12T09:00:00+08:00')

@@ -73,8 +73,9 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     corpus=keyword_text(doc.get('title','')+'\n'+text)
     classification_corpus=corpus
     if re.search(r'物业|保洁|安保|保安|后勤',doc.get('title','')) and not re.search(PSYCH,keyword_text(doc.get('title',''))):
-        # Staff qualities alone do not establish a purchased psychology service.
-        classification_corpus=re.sub(r'心理素质|情绪管理能力','',corpus)
+        # Remove explicit staff qualifications only; purchased courses remain relevant.
+        staff_quality=r'(?:具备|具有|应有|拥有|强大|良好|较强|较好)(?:良好|强大|较强|较好)?的?(?:心理素质|情绪管理能力)(?!\s*(?:培训|课程|训练|提升))'
+        classification_corpus=re.sub(staff_quality,'',corpus)
     psych=bool(re.search(PSYCH,classification_corpus)); edu=bool(re.search(EDU,corpus))
     medical=bool(re.search(MEDICAL,corpus))
     ordinary=bool(re.search(r'普通椅|轮椅|病床|办公家具|保洁|物业|空调',corpus))
