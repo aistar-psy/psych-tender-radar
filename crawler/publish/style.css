@@ -18,3 +18,11 @@
 .home-shortcuts p{color:var(--muted);font-size:12px;margin:0}
 @media(min-width:701px) and (max-height:800px){.sidebar{padding-top:24px;padding-bottom:24px}.brand-mark{margin-bottom:16px}.nav-label{margin-top:25px}.nav-item{padding-block:11px;margin-bottom:4px}.sidebar-note{padding-top:24px}.sidebar-note p{font-size:17px;margin:12px 0}}
 @media(max-width:700px){.sidebar{overflow:visible}.sidebar nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-bottom:12px}.nav-item{font-size:13px;padding:11px 4px;gap:6px}.home-intro h1{font-size:34px}.home-shortcuts{margin-bottom:24px}.home-shortcuts>a{padding:16px 14px 16px 0}.home-shortcuts>a+a{padding-left:14px}.home-shortcuts strong{font-size:20px}.home-shortcuts p{font-size:11px}.shortcut-kicker{font-size:8px;letter-spacing:.5px}}
+
+/* Project titles open the recorded notice; evidence details remain separate. */
+.project-title,.table-project-link,.dialog-title-link{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;color:var(--accent);overflow-wrap:anywhere}
+.project-title:hover,.table-project-link:hover,.dialog-title-link:hover{text-decoration-thickness:2px}
+.project-row{grid-template-columns:43px minmax(0,1fr) 150px 44px}.project-row .row-arrow{font-size:12px;white-space:nowrap;text-decoration:underline;text-underline-offset:4px}
+.original-notice-link{display:flex;width:fit-content;align-items:center;margin:16px 0 0;padding:10px 15px;background:var(--accent);color:var(--white);font-size:13px;text-decoration:none;border:1px solid var(--accent)}
+.original-notice-link:hover{background:var(--ink);border-color:var(--ink)}
+@media(max-width:700px){.project-row{grid-template-columns:26px minmax(0,1fr) 38px}.project-row .project-finance{grid-column:2}.project-row .row-arrow{grid-column:3;grid-row:1}.dialog-title{font-size:24px}}
