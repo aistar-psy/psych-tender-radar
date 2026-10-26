@@ -15,6 +15,15 @@ class SopExportTests(unittest.TestCase):
   self.assertEqual(out['migration']['queriesExecuted'],1);self.assertEqual(out['migration']['status'],'partial');self.assertFalse(out['migration']['annualComplete'])
 
 class SopStateTests(unittest.TestCase):
+ def test_large_valid_backup_roundtrips_through_export_and_import(self):
+  root=Path(__file__).resolve().parents[1]
+  js="""const a=require('node:assert/strict'),s=require('./publish/sop-state.js');
+  const ids=['scope','discovery','evidence','classification','fields','publication','recovery','vocabulary'],weeks={};
+  for(let i=0;i<8;i++){const d=new Date('2026-10-26T00:00:00+08:00');d.setUTCDate(d.getUTCDate()+i*7);weeks[s.weekKey(d)]=Object.fromEntries(ids.map(id=>[id,{status:'完成',evidence:'证'.repeat(6000),updatedAt:new Date().toISOString()}]));}
+  const original=s.validateBackup({schemaVersion:1,weeks},ids),text=s.stringifyBackup(original,ids);
+  a.ok(Buffer.byteLength(text)>1024*1024);a.deepEqual(s.parseBackup(text,ids),original);
+  a.throws(()=>s.checkBackupSize(s.MAX_BACKUP_BYTES+1),/备份文件/);console.log('Large exported backup restored');"""
+  result=subprocess.run(['node','-e',js],cwd=root,text=True,capture_output=True);self.assertEqual(result.returncode,0,result.stdout+result.stderr)
  def test_week_evidence_and_backup_rules(self):
   root=Path(__file__).resolve().parents[1]
   js="""const a=require('node:assert/strict'),s=require('./publish/sop-state.js');
