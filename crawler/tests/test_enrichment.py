@@ -6,6 +6,15 @@ class EnrichmentTests(unittest.TestCase):
   found=awarded_suppliers('心理服务项目中标（成交）结果公告',rows,'https://example.org/result')
   self.assertEqual([x['name'] for x in found],['陕西心理服务有限公司'])
 
+ def test_summary_label_value_row_does_not_turn_following_labels_into_winners(self):
+  rows=[{'text':text,'kind':'table_row','locator':f'html/table:1/row:{i}'} for i,text in enumerate(['中标单位 | 一线达通科技集团有限公司 | 中标金额 | ***','联系方式 | *** | |'],1)]
+  self.assertEqual([r['name'] for r in awarded_suppliers('心理设备中标公告',rows,'https://e/result')],['一线达通科技集团有限公司'])
+
+ def test_form_labels_and_stamp_instructions_are_not_suppliers(self):
+  labels=['联系方式','（加盖单位公章）','（全称及公章）','磋商响应文件签字、盖章','统一社会信用代码','采购项目编号','服务期','资产总额（万元）','法定代表人或被授权代表（签字或盖章）','（供应商公章） 项目编号：SNJZ-2025-158','二〇二五年 月']
+  rows=[{'text':'供应商名称：'+name,'locator':f'p:{i}'} for i,name in enumerate(labels+['陕西心理服务有限公司（加盖单位公章）'])]
+  self.assertEqual([r['name'] for r in awarded_suppliers('心理服务结果中标公告',rows,'https://e/result')],['陕西心理服务有限公司'])
+
  def test_contract_supplier_and_signing_date_are_explicit(self):
   rows=[{'text':'供应商(乙方)：某心理健康服务协会','locator':'p:1'}, {'text':'合同签订日期','locator':'p:2'}, {'text':'2024年11月25日','locator':'p:3'}]
   found=awarded_suppliers('学校心理服务中心政府采购合同公告',rows,'https://example.org')
@@ -32,6 +41,15 @@ class EnrichmentTests(unittest.TestCase):
 
 
 class FullTextEvidenceTests(unittest.TestCase):
+ def test_removed_sidebar_link_is_not_retained_as_historical_attachment(self):
+  from unittest.mock import patch
+  from radar.enrichment import document_parts
+  main={'status':'ok','text':'心理服务采购正文','blocks':[{'text':'心理服务采购正文'}],'links':[{'kind':'attachment','url':'https://e/need.pdf'}]}
+  attachment={'status':'ok','text':'真实心理采购需求','blocks':[{'text':'真实心理采购需求'}]}
+  with patch('radar.enrichment.parsed_evidence',side_effect=lambda path:main if path=='main' else attachment):
+   d={'url':'https://e/notice','analysis':{'title':'心理采购公告'},'evidence':[{'path':'main','url':'https://e/notice','content_type':'text/html'},{'path':'bad','url':'https://e/unrelated-notice'},{'path':'good','url':'https://e/need.pdf'}]}
+   self.assertEqual([p['url'] for p in document_parts(d)],['https://e/notice','https://e/need.pdf'])
+
  def test_access_pages_and_scan_watermarks_are_not_exported_as_full_text(self):
   from unittest.mock import patch
   from radar.enrichment import document_parts

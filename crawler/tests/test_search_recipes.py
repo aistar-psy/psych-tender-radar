@@ -35,3 +35,12 @@ class AdditionalWordBoundaryTests(unittest.TestCase):
  def test_livestock_core_breeding_is_not_mental_health_education(self):
   self.assertEqual(match_recipes('国家肉牛核心育种场测绘服务采购'),[])
   self.assertIn('A',match_recipes('核心育种场职工心理健康服务采购'))
+
+class NurseryWordBoundaryTests(unittest.TestCase):
+ def test_agriculture_core_nursery_does_not_match_xinyu(self):
+  from radar.analysis import analyze_document
+  title='榆林市横山区育苗基地建设项目竞争性磋商公告'
+  text='项目编号：NURSERY-2026-01。最高限价：1614697.37元。购置并安装核心育苗设备。'
+  self.assertEqual(match_recipes(title,text),[])
+  self.assertEqual(analyze_document({'title':title,'text':text},'https://e.gov.cn/a','2026-10-26T09:00:00+08:00')['category'],'待核验')
+  self.assertIn('A',match_recipes('学校心育中心设备采购'))

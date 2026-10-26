@@ -63,6 +63,16 @@ class LifecycleExportTests(unittest.TestCase):
   correction={'project_id':'p','url':'https://example.org/b','analysis':{'title':'心理系统更正公告','category':'教育核心','published_at':'2026-09-03','notice_type':'更正公告','deadline':'2026-09-20','parameters':[{'text':'更正为200人','locator':'line:2','url':'https://example.org/b'}],'amounts':[{'type':'预算','value':50000,'currency':'CNY'}]}}
   p=public_run({'run_id':'r'},[original,correction],[])['projects'][0]
   self.assertEqual(p['deadline'],'2026-09-20');self.assertFalse(p['amountEligible']);self.assertEqual(len(p['parameters']),2)
+ def test_same_number_correction_links_missing_buyer_result_without_losing_evidence(self):
+  from radar.web_export import merge_numbered_corrections
+  old={'id':'old','number':'HNQZ2026-5-1','title':'海口市中小学心理健康教育基础环境建设项目结果公告','buyer':None,'sourceUrl':'https://ggzy.haikou.gov.cn/gonggao/93649','publishedAt':'2026-06-29','amountEligible':True,'amounts':[{'type':'成交','value':7605584}],'events':[{'url':'https://ggzy.haikou.gov.cn/gonggao/93649','type':None}],'parameters':[{'text':'历史参数','url':'https://ggzy.haikou.gov.cn/gonggao/93649'}]}
+  correction={'id':'new','number':'HNQZ2026-5-1','title':'海口市中小学心理健康教育基础环境建设项目结果更正公告（第一次）','buyer':'海口市教育综合服务中心','sourceUrl':'https://ggzy.haikou.gov.cn/gonggao/94160','publishedAt':'2026-07-22','amountEligible':False,'amounts':[],'events':[{'url':'https://ggzy.haikou.gov.cn/gonggao/94160','type':'更正公告'}],'parameters':[{'text':'中标更正为未中标，作废标处理','url':'https://ggzy.haikou.gov.cn/gonggao/94160'}]}
+  tender={**old,'id':'tender','title':'海口市中小学心理健康教育基础环境建设项目公开招标招标公告','buyer':correction['buyer'],'publishedAt':'2026-06-05','events':[{'url':'https://ggzy.haikou.gov.cn/gonggao/93210','type':'招标公告'}],'parameters':[]}
+  merged=merge_numbered_corrections([old,correction,tender]);self.assertEqual(len(merged),1)
+  self.assertFalse(merged[0]['amountEligible']);self.assertEqual(merged[0]['buyer'],correction['buyer']);self.assertEqual(len(merged[0]['events']),3);self.assertEqual(len(merged[0]['parameters']),2)
+  self.assertEqual(len(merge_numbered_corrections([{**old,'buyer':'另一采购单位'},correction])),2)
+  self.assertEqual(len(merge_numbered_corrections([{**old,'sourceUrl':'https://other.gov.cn/result'},correction])),2)
+
  def test_cross_run_retains_events_and_parameter_sources(self):
   from radar.web_export import merge_project
   newer={'id':'p','publishedAt':'2026-09-03','sourceQuality':'正文已取得','events':[{'url':'https://b.gov.cn/2','type':'成交公告','publishedAt':'2026-09-03'}],'parameters':[],'products':[],'gaps':[],'amounts':[{'type':'成交','value':50000}]}

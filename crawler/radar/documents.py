@@ -60,11 +60,11 @@ def _html(data, url, out):
     if location.hostname=='www.sxggzyjy.cn' and re.match(r'^/(?:xwzx|zcfg|cxgk)/',location.path):
         out['page_kind']='non_notice'
     soup = BeautifulSoup(data, 'html.parser', from_encoding='utf-8' if _utf8(data) else None)
-    for node in soup.select('script, style, nav, footer, header, aside, noscript, .nav, .navigation, .footer, .breadcrumb, .new_miew, .fixedbox, .detail-content-recommend'):
+    for node in soup.select('script, style, nav, footer, header, aside, noscript, .nav, .navigation, .footer, .breadcrumb, .new_miew, .fixedbox, .detail-content-recommend, .page-main-aside'):
         node.decompose()
     # A selector union returns the earliest DOM match, often a search widget.
     # Prefer explicit notice containers, then generic layout classes.
-    selectors=('#zbDiv','.xwxq_contianer','article','.article','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.detail-content','.content')
+    selectors=('#zbDiv','.xwxq_contianer','article','.article','.detail-content','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.content')
     root=None; empty_root=None
     for selector in selectors:
         candidates=soup.select(selector)

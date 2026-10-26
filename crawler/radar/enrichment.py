@@ -32,14 +32,25 @@ def match_evidence(title,blocks,url,body_label='正文'):
       out.append({'term':term,'point':points[recipe['id']],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
  return list({(h['term'],h['field'],h['url']):h for h in out}.values())
 
+def supplier_name(value):
+ """Normalize explicit award names, rejecting form labels and blank stamps."""
+ name=value.strip(' ：:　').split('供应商地址')[0].strip()
+ name=re.sub(r'\s*[（(](?:加盖|盖)?(?:供应商)?(?:单位)?公?章[）)]\s*$','',name).strip()
+ if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$|项目编号|招标编号',name):return None
+ compact=re.sub(r'\s+','',name)
+ if re.fullmatch(r'[_*＊×—-]+|[（(]?(?:(?:加盖|盖)?(?:供应商)?(?:单位)?(?:公章|章)|全称及公章|供应商全称并加盖公章|单位性质|签字)[）)]?',compact):return None
+ if re.fullmatch(r'(?:磋商)?(?:响应|投标)?文件(?:格式|签字[、，和及或]*盖章)|(?:法定代表人|授权代表|被授权人|法定代表人或被授权代表)(?:[（(].*[）)])?|签(?:字|名)[、，和及或]*盖章(?:要求)?',compact):return None
+ if re.fullmatch(r'(?:联系方式|统一社会信用代码|组织机构代码|信用代码号|电子邮箱|税务登记机关|投标资质|中标价|建造师(?:姓名)?|招标人|招标代理机构|监管机构|监督机构|企业资质|供应商报价|供应商特殊性质|上年营业收入|营业执照(?:号)?|注册号码?|发证机关|资产总额|营业范围(?:[（(](?:主营|兼营)[）)])?|基本开户行|基本账户开户银行|基本账户银行账号|时[间]|技术负责人|成立时间|注册资金|经营范围|最高限价|合同条款响应|合同履行期限|磋商有效期|投标有效期|投标报价|响应文件报价|响应文件有效性|响应有效期|服务期(?:限)?|服务内容及要求|交货期(?:、质保期)?|质保期|其他实质性要求|单位)(?:[（(]万元[）)]|[:：]万元)?',compact):return None
+ if re.fullmatch(r'[二〇零一两三四五六七八九十\d]+年(?:月|\d+月)?',compact):return None
+ return name
+
 def awarded_suppliers(title,blocks,url):
  contract='合同公告' in title
  if not (contract or '采购结果公告' in title or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):
-  name=value.strip(' ：:　').split('供应商地址')[0].strip()
-  if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$',name):return
-  if re.fullmatch(r'[\s_*＊×—-]+|[（(]?\s*(?:盖(?:单位)?章|单位性质|签字|公章)\s*[）)]?',name):return
+  name=supplier_name(value)
+  if not name:return
   if name not in seen:seen.add(name);out.append({'name':name,'role':'合同供应商' if contract else '中标单位','url':b.get('source_url',url),'locator':b.get('locator','document'),'text':b['text']})
  for bi,b in enumerate(blocks):
   line=b.get('text','');cells=[s.strip() for s in line.split('|')];key=(b.get('source_url',url),b.get('locator','').rsplit('/row:',1)[0])
@@ -54,7 +65,11 @@ def awarded_suppliers(title,blocks,url):
    if indices and any(re.search(r'排序|排名|最终报价|投标报价|评审报价',c) for c in cells) and not any(re.search(r'(?:中标|成交).*金额',c) for c in cells):
     headers[key]=[];continue
    if indices:
-    if len(cells)==2 and indices==[0]:add(cells[1],b)
+    # Summary tables use alternating labels/values, not column headers.
+    pairs=[i for i in indices if i+1<len(cells) and supplier_name(cells[i+1]) and not re.search(r'金额|报价|得分|排序|排名|序号',cells[i+1])]
+    if pairs:
+     for i in pairs:add(cells[i+1],b)
+     headers.pop(key,None)
     else:headers[key]=indices
    elif key in headers:
     for i in headers[key]:
@@ -96,9 +111,15 @@ def parsed_evidence(path):
 
 def document_parts(d):
  from .candidate_urls import is_listing_url
- out=[]
+ out=[];allowed=None
+ if d.get('evidence'):
+  first=d['evidence'][0]
+  if 'html' in first.get('content_type','').lower():
+   main=parsed_evidence(first.get('path',''))
+   if 'links' in main:allowed={row['url'] for row in main['links'] if row.get('kind')=='attachment'}
  for i,ev in enumerate(d.get('evidence',[])):
   if is_listing_url(ev.get('url','')):continue
+  if i and allowed is not None and ev.get('url') not in allowed:continue
   if i==0 and d.get('main_content_status')=='unavailable':continue
   parsed=parsed_evidence(ev.get('path',''))
   if parsed.get('status') not in ('ok','parsed','partial') or parsed.get('content_status')=='unavailable':continue

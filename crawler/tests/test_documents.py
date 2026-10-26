@@ -23,6 +23,17 @@ class DocumentTests(unittest.TestCase):
         self.assertIn('测评量表不少于20套',doc['text'])
         self.assertEqual(result['amounts'][0]['value'],400000)
 
+    def test_jianyu_sidebar_cannot_reclassify_or_supply_attachments(self):
+        raw='''<title>深圳某单位心理服务采购项目招标公告</title><main class="page-main"><section class="page-main-content"><h1>深圳某单位心理服务采购项目招标公告</h1><p>发布日期：2026-09-22</p><main class="detail-content"><p>项目编号：2026-JWGDSZ-F4009。项目预算：20万元。为官兵提供心理咨询服务，服务期限1年。</p><a href="/files/requirements.pdf">采购需求.pdf</a></main></section><section class="page-main-aside"><main class="aside-card-content"><a href="/jybx/school.html">肇庆市商业幼儿园食材供应商遴选</a><a href="/jybx/road.html">某小学工程招标文件</a></main></section></main>'''
+        url='https://guangdong.jianyu360.cn/jybx/notice.html'
+        doc=parse_document(raw.encode(),url)
+        from radar.analysis import analyze_document
+        result=analyze_document(doc,url,'2026-10-26T09:00:00+08:00')
+        self.assertEqual(result['category'],'其他心理')
+        self.assertEqual(result['published_at'],'2026-09-22')
+        self.assertNotIn('幼儿园',doc['text'])
+        self.assertEqual([l['url'] for l in doc['links'] if l['kind']=='attachment'],['https://guangdong.jianyu360.cn/files/requirements.pdf'])
+
     def test_hospital_notice_keeps_publication_metadata_outside_body(self):
         raw='<title>医院通知</title><div>学校培训导航</div><div class="xwxq_tittle">某医院心理热线项目招标通告</div><div class="xwxq_author">作者： 日期：2026-09-14 09:26:10 点击：</div><div class="xwxq_contianer">招标内容：心理热线系统升级。<p>开标时间：2026年9月22日上午9：00。</p><p>2026年9月11日</p></div>'
         doc=parse_document(raw.encode(),'https://www.hnnkyy.com/index.php?id=1')

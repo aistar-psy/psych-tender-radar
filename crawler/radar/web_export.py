@@ -109,7 +109,7 @@ def public_run(summary,documents,tasks):
 def merge_project(newer,older):
     primary,secondary=(newer,older) if (newer.get('publishedAt') or '') >= (older.get('publishedAt') or '') else (older,newer)
     result=dict(primary)
-    for field in ('events','parameters','products','gaps'):
+    for field in ('events','parameters','products','gaps','fullTexts','matchEvidence','winners','sourceNames','sourceLinks','sourceTrace','matchedTerms','matchPoints','recipeIds'):
         seen=set();values=[]
         for item in primary.get(field,[])+secondary.get(field,[]):
             k=json.dumps(item,ensure_ascii=False,sort_keys=True)
@@ -119,6 +119,38 @@ def merge_project(newer,older):
         result.update(amountEligible=False,amountScope='含更正与历史公告，字段生效待复核，不计入合计')
     result['detailStatus']='含多份公告/历史参数证据，按各自来源核验有效性'
     return result
+
+def merge_numbered_corrections(projects):
+    """Link corrections when number, named project and publishing host agree.
+
+    A missing buyer is not a conflicting buyer. A number alone is insufficient:
+    reused numbers at another buyer, host or named project stay separate.
+    """
+    def core(title):
+        title=re.sub(r'^【[^】]+】','',title or '')
+        title=re.sub(r'[（(]第[一二三四五六七八九十0-9]+次[）)]$','',title)
+        title=re.sub(r'(?:公开招标招标|公开招标|竞争性磋商|竞争性谈判|询价|磋商|谈判|招标|采购)公告$','',title)
+        return re.sub(r'(?:中标[（(]成交[）)]|中标|成交|采购)?(?:结果)?(?:更正|变更|终止|废标)?公告$','',title).strip()
+    positions={p['id']:i for i,p in enumerate(projects)}
+    grouped=defaultdict(list);others=[]
+    for project in projects:
+        number=re.sub(r'\s+','',project.get('number') or '').casefold()
+        name=core(project.get('title'));host=urlsplit(project.get('sourceUrl') or '').hostname
+        if len(number)>=6 and len(name)>=6 and host:grouped[(host,number,name)].append(project)
+        else:others.append(project)
+    for group in grouped.values():
+        buyers={re.sub(r'\s+','',p['buyer']) for p in group if p.get('buyer')}
+        correction=any('更正' in (p.get('title') or '') or any('更正' in (e.get('type') or '') or '更正' in (e.get('title') or '') for e in p.get('events',[])) for p in group)
+        if len(group)<2 or len(buyers)>1 or not correction:
+            others.extend(group);continue
+        merged=group[0]
+        for project in group[1:]:
+            buyer=merged.get('buyer') or project.get('buyer')
+            merged=merge_project(merged,project)
+            merged['buyer']=buyer
+        merged['mergedIds']=list(dict.fromkeys(i for p in group for i in [p['id']]+p.get('mergedIds',[])))
+        others.append(merged)
+    return sorted(others,key=lambda p:min(positions.get(i,len(projects)) for i in [p['id']]+p.get('mergedIds',[])))
 
 def cloud_attempts(directory):
     latest={}
@@ -236,6 +268,8 @@ def export(out=None,run_dirs=None):
             'products':[],'parameters':[{'text':clean(seed['search_note']),'locator':'搜索摘要，非本地正文','url':link(url)}] if seed.get('search_note') else [],'events':[],
             'detailStatus':'正文待获取或采购属性待核验','status':'待核验',
             'gaps':[{'name':'公告正文','status':'待核验','reason':'尚未完成正文核验，不计入已核验金额','url':link(url)}]}
+    archive={p['id']:p for p in merge_numbered_corrections(list(archive.values()))}
+    for r in runs:r['projects']=merge_numbered_corrections(r['projects'])
     from .enrichment import enrich
     enrich(list(archive.values()),latest_documents,out)
     for r in runs:enrich(r['projects'],run_documents[r['id']],out)
