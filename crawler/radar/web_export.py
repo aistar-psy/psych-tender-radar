@@ -310,6 +310,9 @@ def export(out=None,run_dirs=None):
     write_run_history(data,out)
     encoded=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('>','\\u003e')
     (out/'data.js').write_text('window.RADAR_DATA = '+encoded+';\n',encoding='utf-8')
+    if (ROOT/'config/sop.json').exists() and (out/'sop.html').exists():
+        from .sop_export import export as export_sop
+        export_sop(ROOT,out)
     return {'out':str(out),'runs':len(runs),'projects_in_default_run':len(preferred['projects']) if preferred else 0}
 
 if __name__=='__main__':

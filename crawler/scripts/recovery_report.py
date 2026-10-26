@@ -102,7 +102,7 @@ def build(before_path,batch):
 @media(max-width:600px){.report-nav-inner{padding:14px 14px 8px}.report-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px}.report-links a{justify-content:center;padding:8px 0;border-bottom:0}.report-links a[aria-current=page]{background:#e7eee5}.annual-intro h1{font-size:28px}.annual-summary{grid-template-columns:repeat(2,1fr);row-gap:18px;padding:18px 0}.annual-summary div{padding:0 16px}.annual-summary div:nth-child(3){padding-left:0}.annual-summary div:nth-child(2){border:0}.annual-summary strong{font-size:27px}.annual-tools select{flex:1 1 130px;min-width:0;max-width:none}.annual-tools button{flex:0 0 auto}.annual-caption{flex-direction:column;gap:4px}}
 """
     def navigation(active):
-        links=[('overview','index.html#overview','首页'),('report','recovery-report.html','市场周报'),('annual','annual-projects.html','近一年明细'),('projects','index.html#projects','项目库'),('coverage','index.html#coverage','覆盖情况'),('method','index.html#method','实施方案')]
+        links=[('overview','index.html#overview','首页'),('report','recovery-report.html','市场周报'),('annual','annual-projects.html','近一年明细'),('projects','index.html#projects','项目库'),('coverage','index.html#coverage','覆盖情况'),('sop','sop.html','每周SOP'),('method','index.html#method','实施方案')]
         return '<header class="report-nav"><nav class="report-nav-inner" aria-label="主导航"><a class="report-brand" href="index.html#overview" aria-label="心育采购观察首页">心育采购观察</a><div class="report-links">'+''.join('<a href="'+url+'"'+(' aria-current="page"' if key==active else '')+'>'+label+'</a>' for key,url,label in links)+'</div></nav></header>'
     page=page.replace('</style>','</style><style>'+module_css+'</style>')
     page=page.replace('<main><a href="index.html">← 返回情报工作台</a>',navigation('report')+'<main>')
@@ -125,6 +125,9 @@ search.addEventListener('input',filter);keyword.addEventListener('change',filter
     lines+=['',f"最近完整周：{previous_range['start']} — {previous_range['end']}，共 {previous_metrics['records']} 条，正文已取得 {previous_metrics['body_obtained']} 条，教育类 {previous_metrics['education']} 条。"]
     if audit_path.exists():lines+=['']+['- '+t for t in audit.get('notes',[])]
     (ROOT/'docs'/f"{after['builtAt'][:10]}正文补抓修复报告.md").write_text('\n'.join(lines)+'\n')
+    if (ROOT/'config/sop.json').exists() and (public_dir(ROOT)/'sop.html').exists():
+        from radar.sop_export import export as export_sop
+        export_sop(ROOT,public_dir(ROOT))
     print(json.dumps(result,ensure_ascii=False))
 
 if __name__=='__main__':
