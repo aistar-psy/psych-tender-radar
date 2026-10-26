@@ -5,6 +5,24 @@ from radar.documents import parse_document
 
 
 class DocumentTests(unittest.TestCase):
+    def test_recommended_school_links_do_not_reclassify_military_psychology_service(self):
+        raw='''<div class="detail-content"><h1>某部2026-2028年心理咨询服务项目招标公告</h1><p>项目编号：2026-JWHJEZ-F3009。最高限价：20万元。我部面向官兵采购心理咨询服务，按采购单位需求提供心理服务，服务地点由采购单位指定，合同签订之日起两年。</p><div class="detail-content-recommend"><dl><dd>浙江学校</dd><dd>舟山学校</dd></dl><a href="/schools/">学校招标推荐</a></div></div>'''
+        doc=parse_document(raw.encode(),'https://m.yfbzb.com/inviteBid/detail/example.html')
+        from radar.analysis import analyze_document
+        result=analyze_document(doc,'https://m.yfbzb.com/inviteBid/detail/example.html','2026-10-26T09:00:00+08:00')
+        self.assertEqual(result['category'],'其他心理')
+        self.assertTrue(result['is_procurement'])
+        self.assertEqual(result['amounts'][0]['value'],200000)
+
+    def test_school_service_body_and_parameters_survive_recommendation_cleanup(self):
+        raw='''<div class="detail-content"><h1>某学校心理测评服务采购公告</h1><p>项目编号：SCHOOL-2026-01。预算金额：40万元。采购人为某学校，为学生提供心理测评、心理辅导与心理健康教育服务，服务期一年，测评量表不少于20套，供应商提供实施培训。</p><div class="detail-content-recommend"><dd>医院招标推荐</dd></div></div>'''
+        doc=parse_document(raw.encode(),'https://m.yfbzb.com/inviteBid/detail/school.html')
+        from radar.analysis import analyze_document
+        result=analyze_document(doc,'https://m.yfbzb.com/inviteBid/detail/school.html','2026-10-26T09:00:00+08:00')
+        self.assertEqual(result['category'],'教育核心')
+        self.assertIn('测评量表不少于20套',doc['text'])
+        self.assertEqual(result['amounts'][0]['value'],400000)
+
     def test_hospital_notice_keeps_publication_metadata_outside_body(self):
         raw='<title>医院通知</title><div>学校培训导航</div><div class="xwxq_tittle">某医院心理热线项目招标通告</div><div class="xwxq_author">作者： 日期：2026-09-14 09:26:10 点击：</div><div class="xwxq_contianer">招标内容：心理热线系统升级。<p>开标时间：2026年9月22日上午9：00。</p><p>2026年9月11日</p></div>'
         doc=parse_document(raw.encode(),'https://www.hnnkyy.com/index.php?id=1')

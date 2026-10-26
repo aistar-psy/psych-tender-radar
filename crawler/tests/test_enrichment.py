@@ -1,6 +1,11 @@
 import unittest
 from radar.enrichment import match_evidence, awarded_suppliers, purchase_time
 class EnrichmentTests(unittest.TestCase):
+ def test_blank_form_fields_are_not_awarded_suppliers(self):
+  rows=[{'text':'供应商名称：陕西心理服务有限公司','locator':'notice/p:1'}, {'text':'供应商名称：','locator':'attachment/p:1'}, {'text':'（盖单位章）','locator':'attachment/p:2'}, {'text':'供应商名称：','locator':'attachment/p:3'}, {'text':'单位性质','locator':'attachment/p:4'}, {'text':'供应商名称：****','locator':'attachment/p:5'}]
+  found=awarded_suppliers('心理服务项目中标（成交）结果公告',rows,'https://example.org/result')
+  self.assertEqual([x['name'] for x in found],['陕西心理服务有限公司'])
+
  def test_contract_supplier_and_signing_date_are_explicit(self):
   rows=[{'text':'供应商(乙方)：某心理健康服务协会','locator':'p:1'}, {'text':'合同签订日期','locator':'p:2'}, {'text':'2024年11月25日','locator':'p:3'}]
   found=awarded_suppliers('学校心理服务中心政府采购合同公告',rows,'https://example.org')

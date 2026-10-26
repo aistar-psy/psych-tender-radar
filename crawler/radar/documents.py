@@ -60,7 +60,7 @@ def _html(data, url, out):
     if location.hostname=='www.sxggzyjy.cn' and re.match(r'^/(?:xwzx|zcfg|cxgk)/',location.path):
         out['page_kind']='non_notice'
     soup = BeautifulSoup(data, 'html.parser', from_encoding='utf-8' if _utf8(data) else None)
-    for node in soup.select('script, style, nav, footer, header, aside, noscript, .nav, .navigation, .footer, .breadcrumb, .new_miew, .fixedbox'):
+    for node in soup.select('script, style, nav, footer, header, aside, noscript, .nav, .navigation, .footer, .breadcrumb, .new_miew, .fixedbox, .detail-content-recommend'):
         node.decompose()
     # A selector union returns the earliest DOM match, often a search widget.
     # Prefer explicit notice containers, then generic layout classes.

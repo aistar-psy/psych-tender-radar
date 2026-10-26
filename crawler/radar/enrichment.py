@@ -39,6 +39,7 @@ def awarded_suppliers(title,blocks,url):
  def add(value,b):
   name=value.strip(' ：:　').split('供应商地址')[0].strip()
   if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$',name):return
+  if re.fullmatch(r'[\s_*＊×—-]+|[（(]?\s*(?:盖(?:单位)?章|单位性质|签字|公章)\s*[）)]?',name):return
   if name not in seen:seen.add(name);out.append({'name':name,'role':'合同供应商' if contract else '中标单位','url':b.get('source_url',url),'locator':b.get('locator','document'),'text':b['text']})
  for bi,b in enumerate(blocks):
   line=b.get('text','');cells=[s.strip() for s in line.split('|')];key=(b.get('source_url',url),b.get('locator','').rsplit('/row:',1)[0])
