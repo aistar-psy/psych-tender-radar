@@ -43,8 +43,8 @@ def clauses(expression):
  return result
 
 def keyword_text(text):
- # Prevent the word boundary 中心 / 理化、理学 from manufacturing a 心理 keyword.
- return str(text or '').replace('中心理化','中心 理化').replace('中心理学','中心 理学').replace('核心育种','核心 育种').replace('核心育苗','核心 育苗')
+ # Prevent the word boundary 中心 / 理化、理学、理发 from manufacturing a 心理 keyword.
+ return re.sub(r'中\s*心\s*理\s*(化|学|发)',r'中心 理\1',str(text or '')).replace('核心育种','核心 育种').replace('核心育苗','核心 育苗')
 
 def match_recipes(title,fulltext=''):
  title=keyword_text(title);fulltext=keyword_text(fulltext)

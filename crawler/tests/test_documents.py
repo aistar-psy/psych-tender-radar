@@ -225,3 +225,20 @@ class DocumentTests(unittest.TestCase):
             doc=parse_document(('<article><h1>心理采购公告</h1>'+widget+'<p class="time">服务时间：2026-04-01</p></article>').encode(),'https://e/a.html')
             self.assertEqual(analyze_document(doc,'https://e/a.html','2026-09-07T09:00:00+08:00')['published_at'],'2026-03-19')
             self.assertFalse(any('服务时间' in b['text'] for b in doc['blocks'] if b['kind']=='metadata'))
+
+    def test_known_result_directory_preserves_real_links_without_notice_body(self):
+        raw='<title>心理招标采购-招投标与采购信息指定平台</title><main><p>项目编号：62026110163666339 采购人：甲中学</p><table><tr><td>2026-11-02</td><td><a href="/notice-detail-333842804.html">黔西市钟山中学葵花工程项目采购</a></td></tr><tr><td>2026-10-31</td><td><a href="/s5595/">心理招标采购</a></td></tr></table></main>'
+        doc=parse_document(raw.encode(),'https://www.jszhaobiao.cn/s5595/')
+        self.assertEqual(doc.get('page_kind'),'non_notice')
+        self.assertEqual(doc['content_status'],'unavailable')
+        self.assertEqual([link['url'] for link in doc['links']],['https://www.jszhaobiao.cn/notice-detail-333842804.html'])
+
+    def test_view_full_content_login_with_masked_fields_is_not_full_body(self):
+        raw='<title>学校葵花工程采购公告</title><main><p>心理咨询室智慧黑板，需要提供检测报告。</p><p>项目名称：(略)</p><p>项目编号：(略)</p><p>采购单位：(略)</p><p>预算金额（元）：(略)</p><p>查看完整内容&gt;&gt;</p><div>用户登录</div><div>注册会员</div></main>'
+        doc=parse_document(raw.encode(),'https://www.jszhaobiao.cn/notice-detail-333842804.html')
+        self.assertEqual(doc['content_status'],'unavailable')
+
+    def test_full_notice_with_login_footer_and_visible_key_fields_survives(self):
+        raw='<article><h1>学校心理咨询室采购公告</h1><p>项目名称：心理咨询室设备</p><p>项目编号：PSY-2026-01</p><p>采购单位：第一中学</p><p>预算金额：20万元</p><p>'+('采购参数：心理沙盘数量1套，软件并发100人。'*100)+'</p></article><footer>用户登录 注册会员</footer>'
+        doc=parse_document(raw.encode(),'https://www.jszhaobiao.cn/notice-detail-100.html')
+        self.assertEqual(doc['content_status'],'available')

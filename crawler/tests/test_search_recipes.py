@@ -29,6 +29,9 @@ class RecipeTests(unittest.TestCase):
   for a in atoms:self.assertTrue(any(mapped[a['id']]['keyword'] in term for term in a['terms']))
  def test_word_boundary_false_positive_is_not_psychology(self):
   self.assertEqual(match_recipes('疾病预防控制中心理化所设备采购'),[])
+  self.assertEqual(match_recipes('萧山区行政中心理发服务政府采购项目的公开招标公告'),[])
+  self.assertEqual(match_recipes('萧山区行政中 心理 发服务政府采购项目的公开招标公告'),[])
+  self.assertIn('B',match_recipes('学校心理发展评估服务采购'))
   self.assertIn('A',match_recipes('学校理化生实验室和心理咨询室建设项目'))
 
 class AdditionalWordBoundaryTests(unittest.TestCase):

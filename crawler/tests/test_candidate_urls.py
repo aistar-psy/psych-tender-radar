@@ -58,3 +58,22 @@ class CandidateUrlTests(unittest.TestCase):
             'https://example.edu.cn/zbcontent/123.html',
         ):
             with self.subTest(url=url): self.assertFalse(is_listing_url(url))
+
+    def test_observed_jszhaobiao_and_zhaobiao_result_directories(self):
+        for url in (
+            'https://www.jszhaobiao.cn/s5595/',
+            'https://new.zhaobiao.cn/ts_i_02_s_0_a_0_t_03050041_p_1.html',
+            'https://new.zhaobiao.cn/ts_i_0201_s_0_a_0_t_03050041_p_1.html',
+            'https://s.zhaobiao.cn/search_q_心理_f_02_s_01_p_1.html',
+        ):
+            with self.subTest(url=url): self.assertTrue(is_listing_url(url))
+
+    def test_observed_aggregate_notice_links_and_other_hosts_survive(self):
+        for url in (
+            'https://www.jszhaobiao.cn/notice-detail-333842804.html',
+            'https://www.jszhaobiao.cn/negotiate-detail-333839566.html',
+            'https://zb.zhaobiao.cn/bidding_v_33a64d1f0cd2f1af29c304ee2b66debd.html',
+            'https://example.edu.cn/s5595/',
+            'https://example.edu.cn/ts_i_02_s_0_a_0_t_03050041_p_1.html',
+        ):
+            with self.subTest(url=url): self.assertFalse(is_listing_url(url))

@@ -20,6 +20,10 @@ def is_listing_url(url):
         return path.startswith('/gjxx/') or bool(re.fullmatch(r'/hot\d+/?', path))
     if host == 'jianyu360.cn' or host.endswith('.jianyu360.cn'):
         return path.startswith('/jycms/')
+    if host == 'jszhaobiao.cn' or host.endswith('.jszhaobiao.cn'):
+        return bool(re.fullmatch(r'/s\d+/?', path))
+    if host == 'zhaobiao.cn' or host.endswith('.zhaobiao.cn'):
+        return bool(re.fullmatch(r'/ts_i_[a-z0-9_]+\.html?', path)) or (host == 's.zhaobiao.cn' and path.startswith('/search'))
     if host == 'ccgp.gov.cn' or host.endswith('.ccgp.gov.cn'):
         return bool(re.search(r'/index(?:_\d+)?\.html?$', path))
     if host == 'hnnkyy.com' or host.endswith('.hnnkyy.com'):
