@@ -8,6 +8,12 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_technical_center_rigaku_does_not_create_psychology_keyword(self):
+        title='三钢技术中心理学荧光仪维护保养询比采购公告'
+        a=analyze_document({'title':title,'text':'对两台理学荧光光谱仪整机进行维护保养。'},'https://e/instrument','2026-11-02T09:00:00+08:00')
+        self.assertEqual(a['category'],'待核验')
+        self.assertEqual(analyze('某学校心理学教育中心采购心理辅导服务')['category'],'教育核心')
+
     def test_per_person_and_per_use_rates_are_not_total_amounts(self):
         for text in ['预算金额：100（元/人）','最高限价：200（元/次）','预算金额：￥100（元/人）','预算金额：100元/人']:
             with self.subTest(text=text):self.assertEqual(analyze(text)['amounts'],[])
