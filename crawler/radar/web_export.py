@@ -12,7 +12,7 @@ from .fetch import canonical_url
 from .search_recipes import vocabulary_match
 from .paths import public_dir
 from .candidate_urls import is_listing_url
-from .public_safety import redact_public
+from .public_safety import redact_public,public_project_exclusion
 
 ROOT=Path(__file__).resolve().parent.parent
 
@@ -283,6 +283,17 @@ def export(out=None,run_dirs=None):
         if project.get('sourceQuality')!='正文已取得':
             project['detailStatus']=state['label']+'：'+state['reason']
             project['gaps']=[g for g in project.get('gaps',[]) if g.get('name')!='公告正文']+[{'name':'公告正文','status':state['label'],'reason':state['reason'],'url':project['sourceUrl']}]
+
+    # Download-only evidence stays private until its public parent notice is verified.
+    excluded_links=defaultdict(int)
+    def publishable(project):
+        reason=public_project_exclusion(project)
+        if reason: excluded_links[reason]+=1
+        return reason is None
+    archive={pid:p for pid,p in archive.items() if publishable(p)}
+    archive_link_exclusions=dict(excluded_links);excluded_links.clear()
+    for run in runs:run['projects']=[p for p in run['projects'] if publishable(p)]
+    data['publicationExclusions']={'archive':archive_link_exclusions,'historicalRunRows':dict(excluded_links)}
 
     cloud,cloud_failed=cloud_attempts(ROOT/'data/cloud-downloads')
     for url,status in cloud_failed.items():

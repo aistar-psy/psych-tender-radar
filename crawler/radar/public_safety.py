@@ -37,3 +37,20 @@ def redact_public(value):
             return ''
         return URL_PATTERN.sub(lambda m: '[下载地址含访问参数，未公开]' if protected_url(m[0]) else m[0], value)
     return value
+
+
+def public_project_exclusion(project):
+    """A project needs an actual public notice route, not an empty download link."""
+    url=project.get('sourceUrl')
+    try:
+        parsed=urlsplit(url) if isinstance(url,str) else None
+        if not parsed or parsed.scheme not in ('http','https') or not parsed.hostname or protected_url(url):
+            return 'source_link_pending'
+    except ValueError:
+        return 'source_link_pending'
+    from .candidate_urls import is_listing_url
+    if is_listing_url(url): return 'source_directory'
+    title=project.get('title') or ''
+    if '新闻发布会' in title and not re.search('采购|招标|磋商|竞价|成交|中标',title):
+        return 'non_procurement_news'
+    return None

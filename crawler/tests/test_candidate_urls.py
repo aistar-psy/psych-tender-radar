@@ -7,6 +7,12 @@ class CandidateUrlTests(unittest.TestCase):
         for url in (
             'https://puyang.zfcg.henan.gov.cn/',
             'https://www.sxggzyjy.cn',
+            'https://www.uwh.edu.cn/',
+            'https://www.qhpolice.edu.cn/',
+            'https://www.gdpt.edu.cn/main/index/index.html',
+            'https://www.qhpolice.edu.cn/39/list.htm',
+            'https://www.bidcenter.com.cn/newssearchyz-30355360.html',
+            'https://www.bidcenter.com.cn/newssearchzb-187204168.html',
             'https://xuchang.zfcg.henan.gov.cn/puyang',
             'https://ruzhou.zfcg.henan.gov.cn/ruzhou/',
             'https://zhecheng.zfcg.henan.gov.cn/henan/list2?bz=1&pageNo=24&pageSize=20',
