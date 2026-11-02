@@ -16,6 +16,20 @@ class VocabularySyncTests(unittest.TestCase):
    self.assertEqual(r['version'],'V1.7');self.assertNotIn('sop',r);self.assertEqual(r,json.loads(out.read_text()))
 
 class MigrationDiffTests(unittest.TestCase):
+ def test_partial_weekly_execution_does_not_erase_pending_annual_diff(self):
+  import contextlib,io
+  from unittest.mock import patch
+  import scripts.prepare_sop_plans as planner
+  root=Path(__file__).resolve().parents[1]
+  old=json.loads((root/'config/vocabulary_history/V1.5.json').read_text());new=json.loads((root/'config/search_recipes.json').read_text())
+  with tempfile.TemporaryDirectory() as tmp:
+   f=Path(tmp);(f/'config/vocabulary_history').mkdir(parents=True);(f/'data/recovery/latest').mkdir(parents=True)
+   (f/'config/vocabulary_history/V1.5.json').write_text(json.dumps(old));(f/'config/vocabulary_history/V1.7.json').write_text(json.dumps(new))
+   prior=planner.migration_diff(new,old);(f/'config/vocabulary_migration.json').write_text(json.dumps(prior))
+   (f/'data/recovery/latest/result.json').write_text(json.dumps({'builtAt':'2026-11-02','weeklyExecution':{'vocabulary':{'version':'V1.7'}}}))
+   with patch.object(planner,'ROOT',f),patch.object(planner,'load_catalog',return_value=[{'id':'test','domains':['example.gov.cn']}]),contextlib.redirect_stdout(io.StringIO()):planner.prepare()
+   result=json.loads((f/'config/vocabulary_migration.json').read_text())
+   self.assertEqual(result['from'],'V1.5');self.assertEqual(len(result['addedTerms']),29);self.assertEqual(result['changedRecipes'],['A','C','D'])
  def test_pending_upgrade_diff_can_remain_anchored_to_last_executed_version(self):
   from scripts.prepare_sop_plans import migration_diff
   base={'version':'V1.5','source_sha256':'old','families':[{'terms':['心理健康']}],'recipes':[{'id':'A','syntax':'心理健康','field':'title'}]}

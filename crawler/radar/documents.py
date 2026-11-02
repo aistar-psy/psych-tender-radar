@@ -64,7 +64,7 @@ def _html(data, url, out):
         node.decompose()
     # A selector union returns the earliest DOM match, often a search widget.
     # Prefer explicit notice containers, then generic layout classes.
-    selectors=('#zbDiv','.xwxq_contianer','article','.article','.detail-content','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.content')
+    selectors=('#zbDiv','#article-content','.xwxq_contianer','article','.article','.detail-content','main','#zoom','#noticeArea','.epoint-article-content','.tender-content','#detailContentHtml','#content','.article-content','.vF_detail_content','.vT_detail_content','.TRS_Editor','.content')
     root=None; empty_root=None
     for selector in selectors:
         candidates=soup.select(selector)

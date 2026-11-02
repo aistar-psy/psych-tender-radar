@@ -5,6 +5,17 @@ from radar.documents import parse_document
 
 
 class DocumentTests(unittest.TestCase):
+    def test_sunshine_award_container_keeps_all_project_and_result_cells(self):
+        raw='''<title>深圳机场人员心理测评项目结果公示</title><div>发布时间：2026-10-30</div><div id="article-content"><p>成交结果信息</p><table><tr><td>项目名称</td><td class="content">深圳机场人员心理测评项目</td><td>项目编号</td><td class="content">SZJC-SQ-JT-2026-02823</td></tr></table><table><tr><td>供应商名称</td><td>成交价（元）</td></tr><tr><td>某科技有限公司</td><td>248000.0000</td></tr></table></div>'''
+        url='https://www.szggzy.com/jygg/details.html?contentId=fixture';doc=parse_document(raw.encode(),url)
+        from radar.analysis import analyze_document
+        from radar.enrichment import awarded_suppliers
+        a=analyze_document(doc,url,'2026-11-02T09:00:00+08:00')
+        self.assertIn('248000.0000',doc['text']);self.assertEqual(a['project_number'],'SZJC-SQ-JT-2026-02823');self.assertTrue(a['is_procurement'])
+        self.assertEqual(a['notice_type'],'成交结果公告');self.assertEqual([(x['type'],x['value']) for x in a['amounts']],[('成交',248000)])
+        self.assertEqual([s['name'] for s in awarded_suppliers(doc['title'],doc['blocks'],url)],['某科技有限公司'])
+        self.assertEqual(awarded_suppliers('心理服务候选结果公示',doc['blocks'],url),[])
+
     def test_recommended_school_links_do_not_reclassify_military_psychology_service(self):
         raw='''<div class="detail-content"><h1>某部2026-2028年心理咨询服务项目招标公告</h1><p>项目编号：2026-JWHJEZ-F3009。最高限价：20万元。我部面向官兵采购心理咨询服务，按采购单位需求提供心理服务，服务地点由采购单位指定，合同签订之日起两年。</p><div class="detail-content-recommend"><dl><dd>浙江学校</dd><dd>舟山学校</dd></dl><a href="/schools/">学校招标推荐</a></div></div>'''
         doc=parse_document(raw.encode(),'https://m.yfbzb.com/inviteBid/detail/example.html')

@@ -32,8 +32,10 @@ def prepare():
  migration_path=ROOT/'config/vocabulary_migration.json';prior=json.loads(migration_path.read_text()) if migration_path.exists() else {}
  reports=[json.loads(p.read_text()) for p in (ROOT/'data/recovery').glob('*/result.json')]
  executed=next((r['weeklyExecution']['vocabulary']['version'] for r in sorted(reports,key=lambda r:r.get('builtAt',''),reverse=True) if r.get('weeklyExecution',{}).get('vocabulary',{}).get('version')),prior.get('from'))
- if executed and all(c in 'V0123456789.' for c in executed):
-  baseline_path=ROOT/'config/vocabulary_history'/(executed+'.json')
+ # A weekly receipt proves some execution, not completion of the annual diff.
+ baseline=prior.get('to') if prior.get('annualComplete') is True else prior.get('from') or executed
+ if baseline and all(c in 'V0123456789.' for c in baseline):
+  baseline_path=ROOT/'config/vocabulary_history'/(baseline+'.json')
   if baseline_path.exists():migration_path.write_text(json.dumps(migration_diff(config,json.loads(baseline_path.read_text())),ensure_ascii=False,indent=2)+'\n')
  (folder/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n');print(json.dumps(summary,ensure_ascii=False));return summary
 if __name__=='__main__':prepare()

@@ -8,7 +8,7 @@ PSYCH = r'心理|心育|情绪|精神卫生|精神健康|抑郁|焦虑'
 EDU = r'义务教育|职业教育中心|教师发展中心|学校|校园|学生|中小学|中学|小学|幼儿园|教育(?:和|与)?(?:科技|科学技术)?(?:和)?(?:体育)?局|教体局|教育厅|教育委员会|教委|大学|高校|学院'
 MEDICAL = r'医院|诊疗|病房|医疗|临床'
 PRODUCT = re.compile(r'[^，。；：:|\n]{0,25}(?:系统|平台|设备|软件|量表|仪器|机器人|训练仪|测评工具|咨询室|课程|培训|服务|终端)')
-DATE = r'(\d{4})[年./-](\d{1,2})[月./-](\d{1,2})日?(?:[ T\s]*(\d{1,2})[:：点时](\d{1,2})分?(?:(?:[:：]|分)(\d{2})秒?)?)?'
+DATE = r'(\d{4})\s*[年./-]\s*(\d{1,2})\s*[月./-]\s*(\d{1,2})\s*日?(?:[ T\s]*(\d{1,2})\s*[:：点时]\s*(\d(?:\s*\d)?)\s*分?(?:(?:[:：]|分)\s*(\d{2})\s*秒?)?)?'
 BUYER_LABEL = r'(?:采购人(?:名称)?(?:[（(]甲方[）)])?|采购单位(?:名称)?)'
 
 
@@ -54,7 +54,7 @@ def _dated(text,label,tz,warnings):
     match=re.search(label+r'\s*[:：|]?\s*'+DATE,text)
     if not match: return None
     try:
-        parts=match.groups()
+        parts=tuple(re.sub(r'\s+','',x) if x else x for x in match.groups())
         dt=datetime(int(parts[0]),int(parts[1]),int(parts[2]),int(parts[3] or 0),int(parts[4] or 0),int(parts[5] or 0),tzinfo=tz)
         return dt.isoformat() if parts[3] is not None else dt.date().isoformat()
     except ValueError:
@@ -101,6 +101,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['buyer'],result['buyer_evidence']=_buyer(blocks,url)
     notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','招标通告','采购信息公告','采购公告','采购通告','采购公示')
     result['notice_type']=next((kind for source in (title,corpus) for kind in notice_types if kind in source),None)
+    if not result['notice_type'] and '结果公示' in title and '成交结果信息' in corpus: result['notice_type']='成交结果公告'
     result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购通告|采购公示|招标(?:公告|通告)|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
     if re.search(r'更正公告|终止公告|废标公告',corpus) and re.search(r'响应|投标|采购|招标|供应商|成交|中标|磋商',corpus):
         result['is_procurement']=True
@@ -110,7 +111,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['content_status']=doc.get('content_status','available')
     if result['content_status']=='unavailable': result['is_procurement']=None
     number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
-    if number: result['project_number']=number.group(1)
+    if number: result['project_number']=re.sub(r'[（(][^）)]*$', '', number.group(1))
     date_label=r'(?:发布日期|发布时间|公告日期|公告发布时间|信息提供日期|信息时间)'
     primary_blocks=[b for b in blocks if b.get('source_url',url)==url]
     for selected in ([b for b in primary_blocks if b.get('kind')=='metadata'], [b for b in primary_blocks if b.get('kind')!='table_row'], primary_blocks):
@@ -126,7 +127,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
                 if result['published_at']: break
     result['bid_at']=result['published_at']
     result['bid_at_semantics']='公开发布日期'
-    result['opening_at']=_dated(text,r'(?:(?:开标|开启)\s*(?:时间|日期)|(?:开标|开启)\s*[:：]?\s*时间|询价\s*开始\s*(?:时间|日期))',current.tzinfo,warnings)
+    result['opening_at']=_dated(text,r'(?:(?:开标|开启)(?:\s*[（(]\s*谈判\s*[）)])?\s*(?:时间|日期)|(?:开标|开启)\s*[:：]?\s*时间|询价\s*开始\s*(?:时间|日期))',current.tzinfo,warnings)
     buyer_name=result['buyer'] or ''
     result['buyer_type']='B/企业' if re.search(r'公司|集团|企业',buyer_name) else ('G/事业单位' if re.search(r'职业教育中心|教师发展中心|大学|学院|学校|小学|中学|幼儿园|教育(?:和|与)?(?:科技|科学技术)?(?:和)?(?:体育)?局|教体局|教育厅|委员会|政府|管理局|管理中心|事业单位',buyer_name) else '未知')
     result['buyer_type_evidence']={'method':'根据采购人名称规则推断，待核验','text':buyer_name,'url':url} if buyer_name else {'method':'采购人未识别，未知'}
@@ -142,8 +143,8 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     matched={province for candidate in candidates for province in provinces if province in candidate}
     result['province']=next(iter(matched)) if len(matched)==1 else None
     if len(matched)>1: warnings.append('采购方地区证据冲突，省份待核验')
-    result['deadline']=_dated(text,r'(?:(?:响应|投标)\s*(?:截止时间|截止日期)|(?:提交|递交)(?:响应|投标)文件\s*[:：]?\s*(?:截止时间|截止日期)|(?:响应|投标)文件(?:提交|递交)\s*(?:截止时间|截止日期))',current.tzinfo,warnings)
-    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|中标[（(]成交[）)]金额|成交金额|中标金额|中标价格|合同金额|预算)\s*(?:更正为|为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit>亿元|万元|元)?')
+    result['deadline']=_dated(text,r'(?:(?:响应|投标)(?:\s*[（(]\s*响应\s*[）)])?\s*(?:截止\s*时间|截止\s*日期)|(?:提交|递交)(?:响应|投标)文件\s*[:：]?\s*(?:截止时间|截止日期)|(?:响应|投标)文件(?:提交|递交)\s*(?:截止时间|截止日期))',current.tzinfo,warnings)
+    amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额|中标价格|合同金额|预算)\s*(?:更正为|为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?:[（(]\s*)?(?P<unit>亿元|万元|元)?(?:\s*[）)])?')
     seen=set()
     table_headers={}
     amount_headers={}
@@ -154,7 +155,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
         amount_blocks=[b]
         valid=lambda m: bool(m['unit'] or m['symbol'])
         matches=[m for m in amount_re.finditer(amount_line) if valid(m)]
-        if not matches and re.search(r'预算|限价|中标[（(]成交[）)]金额|成交金额|中标金额|中标价格|合同金额',line) and b.get('kind')!='table_row':
+        if not matches and re.search(r'预算|限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额|中标价格|合同金额',line) and b.get('kind')!='table_row':
             for following in blocks[bi+1:bi+4]:
                 if following.get('source_url',url)!=b.get('source_url',url) or following.get('kind')=='table_row': break
                 amount_blocks.append(following)
@@ -169,13 +170,13 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
                 key=(kind,str(value),loc)
                 if key not in seen:
                     result['amounts'].append(dict(ev,text=amount_line,type=kind,value=float(value),currency='CNY',raw=m.group(0),source_locators=[item.get('locator','document') for item in amount_blocks])); seen.add(key)
-        if re.search(r'预算金额|采购预算|最高限价|中标[（(]成交[）)]金额|成交金额|中标金额',line) and re.search(r'¥|￥|人民币',line) and not amount_re.search(line):
+        if re.search(r'预算金额|采购预算|最高限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额',line) and re.search(r'¥|￥|人民币',line) and not amount_re.search(line):
             warnings.append('金额待核验：'+loc+' '+line[:180])
         tabular_product=False
         if b.get('kind')=='table_row':
             table_key=(b.get('source_url',url),loc.rsplit('/row:',1)[0])
             cells=[c.strip() for c in line.split('|')]
-            monetary=[(i,c) for i,c in enumerate(cells) if re.search(r'预算(?:金额)?|最高限价|中标[（(]成交[）)]金额|成交金额|中标金额',c) and not re.search(r'\d',c)]
+            monetary=[(i,c) for i,c in enumerate(cells) if re.search(r'预算(?:金额)?|最高限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额',c) and not re.search(r'\d',c)]
             if monetary:
                 amount_headers[table_key]=monetary
             elif table_key in amount_headers:

@@ -38,6 +38,7 @@ def supplier_name(value):
  name=re.sub(r'\s*[（(](?:加盖|盖)?(?:供应商)?(?:单位)?公?章[）)]\s*$','',name).strip()
  if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$|项目编号|招标编号',name):return None
  compact=re.sub(r'\s+','',name)
+ if re.fullmatch(r'(?:成交价|成交金额|中标价|中标金额)(?:[（(](?:万|亿)?元[）)])?',compact):return None
  if re.fullmatch(r'[_*＊×—-]+|[（(]?(?:(?:加盖|盖)?(?:供应商)?(?:单位)?(?:公章|章)|全称及公章|供应商全称并加盖公章|单位性质|签字)[）)]?',compact):return None
  if re.fullmatch(r'(?:磋商)?(?:响应|投标)?文件(?:格式|签字[、，和及或]*盖章)|(?:法定代表人|授权代表|被授权人|法定代表人或被授权代表)(?:[（(].*[）)])?|签(?:字|名)[、，和及或]*盖章(?:要求)?',compact):return None
  if re.fullmatch(r'(?:联系方式|统一社会信用代码|组织机构代码|信用代码号|电子邮箱|税务登记机关|投标资质|中标价|建造师(?:姓名)?|招标人|招标代理机构|监管机构|监督机构|企业资质|供应商报价|供应商特殊性质|上年营业收入|营业执照(?:号)?|注册号码?|发证机关|资产总额|营业范围(?:[（(](?:主营|兼营)[）)])?|基本开户行|基本账户开户银行|基本账户银行账号|时[间]|技术负责人|成立时间|注册资金|经营范围|最高限价|合同条款响应|合同履行期限|磋商有效期|投标有效期|投标报价|响应文件报价|响应文件有效性|响应有效期|服务期(?:限)?|服务内容及要求|交货期(?:、质保期)?|质保期|其他实质性要求|单位)(?:[（(]万元[）)]|[:：]万元)?',compact):return None
@@ -46,7 +47,8 @@ def supplier_name(value):
 
 def awarded_suppliers(title,blocks,url):
  contract='合同公告' in title
- if not (contract or '采购结果公告' in title or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
+ explicit_result='结果公示' in title and any('成交结果信息' in b.get('text','') for b in blocks)
+ if not (contract or explicit_result or '采购结果公告' in title or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):
   name=supplier_name(value)

@@ -8,6 +8,22 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_split_chinese_deadline_and_parenthesized_opening_labels(self):
+        text='投标（响应）截止\n时间: 2026年\n11\n月\n03\n日\n09\n时\n3\n0分止\n开标（谈判\n）时间：2026年\n11\n月\n03\n日\n09\n时\n30\n分'
+        result=analyze(text)
+        self.assertEqual(result['deadline'],'2026-11-03T09:30:00+08:00')
+        self.assertEqual(result['opening_at'],'2026-11-03T09:30:00+08:00')
+        self.assertIsNone(analyze('获取投标文件截止时间：2026年11月03日09时30分')['deadline'])
+
+    def test_amount_unit_in_separate_parenthesized_block(self):
+        result=analyze('校园心理设备采购公告\n预算金额：\n164200.00\n（元）\n二、投标人资格要求')
+        self.assertEqual([(a['type'],a['value']) for a in result['amounts']],[('预算',164200)])
+        self.assertIn('164200.00',result['amounts'][0]['text'])
+
+    def test_project_number_does_not_keep_unmatched_opening_parenthesis(self):
+        self.assertEqual(analyze('项目编号\n：FTZXDL-2026-01708（\nBP-SZ260110F ）')['project_number'],'FTZXDL-2026-01708')
+        self.assertEqual(analyze('项目编号：PSY(2026)-001')['project_number'],'PSY(2026)-001')
+
     def test_staff_qualities_do_not_make_property_services_psychology_procurement(self):
         doc={'title':'延安市实验中学物业服务采购结果公告','text':'项目编号：PROPERTY-2026-001。中标金额：147万元。安保人员应具备强大的心理素质，具备良好的情绪管理能力。'}
         result=analyze_document(doc,'https://e/property','2026-10-20T09:00:00+08:00')

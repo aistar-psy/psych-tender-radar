@@ -9,7 +9,7 @@ const old=fs.existsSync(logfile)?JSON.parse(fs.readFileSync(logfile)):[],results
 function save(){fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));fs.writeFileSync(logfile,JSON.stringify([...old.filter(x=>!results.some(r=>r.source_id===x.source_id)),...results],null,2));}
 (async()=>{const browser=await chromium.launch({channel:'chrome',headless:true,args:process.env.RADAR_BROWSER_DIRECT==='1'?['--no-proxy-server']:[]});
 async function worker(){const context=await browser.newContext();
- while(cursor<plan.length){const page=await context.newPage();page.setDefaultTimeout(4000);const s=plan[cursor++],q={source_id:s.id,checked_at:new Date().toISOString(),entry_url:s.url,complete:false,positive_control_reference:s.positive_control_reference};
+ while(cursor<plan.length){const s=plan[cursor++];const page=await context.newPage();page.setDefaultTimeout(4000);const q={source_id:s.id,checked_at:new Date().toISOString(),entry_url:s.url,complete:false,positive_control_reference:s.positive_control_reference};
  try{const response=await page.goto(s.url,{waitUntil:'domcontentloaded',timeout:25000});q.http_status=response?.status();q.title=await page.title();q.final_url=page.url();let text=await page.locator('body').innerText({timeout:4000});
   const challenge=/人机验证|访问验证|安全验证|请输入验证码以继续|Access Denied|verify you are human/i;
   if(challenge.test(text)&&text.length<8000){q.status='verification_required';q.reason='公开入口显示验证要求；停止交互，未判断无公告。';}
