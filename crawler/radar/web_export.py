@@ -285,13 +285,16 @@ def export(out=None,run_dirs=None):
             project['gaps']=[g for g in project.get('gaps',[]) if g.get('name')!='公告正文']+[{'name':'公告正文','status':state['label'],'reason':state['reason'],'url':project['sourceUrl']}]
 
     # Download-only evidence stays private until its public parent notice is verified.
-    excluded_links=defaultdict(int)
+    excluded_links=defaultdict(int);quarantined=[];gate_scope='archive'
     def publishable(project):
         reason=public_project_exclusion(project)
-        if reason: excluded_links[reason]+=1
+        if reason:
+            excluded_links[reason]+=1
+            if reason=='psychology_evidence_missing':quarantined.append({'scope':gate_scope,'reason':reason,'project':project})
         return reason is None
     archive={pid:p for pid,p in archive.items() if publishable(p)}
     archive_link_exclusions=dict(excluded_links);excluded_links.clear()
+    gate_scope='historicalRunRows'
     for run in runs:run['projects']=[p for p in run['projects'] if publishable(p)]
     data['publicationExclusions']={'archive':archive_link_exclusions,'historicalRunRows':dict(excluded_links)}
 
@@ -302,6 +305,9 @@ def export(out=None,run_dirs=None):
     now=datetime.now(ZoneInfo('Asia/Shanghai'));week=now-timedelta(days=now.weekday())
     data.update(yearRange={'start':(now-timedelta(days=364)).date().isoformat(),'end':now.date().isoformat()},
         weekRange={'start':week.date().isoformat(),'end':now.date().isoformat()},archiveProjects=list(archive.values()))
+    from .relevance import attach_relevance_audit
+    audit_dir=ROOT/'data/relevance-audit/exports'/re.sub(r'[^0-9A-Za-z_-]','',data['builtAt'])
+    attach_relevance_audit(data,quarantined,audit_dir,out)
     logs=ROOT/'data/external-discovery/annual_education_queries.json'
     count=len(json.loads(logs.read_text()).get('executed_queries',[])) if logs.exists() else 0
     fetched=sum(1 for u in candidates if u in read_urls)

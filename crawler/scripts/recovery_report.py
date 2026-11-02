@@ -81,6 +81,13 @@ def build(before_path,batch):
         result['weeklyExecution']=audit
         (directory/'result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
     page=page.replace('以上为当前窗口内项目和线索记录。','上期快照窗口为 '+h(before['yearRange']['start'])+' — '+h(before['yearRange']['end'])+'；本期窗口为 '+h(after['yearRange']['start'])+' — '+h(after['yearRange']['end'])+'。以上为各自窗口内项目和线索记录。')
+    relevance=after.get('relevanceAudit')
+    if relevance:
+        review_rows=''.join('<tr><td><a href="'+h(p['sourceUrl'])+'" target="_blank" rel="noopener">'+h(p['title'])+'</a></td><td>'+h(p['reason'])+'</td></tr>' for p in relevance.get('reviewRows',[]))
+        section='<h2>心理采购相关性复核</h2><p>规则版本 '+h(relevance['ruleVersion'])+'。本次从年度项目列表移出 '+str(relevance['annualRemoved'])+' 条、全时段归档移出 '+str(relevance['archiveRemoved'])+' 条缺少心理用途证据的记录；历史运行列表同步校正。原始证据及待复核记录保留，移出量不计为补抓成功。</p><p>'+h(relevance['method'])+'。'+h(relevance['limitation'])+'</p><p>房屋租赁中的“急切心理”、文化展演中的“以文润心”、跨词“核心理念”以及供应商名称，均不能单独证明采购的是心理产品或服务。真实心理子包及有明确心理用途的润心服务继续保留。</p><details><summary>查看移出项目列表的待复核记录</summary><div class="scroll"><table><thead><tr><th>原公告</th><th>移出原因</th></tr></thead><tbody>'+review_rows+'</tbody></table></div></details>'
+        page=page.replace('<h2>补抓前后</h2>',section+'<h2>补抓前后</h2>')
+        result['relevanceAudit']=relevance
+        (directory/'result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
     module_css="""
 .report-nav{position:sticky;top:0;z-index:10;background:#f5f4ef;border-bottom:1px solid #d6ded7}
 .report-nav-inner{max-width:1250px;margin:auto;display:flex;align-items:center;gap:28px;padding:0 24px;min-height:70px}

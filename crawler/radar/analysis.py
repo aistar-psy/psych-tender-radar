@@ -1,4 +1,5 @@
 from .search_recipes import keyword_text
+from .relevance import assess_relevance, purchase_context
 """Conservative rule extraction: every candidate retains its source evidence."""
 import re
 from datetime import datetime
@@ -71,11 +72,11 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     blocks=doc.get('blocks') or [{'text':doc.get('text',''),'locator':'document','kind':'text'}]
     text=doc.get('text','') or '\n'.join(b['text'] for b in blocks)
     corpus=keyword_text(doc.get('title','')+'\n'+text)
-    classification_corpus=corpus
+    classification_corpus=purchase_context(corpus)
     if re.search(r'物业|保洁|安保|保安|后勤',doc.get('title','')) and not re.search(PSYCH,keyword_text(doc.get('title',''))):
         # Remove explicit staff qualifications only; purchased courses remain relevant.
         staff_quality=r'(?:具备|具有|应有|拥有|强大|良好|较强|较好)(?:良好|强大|较强|较好)?的?(?:心理素质|情绪管理能力)(?!\s*(?:培训|课程|训练|提升))'
-        classification_corpus=re.sub(staff_quality,'',corpus)
+        classification_corpus=re.sub(staff_quality,'',classification_corpus)
     psych=bool(re.search(PSYCH,classification_corpus)); edu=bool(re.search(EDU,corpus))
     medical=bool(re.search(MEDICAL,corpus))
     ordinary=bool(re.search(r'普通椅|轮椅|病床|办公家具|保洁|物业|空调',corpus))
@@ -109,6 +110,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
         result['is_procurement']=True
     result['procurement_hint']=result['is_procurement']
     result['content_status']=doc.get('content_status','available')
+    result['relevance']=assess_relevance(title,blocks,body_available=result['content_status']!='unavailable')
     if result['content_status']=='unavailable': result['is_procurement']=None
     number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
     if number: result['project_number']=re.sub(r'[（(][^）)]*$', '', number.group(1))

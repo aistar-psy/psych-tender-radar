@@ -53,4 +53,6 @@ def public_project_exclusion(project):
     title=project.get('title') or ''
     if '新闻发布会' in title and not re.search('采购|招标|磋商|竞价|成交|中标',title):
         return 'non_procurement_news'
+    if project.get('relevance',{}).get('status')=='review_required':
+        return 'psychology_evidence_missing'
     return None
