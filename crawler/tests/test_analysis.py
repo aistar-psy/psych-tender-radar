@@ -8,6 +8,18 @@ def analyze(text):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_per_person_and_per_use_rates_are_not_total_amounts(self):
+        for text in ['预算金额：100（元/人）','最高限价：200（元/次）','预算金额：￥100（元/人）','预算金额：100元/人']:
+            with self.subTest(text=text):self.assertEqual(analyze(text)['amounts'],[])
+        self.assertEqual([(a['type'],a['value']) for a in analyze('预算金额：100（元）')['amounts']],[('预算',100)])
+        doc={'title':'学校心理服务采购公告','blocks':[{'text':'预算金额（元/人）','kind':'table_row','locator':'html/table:1/row:1'},{'text':'100','kind':'table_row','locator':'html/table:1/row:2'}]}
+        self.assertEqual(analyze_document(doc,'https://e/rate','2026-11-02T09:00:00+08:00')['amounts'],[])
+
+    def test_candidate_result_heading_does_not_prove_final_award(self):
+        doc={'title':'心理服务候选结果公示','text':'项目编号：PSY-001\n成交结果信息'}
+        result=analyze_document(doc,'https://e/candidate','2026-11-02T09:00:00+08:00')
+        self.assertIsNone(result['notice_type'])
+
     def test_split_chinese_deadline_and_parenthesized_opening_labels(self):
         text='投标（响应）截止\n时间: 2026年\n11\n月\n03\n日\n09\n时\n3\n0分止\n开标（谈判\n）时间：2026年\n11\n月\n03\n日\n09\n时\n30\n分'
         result=analyze(text)
