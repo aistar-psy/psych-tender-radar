@@ -26,6 +26,39 @@ def browser_queue(queue, manifest):
     return pending
 
 
+
+def trace_queue(relations):
+    # Keep every verified parent edge until the requested batch is selected.
+    return [{'parent_url':r['from_url'],'url':r['to_url'],'title':r.get('link_text',''),
+             'kind':'attachment' if r.get('kind')=='public_attachment' else 'document'} for r in relations]
+
+
+def select_linked_queue(rows,parents,saved,attempted):
+    """Keep retries local to verified parent links; saved responses remain evidence."""
+    edges=[(canonical_url(r['parent_url']),canonical_url(r['url']),r) for r in rows if r.get('parent_url') and r.get('url')]
+    parents=set(parents)
+    while True:
+        cached_parents={url for parent,url,row in edges if parent in parents and url in saved and row.get('kind')=='document'}-parents
+        if not cached_parents:break
+        parents.update(cached_parents)
+    out={}
+    for parent,url,row in edges:
+        if parent in parents and url not in saved and url not in attempted:
+            out.setdefault(url,row)
+    return list(out.values())
+
+
+def saved_response_urls(root):
+    saved=set()
+    for folder in ('public-downloads','cloud-downloads'):
+        for manifest in (root/'data'/folder).glob('*/manifest.json'):
+            rows=json.loads(manifest.read_text())
+            if isinstance(rows,dict):rows=rows.get('results',[])
+            for row in rows:
+                if row.get('status')=='ok' and row.get('url') and row.get('path') and (manifest.parent/row['path']).is_file():
+                    saved.add(canonical_url(row['url']))
+    return saved
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--queue');parser.add_argument('--batch',default=datetime.now().strftime('%Y%m%dT%H%M%S')+'-recovery');parser.add_argument('--prepare-only',action='store_true')
     args=parser.parse_args();base=ROOT/'data/recovery'/args.batch;base.mkdir(parents=True,exist_ok=True)
@@ -39,9 +72,26 @@ def main():
     run(sys.executable,'scripts/fetch_public_batch.py',q,http,'--workers','3')
     browser_rows=browser_queue(queue,http/'manifest.json');bq=base/'browser.json';bq.write_text(json.dumps(browser_rows,ensure_ascii=False,indent=2))
     if browser_rows:run('node','scripts/browser_notice_fetch.cjs',bq,browser,'3')
-    for _ in range(2):
+    parents={canonical_url(row['url']) for row in queue}
+    attempted=set(parents)
+    # A second pass may follow a verified original page acquired on the first.
+    # Older unrelated links remain in the global trace without repeated requests.
+    for round_index in range(2):
         run(sys.executable,'scripts/trace_public_sources.py')
-        run(sys.executable,'scripts/fetch_public_batch.py','data/source-trace/fetch_queue.json',linked,'--workers','3')
+        rows=trace_queue(json.loads((ROOT/'data/source-trace/links.json').read_text()))
+        blocked={url for url,row in latest_receipts(ROOT).items() if row.get('error_type')=='access_challenge'}
+        related=select_linked_queue(rows,parents,saved_response_urls(ROOT),attempted|blocked)
+        for kind,target in [('document',linked),('attachment',ROOT/'data/public-downloads'/(args.batch+'-attachments'))]:
+            selected=[row for row in related if row.get('kind','document')==kind]
+            if not selected:continue
+            scoped=base/f'linked-{round_index+1}-{kind}.json'
+            scoped.write_text(json.dumps(selected,ensure_ascii=False,indent=2))
+            run(sys.executable,'scripts/fetch_public_batch.py',scoped,target,'--workers','3')
+            attempted.update(canonical_url(row['url']) for row in selected)
+            if kind=='document':
+                receipts=latest_receipts(ROOT)
+                parents.update(canonical_url(row['url']) for row in selected if receipts.get(canonical_url(row['url']),{}).get('status')=='ok')
+        if not related:break
     trace_path=ROOT/'data/source-trace/links.json'
     if trace_path.exists():
         traces=json.loads(trace_path.read_text());receipts=latest_receipts(ROOT)

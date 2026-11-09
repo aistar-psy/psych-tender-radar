@@ -47,11 +47,12 @@ def keyword_text(text):
  return re.sub(r'中\s*心\s*理\s*(化|学|发)',r'中心 理\1',str(text or '')).replace('核心育种','核心 育种').replace('核心育苗','核心 育苗')
 
 def match_recipes(title,fulltext=''):
- title=keyword_text(title);fulltext=keyword_text(fulltext)
+ title=keyword_text(title).casefold()
+ combined=title+' '+keyword_text(fulltext).casefold()
  out=[]
  for r in load_recipes()['recipes']:
-  text=title if r['field']=='title' else title+' '+fulltext
-  if any(all(t.casefold() in text.casefold() for t in clause) for clause in clauses(r['syntax'])):out.append(r['id'])
+  text=title if r['field']=='title' else combined
+  if any(all(t.casefold() in text for t in clause) for clause in clauses(r['syntax'])):out.append(r['id'])
  return out
 
 def vocabulary_match(text):

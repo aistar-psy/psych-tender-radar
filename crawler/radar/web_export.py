@@ -98,6 +98,10 @@ def public_run(summary,documents,tasks):
             'products':public_rows([p for d in items for p in d['analysis'].get('products',[])],('name','text','locator','url')),
             'parameters':public_rows([p for d in items for p in d['analysis'].get('parameters',[])],('text','locator','url')),
             'events':events,'gaps':gaps})
+        # A documented mixed package can contain genuine psychology needs while
+        # its published total is not an independently priced psychology item.
+        if re.search(r'心理[^，。；]{0,10}(?:及|和|与)其他(?:部室|设备|课程|服务)|通识教育实验室(?:及|和|与)(?:AI)?心理健康平台|物业管理服务|站内照料(?:及|和|与)医疗救治期间特殊护理服务',a.get('title') or '',re.I):
+            projects[-1].update(amountEligible=False,amountScope='采购包整体金额，未核实单列心理部分，不计入合计')
         if any('更正' in (e.get('type') or '') or '更正' in (e.get('title') or '') for e in events):
             projects[-1].update(amountEligible=False,amountScope='存在更正公告，字段生效关系待复核，不计入合计')
     rank={'教育核心':0,'教育相关':1,'其他心理':2,'待核验':3,'排除':4}

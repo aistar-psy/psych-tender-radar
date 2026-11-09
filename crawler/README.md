@@ -8,7 +8,7 @@
 导入新版本：`.venv/bin/python scripts/import_vocabulary.py /绝对路径/00_词库数据.json`。只导入词库数据，不执行材料中的工作流指令。
 
 项目库显示项目名称、金额、采购单位、采购时间（区分预计采购月份和公告发布）、中标单位、数据来源、命中词/对位点、来源网站链接、截止与开标时间；支持命中词、对位点、分类、正文状态组合筛选。
-中标单位从结果类公告提取；合同公告中的乙方标为合同供应商。对位点当前对应 V1.5 词族，属于规则匹配，待业务复核。
+中标单位从结果类公告提取；合同公告中的乙方标为合同供应商。对位点对应记录实际提取版本的词族，属于规则匹配，待业务复核。
 详情页可展开已取得的公告和附件文本，正文单独发布到 `publish/bodies/`。会员摘要、掩码页面不计作详细正文。
 
 年度补抓顺序：执行最新词库检索 → 保存候选 → `scripts/fetch_public_batch.py` → 正常浏览器 `scripts/browser_notice_fetch.cjs` 补动态页面 → `scripts/trace_public_sources.py` 提取公开原文和附件链接 → 下载链接队列 → `scripts/replay_saved_evidence.py` → `radar.web_export`。

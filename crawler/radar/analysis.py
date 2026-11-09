@@ -28,6 +28,12 @@ def _buyer(blocks,url):
             elif key in headers:
                 candidates.extend(cells[i] for i in headers[key] if i<len(cells))
         candidates.extend(m.group(1).strip() for m in re.finditer(BUYER_LABEL+r'\s*[:：|]\s*([^\n|；;]{2,100})',line))
+        if block.get('kind')!='table_row' and re.fullmatch(r'\s*(?:\d+[.、]\s*)?'+BUYER_LABEL+r'\s*[:：]\s*',line) and index+1<len(blocks):
+            following=blocks[index+1]
+            value=following['text'].strip()
+            if following.get('source_url',url)==block.get('source_url',url) and following.get('kind')!='table_row' and not re.search(r'[:：|\n]',value):
+                candidates.append(value)
+                evidence_text=line+' '+value
         if re.search(r'采购人信息',line):
             section=line
             for following in blocks[index+1:index+4]:
@@ -82,7 +88,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     ordinary=bool(re.search(r'普通椅|轮椅|病床|办公家具|保洁|物业|空调',corpus))
     specific=bool(re.search(r'心理(?:测评|评估|咨询|辅导|干预|健康教育)|心育|情绪(?:调节|识别|训练)|抑郁(?:评估|筛查)',corpus))
     title=doc.get('title','')
-    title_psych=bool(re.search(PSYCH,keyword_text(title)))
+    title_psych=bool(re.search(PSYCH+r'|脑电生物反馈(?:治疗|训练)',keyword_text(title)))
     if title_psych and re.search(MEDICAL,title):
         category='其他心理'
     elif title_psych and re.search(EDU,title) and re.search(r'平台|系统|心理健康|心育|心理测评',title):
@@ -103,6 +109,8 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','招标通告','采购信息公告','采购公告','采购通告','采购公示')
     result['notice_type']=next((kind for source in (title,corpus) for kind in notice_types if kind in source),None)
     if not result['notice_type'] and '结果公示' in title and not re.search(r'候选|废标|终止|更正',title) and '成交结果信息' in corpus: result['notice_type']='成交结果公告'
+    if not result['notice_type'] and '采购项目结果公告' in title and not re.search(r'候选|废标|终止|更正',title) and re.search(r'成交供应商(?:名称)?\s*[:：]',corpus):
+        result['notice_type']='成交结果公告'
     result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购通告|采购公示|招标(?:公告|通告)|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
     if re.search(r'更正公告|终止公告|废标公告',corpus) and re.search(r'响应|投标|采购|招标|供应商|成交|中标|磋商',corpus):
         result['is_procurement']=True
@@ -113,6 +121,9 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['relevance']=assess_relevance(title,blocks,body_available=result['content_status']!='unavailable')
     if result['content_status']=='unavailable': result['is_procurement']=None
     number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
+    if not number:
+        own='\n'.join(b['text'] for b in blocks if b.get('source_url',url)==url)
+        number=re.search(r'(?m)^[ \t]*(?:\d+[.、][ \t]*)?采购[ \t]*\n[ \t]*编号\s*[:：]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',own)
     if number: result['project_number']=re.sub(r'[（(][^）)]*$', '', number.group(1))
     date_label=r'(?:发布日期|发布时间|公告日期|公告发布时间|信息提供日期|信息时间)'
     primary_blocks=[b for b in blocks if b.get('source_url',url)==url]
@@ -182,18 +193,23 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
             cells=[c.strip() for c in line.split('|')]
             monetary=[(i,c) for i,c in enumerate(cells) if re.search(r'预算(?:金额)?|最高限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额',c) and not re.search(r'\d',c)]
             if monetary:
-                amount_headers[table_key]=monetary
+                amount_headers[table_key]=[(i,c,i+1 if i+1<len(cells) and cells[i+1] in ('单位','金额单位','币种单位') else None) for i,c in monetary]
             elif table_key in amount_headers:
-                for index,header in amount_headers[table_key]:
+                for index,header,unit_index in amount_headers[table_key]:
                     if re.search(r'(?:亿元|万元|元)\s*[/／每]',header): continue
                     if index>=len(cells): continue
                     unit=re.search(r'亿元|万元|元',header)
                     number_cell=re.fullmatch(r'[¥￥]?\s*(\d[\d,]*(?:\.\d+)?)\s*(亿元|万元|元)?(?:人民币)?',cells[index])
-                    if not number_cell or not (number_cell.group(2) or unit): continue
-                    unit_name=number_cell.group(2) or unit.group(0)
+                    if not number_cell:continue
+                    separate=cells[unit_index] if unit_index is not None and unit_index<len(cells) else ''
+                    if re.search(r'(?:亿元|万元|元)\s*[/／每]',separate):continue
+                    currency_cell=separate if separate in ('亿元','万元','元') else ''
+                    units={x for x in (number_cell.group(2),unit.group(0) if unit else None,currency_cell) if x}
+                    if len(units)!=1:continue
+                    unit_name=units.pop()
                     kind='预算' if '预算' in header else ('限价' if '限价' in header else '成交')
                     value=Decimal(number_cell.group(1).replace(',',''))*{'亿元':Decimal(100000000),'万元':Decimal(10000),'元':Decimal(1)}[unit_name]
-                    result['amounts'].append(dict(ev,type=kind,value=float(value),currency='CNY',raw=header+'：'+cells[index]))
+                    result['amounts'].append(dict(ev,type=kind,value=float(value),currency='CNY',raw=header+'：'+cells[index]+(' '+currency_cell if currency_cell else '')))
             if any(re.search(r'标的名称|产品名称|货物名称|设备名称|服务名称',c) for c in cells):
                 table_headers[table_key]=cells
             elif psych and table_key in table_headers:

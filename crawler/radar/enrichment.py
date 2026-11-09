@@ -10,12 +10,13 @@ from .relevance import assess_relevance
 
 def match_evidence(title,blocks,url,body_label='正文'):
  sources=[{'text':title,'locator':'title','source_url':url,'field':'标题'}]+[{**b,'field':body_label} for b in blocks]
- for b in sources:b['_normalized']=keyword_text(b.get('text',''))
+ for b in sources:
+  b['_normalized']=keyword_text(b.get('text',''));b['_folded']=b['_normalized'].casefold()
  out=[]
  for family in load_recipes()['families']:
   for term in family['terms']:
    for b in sources:
-    text=b['_normalized'];i=text.casefold().find(term.casefold())
+    text=b['_normalized'];i=b['_folded'].find(term.casefold())
     if i>=0:
      out.append({'term':term,'point':family['name'],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
  # Include explicit A/D/E/F aliases absent from the family table, e.g. 防霸凌.
@@ -28,7 +29,7 @@ def match_evidence(title,blocks,url,body_label='正文'):
    for term in clause:
     if term in family_terms:continue
     for b in selected:
-     text=b['_normalized'];i=text.casefold().find(term.casefold())
+     text=b['_normalized'];i=b['_folded'].find(term.casefold())
      if i>=0:
       out.append({'term':term,'point':points[recipe['id']],'field':b['field'],'locator':b.get('locator','document'),'url':b.get('source_url',url),'text':text[max(0,i-50):i+len(term)+90]});break
  return list({(h['term'],h['field'],h['url']):h for h in out}.values())
@@ -39,6 +40,7 @@ def supplier_name(value):
  name=re.sub(r'\s*[（(](?:加盖|盖)?(?:供应商)?(?:单位)?公?章[）)]\s*$','',name).strip()
  if not 3<=len(name)<=100 or re.search(r'详见|填写|名称|联系人|地址|资格|不得|应当|应具备|^/|^无$|项目编号|招标编号',name):return None
  compact=re.sub(r'\s+','',name)
+ if re.fullmatch(r'(?:供应商|中标单位|成交供应商)?(?:联系)?地址|所在地',compact):return None
  if re.fullmatch(r'(?:成交价|成交金额|中标价|中标金额)(?:[（(](?:万|亿)?元[）)])?',compact):return None
  if re.fullmatch(r'[_*＊×—-]+|[（(]?(?:(?:加盖|盖)?(?:供应商)?(?:单位)?(?:公章|章)|全称及公章|供应商全称并加盖公章|单位性质|签字)[）)]?',compact):return None
  if re.fullmatch(r'(?:磋商)?(?:响应|投标)?文件(?:格式|签字[、，和及或]*盖章)|(?:法定代表人|授权代表|被授权人|法定代表人或被授权代表)(?:[（(].*[）)])?|签(?:字|名)[、，和及或]*盖章(?:要求)?',compact):return None
@@ -46,10 +48,10 @@ def supplier_name(value):
  if re.fullmatch(r'[二〇零一两三四五六七八九十\d]+年(?:月|\d+月)?',compact):return None
  return name
 
-def awarded_suppliers(title,blocks,url):
- contract='合同公告' in title
+def awarded_suppliers(title,blocks,url,notice_type=None):
+ contract='合同公告' in title or notice_type=='合同公告'
  explicit_result='结果公示' in title and any('成交结果信息' in b.get('text','') for b in blocks)
- if not (contract or explicit_result or '采购结果公告' in title or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
+ if not (contract or explicit_result or re.search(r'采购(?:项目)?结果公告',title) or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):
   name=supplier_name(value)
@@ -60,9 +62,9 @@ def awarded_suppliers(title,blocks,url):
   if contract:
    for m in re.finditer(r'供应商\s*[（(]乙方[）)]\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
   for m in re.finditer(r'(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*([^\n|；;]{3,100})',line):add(m[1],b)
-  if b.get('kind')!='table_row' and re.fullmatch(r'(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*',line) and bi+1<len(blocks):
+  if b.get('kind')!='table_row' and re.fullmatch(r'\s*(?:\d+[.、]\s*)?(?:供应商名称|中标(?:单位|人)(?:名称)?|成交(?:供应商|单位)(?:名称)?)\s*[:：]\s*',line) and bi+1<len(blocks):
    following=blocks[bi+1]
-   if following.get('source_url',url)==b.get('source_url',url):add(following.get('text',''),{**b,'text':line+' '+following.get('text','')})
+   if following.get('source_url',url)==b.get('source_url',url) and following.get('kind')!='table_row' and not re.search(r'[:：|\n]',following.get('text','')):add(following.get('text',''),{**b,'text':line+' '+following.get('text','')})
   if b.get('kind')=='table_row':
    indices=[i for i,c in enumerate(cells) if re.fullmatch(r'供应商名称|中标单位(?:名称)?|成交供应商(?:名称)?',c)]
    if indices and any(re.search(r'排序|排名|最终报价|投标报价|评审报价',c) for c in cells) and not any(re.search(r'(?:中标|成交).*金额',c) for c in cells):
@@ -153,7 +155,7 @@ def enrich(projects,documents,out):
      gap={'name':'正文或公开附件','status':issue,'reason':reason,'url':ev.get('url') or url}
      if gap not in p.setdefault('gaps',[]):p['gaps'].append(gap)
    blocks=[b for part in parts[url] for b in part['blocks']];allblocks+=blocks
-   winners+=awarded_suppliers(d['analysis']['title'],blocks,url)
+   winners+=awarded_suppliers(d['analysis']['title'],blocks,url,notice_type=d['analysis'].get('notice_type'))
    for part in parts[url]:
     # Text is stored separately to keep the searchable index small.
     content=redact_public({k:v for k,v in part.items() if k!='blocks'});encoded=json.dumps(content,ensure_ascii=False)
