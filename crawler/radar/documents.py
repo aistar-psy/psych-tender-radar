@@ -169,7 +169,7 @@ def _html(data, url, out):
 
 
     retained='\n'.join(b['text'] for b in out['blocks'])
-    gated=re.search(r'查看(?:政府采购)?详细信息[，,\s]*(?:注册|请|登录)|本网站会员请[\s\S]{0,80}(?:登录|注册)|仅对.{0,20}会员开放|下文中.{0,30}为隐藏内容|登录后(?:查看|可见)|查看完整内容[>\s»]*[\s\S]{0,160}(?:用户登录|注册会员)',retained)
+    gated=re.search(r'查看(?:政府采购)?详细信息[，,\s]*(?:注册|请|登录)|本网站会员请[\s\S]{0,80}(?:登录|注册)|仅对.{0,20}会员开放|下文中.{0,30}为隐藏内容|页面中[\s*]{0,30}为隐藏内容|登录后(?:查看|可见)|查看完整内容[>\s»]*[\s\S]{0,160}(?:用户登录|注册会员)',retained)
     masked=bool(re.search(r'\*{3,}|(?:公司|项目(?:名称|编号)?|采购人|采购单位|预算金额(?:[（(]元[）)])?|简要规格描述)\s*[:：]?\s*[（(]略[）)]',retained))
     if gated and (len(retained)<1500 or masked):
         out['content_status']='unavailable';out['status']='partial'

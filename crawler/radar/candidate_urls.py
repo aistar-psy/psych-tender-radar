@@ -25,7 +25,7 @@ def is_listing_url(url):
     if host == 'qianlima.com' or host.endswith('.qianlima.com'):
         return path.startswith('/gjxx/') or bool(re.fullmatch(r'/hot\d+/?', path))
     if host == 'jianyu360.cn' or host.endswith('.jianyu360.cn'):
-        return path.startswith('/jycms/')
+        return path.startswith('/jycms/') or bool(re.fullmatch(r'/xzbg_\d+/?', path))
     if host == 'jszhaobiao.cn' or host.endswith('.jszhaobiao.cn'):
         return bool(re.fullmatch(r'/s\d+/?', path))
     if host == 'zhaobiao.cn' or host.endswith('.zhaobiao.cn'):

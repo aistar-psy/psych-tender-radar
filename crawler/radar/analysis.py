@@ -89,7 +89,9 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     specific=bool(re.search(r'心理(?:测评|评估|咨询|辅导|干预|健康教育)|心育|情绪(?:调节|识别|训练)|抑郁(?:评估|筛查)',corpus))
     title=doc.get('title','')
     title_psych=bool(re.search(PSYCH+r'|脑电生物反馈(?:治疗|训练)',keyword_text(title)))
-    if title_psych and re.search(MEDICAL,title):
+    school_audience=bool(re.search(r'中小学|幼儿园|师生心理|心理教学|教学实训|面向.{0,10}学生',title))
+    hospital_package=psych and bool(re.search(r'附属医院.*(?:医疗设备|病区|病房)',title))
+    if not school_audience and (hospital_package or (title_psych and re.search(MEDICAL,title))):
         category='其他心理'
     elif title_psych and re.search(EDU,title) and re.search(r'平台|系统|心理健康|心育|心理测评',title):
         category='教育核心'
