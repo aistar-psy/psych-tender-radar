@@ -49,6 +49,21 @@ def _buyer(blocks,url):
     return None,None
 
 
+
+def project_number_text(value):
+    if value is None:
+        return None
+    depth = 0
+    for index, character in enumerate(value):
+        if character in ('(', '（'):
+            depth += 1
+        elif character in (')', '）'):
+            if depth == 0:
+                return value[:index].strip()
+            depth -= 1
+    return re.sub(r'[（(][^）)]*$', '', value).strip()
+
+
 def _dated(text,label,tz,warnings):
     def clock(match):
         part,hour=match.group(1),int(match.group(2))
@@ -110,7 +125,7 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['buyer'],result['buyer_evidence']=_buyer(blocks,url)
     notice_types=('更正公告','终止公告','废标公告','中标（成交）结果公告','成交结果公告','中标结果公告','成交公告','中标公告','中标公示','中标通知书','合同公告','采购意向','招标计划','竞争性磋商公告','竞争性谈判公告','询价公告','招标公告','招标通告','采购信息公告','采购公告','采购通告','采购公示')
     result['notice_type']=next((kind for source in (title,corpus) for kind in notice_types if kind in source),None)
-    if not result['notice_type'] and '结果公示' in title and not re.search(r'候选|废标|终止|更正',title) and '成交结果信息' in corpus: result['notice_type']='成交结果公告'
+    if '结果公示' in title and not re.search(r'候选|废标|终止|更正',title) and re.search(r'成交结果信息|中标[（(]成交[）)]信息',corpus): result['notice_type']='成交结果公告'
     if not result['notice_type'] and '采购项目结果公告' in title and not re.search(r'候选|废标|终止|更正',title) and re.search(r'成交供应商(?:名称)?\s*[:：]',corpus):
         result['notice_type']='成交结果公告'
     result['is_procurement']=bool(re.search(r'采购(?:信息)?公告|采购通告|采购公示|招标(?:公告|通告)|磋商公告|谈判公告|询价公告|采购意向|(?:成交|中标)(?:[（(]成交[）)])?(?:结果)?(?:公告|公示|明细)|中标通知书|合同公告|招标计划|采购项目|采购需求|采购预算|预算金额|项目编号|采购编号|招标编号',corpus))
@@ -122,11 +137,11 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     result['content_status']=doc.get('content_status','available')
     result['relevance']=assess_relevance(title,blocks,body_available=result['content_status']!='unavailable')
     if result['content_status']=='unavailable': result['is_procurement']=None
-    number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',text)
+    number=re.search(r'(?:项目编号|项目号|采购编号|招标编号|采购计划编号)\s*[:：|]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕【】/—-]{2,79})',text)
     if not number:
         own='\n'.join(b['text'] for b in blocks if b.get('source_url',url)==url)
-        number=re.search(r'(?m)^[ \t]*(?:\d+[.、][ \t]*)?采购[ \t]*\n[ \t]*编号\s*[:：]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕/—-]{2,79})',own)
-    if number: result['project_number']=re.sub(r'[（(][^）)]*$', '', number.group(1))
+        number=re.search(r'(?m)^[ \t]*(?:\d+[.、][ \t]*)?采购[ \t]*\n[ \t]*编号\s*[:：]\s*([A-Za-z0-9\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff_.()（）\[\]〔〕【】/—-]{2,79})',own)
+    if number: result['project_number']=project_number_text(number.group(1))
     date_label=r'(?:发布日期|发布时间|公告日期|公告发布时间|信息提供日期|信息时间)'
     primary_blocks=[b for b in blocks if b.get('source_url',url)==url]
     for selected in ([b for b in primary_blocks if b.get('kind')=='metadata'], [b for b in primary_blocks if b.get('kind')!='table_row'], primary_blocks):
@@ -160,6 +175,10 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
     if len(matched)>1: warnings.append('采购方地区证据冲突，省份待核验')
     result['deadline']=_dated(text,r'(?:(?:响应|投标)(?:\s*[（(]\s*响应\s*[）)])?\s*(?:截止\s*时间|截止\s*日期)|(?:提交|递交)(?:响应|投标)文件\s*[:：]?\s*(?:截止时间|截止日期)|(?:响应|投标)文件(?:提交|递交)\s*(?:截止时间|截止日期))',current.tzinfo,warnings)
     amount_re=re.compile(r'(?P<label>预算金额(?:（亦是最高限价）)?|采购预算|项目预算|最高限价|最高投标限价|中标[（(]成交[）)]金额|成交金额|成交价|中标金额|中标价格|合同金额|预算)\s*(?:更正为|为)?\s*[:：|]?\s*(?:人民币)?\s*(?P<symbol>[¥￥]?)\s*(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<unit_open>[（(])?\s*(?P<unit>亿元|万元|元)?(?(unit_open)\s*[）)])')
+    total_price_sources = {
+        b.get('source_url', url) for b in blocks
+        if re.search(r'中标类型\s*[:：|]\s*总价中标', b['text'])
+    }
     seen=set()
     table_headers={}
     amount_headers={}
@@ -168,6 +187,24 @@ def analyze_document(doc: dict, url: str, now: str) -> dict:
         ev={'text':line,'locator':loc,'url':b.get('source_url',url)}
         amount_line=line
         amount_blocks=[b]
+        # Some publishers put the currency unit before the amount. Their shared
+        # yuan/percentage label needs an explicit total-price award declaration.
+        field_amount = re.fullmatch(
+            r'\s*(?P<label>预算金额|采购预算|项目预算|最高限价|中标[（(]成交[）)]金额|'
+            r'成交金额|中标金额|合同金额)\s*[（(]\s*(?P<unit>亿元|万元|元)\s*[）)]\s*'
+            r'(?P<percent>\\?\s*[（(]\s*%\s*[）)])?\s*[:：|]\s*'
+            r'(?P<value>\d[\d,]*(?:\.\d+)?)\s*(?P<value_unit>亿元|万元|元)?\s*',
+            line)
+        if field_amount:
+            same_unit = not field_amount['value_unit'] or field_amount['value_unit'] == field_amount['unit']
+            total_price = b.get('source_url', url) in total_price_sources
+            if same_unit and (not field_amount['percent'] or total_price):
+                label = field_amount['label']
+                kind = '合同' if '合同' in label else '预算' if '预算' in label else '限价' if '限价' in label else '成交'
+                value = Decimal(field_amount['value'].replace(',', '')) * {
+                    '亿元': Decimal(100000000), '万元': Decimal(10000), '元': Decimal(1)
+                }[field_amount['unit']]
+                result['amounts'].append(dict(ev, type=kind, value=float(value), currency='CNY', raw=line))
         def valid(m):
             tail=amount_line[m.end():].lstrip()
             return bool(m['unit'] or m['symbol']) and not re.match(r'[/／每]',tail) and not (not m['unit'] and tail.startswith(('（','(')))

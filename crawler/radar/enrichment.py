@@ -50,7 +50,7 @@ def supplier_name(value):
 
 def awarded_suppliers(title,blocks,url,notice_type=None):
  contract='合同公告' in title or notice_type=='合同公告'
- explicit_result='结果公示' in title and any('成交结果信息' in b.get('text','') for b in blocks)
+ explicit_result='结果公示' in title and any(re.search(r'成交结果信息|中标[（(]成交[）)]信息', b.get('text','')) for b in blocks)
  if not (contract or explicit_result or re.search(r'采购(?:项目)?结果公告',title) or re.search(r'(?:中标|成交).*?(?:公告|公示|结果|通知书)',title)) or re.search(r'候选|废标|终止|更正',title):return []
  out=[];seen=set();headers={}
  def add(value,b):

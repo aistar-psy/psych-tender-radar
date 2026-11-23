@@ -7,20 +7,24 @@ Missing evidence is quarantined for review; it does not prove market absence.
 import re
 from .search_recipes import keyword_text
 
-VERSION = '2026-11-02.2'
+VERSION = '2026-11-23.2'
 TARGET = re.compile(
     r'心理|心育|精神卫生|精神健康|精神障碍|精神测评|抑郁|焦虑|孤独症|自闭症|多动症|'
     r'情绪(?:调节|识别|训练|管理|疏导|宣泄|问题|监测)|无感式情感分析|压力管理|危机干预|'
     r'心灵驿站|舒心小屋|苏康驿站|心灵灯塔|阳光心灵|宣泄室|沙盘(?:游戏|治疗|咨询|辅导)|沙具|'
     r'生物反馈|正念|音乐放松|放松训练|减压(?:室|舱|训练|服务)|'
     r'团体辅导|认知神经|认知(?:训练|评估)|注意力(?:训练|测评|评估)|'
-    r'自杀|自伤|校园欺凌|防欺凌|防霸凌|12355|12356'
+    r'自杀|自伤|校园欺凌|防欺凌|防霸凌'
 )
+# Keep the leading hotline assertion separate so TARGET retains its character
+# prefix optimization on the many blocks without psychology terms.
+HOTLINE_TARGET = re.compile(r'(?<![\d.])(?:12355|12356)(?![\d.]|(?:万|亿)?元)')
 
 def purchase_context(text):
     """Remove observed non-purchase senses without erasing actual training."""
     text = keyword_text(text)
     text = re.sub(r'核\s*心\s*理\s*念', '核心 理念', text)
+    text = re.sub(r'中心理(?=化|$)', '中心 理', text)
     text = re.sub(r'(?:急切|急躁|消费|从众|投机|侥幸)心理(?!\s*(?:测评|测试|评估|实验|研究|课程|教学|培训|咨询|辅导|学))|心理(?:价位|预期|准备)(?!\s*(?:测评|测试|评估|实验|研究|课程|教学|培训|咨询|辅导))', '', text)
     text = re.sub(r'(?:具备|具有|应有|拥有|强大|良好|较强|较好)(?:良好|强大|较强|较好)?的?(?:心理素质|情绪管理能力)(?!\s*(?:培训|课程|训练|提升))', '', text)
     # Supplier identity alone says nothing about the purchased goods/services.
@@ -32,6 +36,7 @@ def assess_relevance(title, blocks, *, body_available):
     if body_available:
         sources += [dict(b, field='正文/公开附件') for b in blocks]
     evidence = []
+    facility_purchase = bool(re.search(r'电梯(?:更换|维保|保养|维修|采购)', title or ''))
     supplier_next = False
     previous_url = None
     for block in sources:
@@ -39,9 +44,14 @@ def assess_relevance(title, blocks, *, body_available):
         source_url = block.get('source_url') or block.get('url') or ''
         name_only = supplier_next and source_url == previous_url and re.fullmatch(r'[^:：|\n]{2,100}(?:公司|学会|协会|学校|中心|研究院|工作室)', raw.strip())
         normalized = '' if name_only else purchase_context(raw)
+        if facility_purchase:
+            normalized = re.sub(r'(?:精神心理|心理|精神)(?:科|门诊)|精神卫生中心', '', normalized)
         supplier_next = bool(re.fullmatch(r'(?:供应商(?:名称)?(?:[（(]乙方[）)])?|中标单位|成交供应商)\s*[:：|]?\s*', raw))
         previous_url = source_url
         match = TARGET.search(normalized)
+        hotline = HOTLINE_TARGET.search(normalized)
+        if hotline is not None and (match is None or hotline.start() < match.start()):
+            match = hotline
         if match:
             evidence.append({'term': match[0], 'field': block['field'],
                              'locator': block.get('locator', 'document'),

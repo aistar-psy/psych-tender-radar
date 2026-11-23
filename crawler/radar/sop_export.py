@@ -1,5 +1,5 @@
 """Public SOP/configuration metadata, kept separate from historical collection."""
-import json
+import json,re
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -47,9 +47,11 @@ def export(root=None,out=None):
     assets=('sop.html','sop.css','sop-data.js','sop-state.js','sop.js')
     if all((out/name).exists() for name in assets):
         page=(out/'sop.html').read_text()
-        page=page.replace('<link rel="stylesheet" href="sop.css?v=20261026">','<style>'+(out/'sop.css').read_text()+'</style>')
+        page=re.sub(r'<link rel="stylesheet" href="sop\.css(?:\?[^"]*)?">',
+                    lambda _: '<style>'+(out/'sop.css').read_text()+'</style>',page)
         for name in ('sop-data.js','sop-state.js','sop.js'):
-            page=page.replace('<script src="'+name+'?v=20261026"></script>','<script>'+(out/name).read_text()+'</script>')
+            page=re.sub(r'<script src="'+re.escape(name)+r'(?:\?[^"]*)?"></script>',
+                        lambda _: '<script>'+(out/name).read_text()+'</script>',page)
         for name in ('index.html','recovery-report.html','annual-projects.html','sop.html','sop-offline.html'):
             page=page.replace('href="'+name,'href="https://aistar-psy.github.io/psych-tender-radar/'+name)
         (out/'sop-offline.html').write_text(page)

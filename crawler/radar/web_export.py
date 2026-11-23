@@ -7,6 +7,7 @@ from datetime import datetime,timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
+from .analysis import project_number_text
 from .report import opportunity_state
 from .fetch import canonical_url
 from .search_recipes import vocabulary_match
@@ -88,7 +89,7 @@ def public_run(summary,documents,tasks):
                             'currency':clean(m.get('currency')),'raw':clean(m.get('raw'))})
         as_of=summary.get('actual_started_at') or summary.get('window_end') or datetime.now(ZoneInfo('Asia/Shanghai')).isoformat()
         projects.append({'id':str(pid),'title':clean(a.get('title') or '标题待核验'),'category':clean(a.get('category') or '待核验'),
-            'buyer':clean(a.get('buyer')),'number':clean(a.get('project_number')),'publishedAt':clean(a.get('published_at')),
+            'buyer':clean(a.get('buyer')),'number':clean(project_number_text(a.get('project_number'))),'publishedAt':clean(a.get('published_at')),
             'deadline':clean(a.get('deadline')),'status':opportunity_state(a,as_of),'detailStatus':clean(primary.get('detail_status') or '待核验'),
             'sourceUrl':link(primary.get('url')),'amounts':amounts,
             'province':clean(a.get('province')),'buyerType':clean(a.get('buyer_type')),
@@ -100,10 +101,10 @@ def public_run(summary,documents,tasks):
             'events':events,'gaps':gaps})
         # A documented mixed package can contain genuine psychology needs while
         # its published total is not an independently priced psychology item.
-        if re.search(r'心理[^，。；]{0,10}(?:及|和|与)其他(?:部室|设备|课程|服务)|通识教育实验室(?:及|和|与)(?:AI)?心理健康平台|物业管理服务|站内照料(?:及|和|与)医疗救治期间特殊护理服务',a.get('title') or '',re.I):
+        if re.search(r'心理[^，。；]{0,10}(?:及|和|与)其他(?:部室|设备|课程|服务)|通识教育实验室(?:及|和|与)(?:AI)?心理健康平台|(?:录播室|理化生科技室|美术室)[^，。；]{0,45}心理咨询室|物业管理服务|站内照料(?:及|和|与)医疗救治期间特殊护理服务',a.get('title') or '',re.I):
             projects[-1].update(amountEligible=False,amountScope='采购包整体金额，未核实单列心理部分，不计入合计')
-        if any('更正' in (e.get('type') or '') or '更正' in (e.get('title') or '') for e in events):
-            projects[-1].update(amountEligible=False,amountScope='存在更正公告，字段生效关系待复核，不计入合计')
+        if any(re.search(r'更正|废标|终止', (e.get('type') or '')+' '+(e.get('title') or '')) for e in events):
+            projects[-1].update(amountEligible=False,amountScope='存在更正、废标或终止公告，字段生效关系待复核，不计入合计')
     rank={'教育核心':0,'教育相关':1,'其他心理':2,'待核验':3,'排除':4}
     projects.sort(key=lambda p:(rank.get(p['category'],5),p['title']))
     return {'id':summary['run_id'],'label':('综合试跑' if coverage['planned'] else '详情补抓')+' · '+summary.get('window_end','')[:10],
@@ -119,8 +120,8 @@ def merge_project(newer,older):
             k=json.dumps(item,ensure_ascii=False,sort_keys=True)
             if k not in seen:seen.add(k);values.append(item)
         result[field]=values
-    if any('更正' in (e.get('type') or '') or '更正' in (e.get('title') or '') for e in result['events']):
-        result.update(amountEligible=False,amountScope='含更正与历史公告，字段生效待复核，不计入合计')
+    if any(re.search(r'更正|废标|终止', (e.get('type') or '')+' '+(e.get('title') or '')) for e in result['events']):
+        result.update(amountEligible=False,amountScope='含更正、废标或终止与历史公告，字段生效待复核，不计入合计')
     result['detailStatus']='含多份公告/历史参数证据，按各自来源核验有效性'
     return result
 

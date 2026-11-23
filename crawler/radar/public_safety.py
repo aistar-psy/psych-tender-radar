@@ -51,6 +51,8 @@ def public_project_exclusion(project):
     from .candidate_urls import is_listing_url
     if is_listing_url(url): return 'source_directory'
     title=project.get('title') or ''
+    if re.search(r'政策通报.*申报项目汇总', title):
+        return 'non_procurement_policy_roundup'
     if '新闻发布会' in title and not re.search('采购|招标|磋商|竞价|成交|中标',title):
         return 'non_procurement_news'
     if project.get('relevance',{}).get('status')=='review_required':

@@ -21,11 +21,13 @@ def is_listing_url(url):
     if host in ('sxggzyjy.cn', 'www.sxggzyjy.cn') and path in ('', '/') and not parsed.query:
         return True
     if host == 'bidcenter.com.cn' or host.endswith('.bidcenter.com.cn'):
-        return bool(re.match(r'^/(?:zhaobiao/(?:agencies_|areanew_|zbkeyw-)|hotlist-|enterprise/|newssearch(?:yz|zb)-)', path))
+        return bool(re.match(r'^/(?:zhaobiao/(?:agencies_|areanew_|zbkeyw-)|hotlist-|enterprise/|newssearch(?:yz|zb)-|datelist-)', path))
     if host == 'qianlima.com' or host.endswith('.qianlima.com'):
         return path.startswith('/gjxx/') or bool(re.fullmatch(r'/hot\d+/?', path))
     if host == 'jianyu360.cn' or host.endswith('.jianyu360.cn'):
         return path.startswith('/jycms/') or bool(re.fullmatch(r'/xzbg_\d+/?', path))
+    if host == 'ss.ebnew.com' and path.startswith('/tradingsearch/'):
+        return True
     if host == 'jszhaobiao.cn' or host.endswith('.jszhaobiao.cn'):
         return bool(re.fullmatch(r'/s\d+/?', path))
     if host == 'zhaobiao.cn' or host.endswith('.zhaobiao.cn'):
